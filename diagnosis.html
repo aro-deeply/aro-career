@@ -175,6 +175,8 @@ function DiagnosisPage() {
     setError(null);
     setStep("loading");
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
     try {
       const response = await fetch("/api/diagnose", {
         method: "POST",
@@ -186,7 +188,9 @@ function DiagnosisPage() {
           rejection: formData.rejection,
           turnstileToken,
         }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
       const data = await response.json();
       if (!response.ok) {
         setError(data?.error || "일시적 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
@@ -196,8 +200,13 @@ function DiagnosisPage() {
       setResult(data.result);
       setStep("result");
     } catch (err) {
+      clearTimeout(timeoutId);
       console.error(err);
-      setError("네트워크 오류입니다. 잠시 후 다시 시도해주세요.");
+      if (err?.name === "AbortError") {
+        setError("진단이 60초 안에 완료되지 않았습니다. 잠시 후 다시 시도해주세요.");
+      } else {
+        setError("네트워크 오류입니다. 잠시 후 다시 시도해주세요.");
+      }
       setStep("input");
     }
   }
@@ -255,7 +264,7 @@ function DiagnosisPage() {
             <div className="text-[10px] tracking-[0.25em] text-neutral-500 font-medium">ARO</div>
             <div className="text-sm font-semibold text-neutral-900 tracking-tight">Career Direction</div>
           </div>
-          <a href="final.html" className="text-xs text-neutral-600 hover:text-neutral-900 transition-colors">
+          <a href="index.html" className="text-xs text-neutral-600 hover:text-neutral-900 transition-colors">
             ← 메인으로
           </a>
         </div>
@@ -593,7 +602,7 @@ function DiagnosisPage() {
                 </p>
                 <div className="flex flex-col md:flex-row gap-3">
                   <a
-                    href="final.html#final"
+                    href="index.html#final"
                     className="bg-neutral-900 hover:bg-black text-white px-8 py-4 text-sm font-semibold tracking-[0.15em] text-center transition-colors"
                   >
                     30분 무료 사전 진단 신청 →

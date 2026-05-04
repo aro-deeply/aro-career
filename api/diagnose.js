@@ -164,7 +164,7 @@ export default async function handler(req, res) {
   try {
     const response = await client.messages.create({
       model: ANTHROPIC_MODEL,
-      max_tokens: 4000,
+      max_tokens: 2500,
       system: [
         {
           type: "text",
