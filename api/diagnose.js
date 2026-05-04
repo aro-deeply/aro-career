@@ -123,14 +123,9 @@ ${resume}
 - JSON 외의 텍스트는 절대 포함하지 마세요`;
 }
 
-function extractJson(text) {
-  const cleaned = text
-    .trim()
-    .replace(/^```json\s*/i, "")
-    .replace(/```\s*$/, "")
-    .trim();
-  return JSON.parse(cleaned);
-}
+export const config = {
+  maxDuration: 60,
+};
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -161,8 +156,9 @@ export default async function handler(req, res) {
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+  let streamingStarted = false;
   try {
-    const response = await client.messages.create({
+    const stream = client.messages.stream({
       model: ANTHROPIC_MODEL,
       max_tokens: 2500,
       system: [
@@ -177,22 +173,24 @@ export default async function handler(req, res) {
       ],
     });
 
-    const text = response.content?.[0]?.text;
-    if (!text) {
-      return res.status(502).json({ error: "AI 응답이 비어있습니다. 잠시 후 다시 시도해주세요." });
+    for await (const event of stream) {
+      if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
+        if (!streamingStarted) {
+          res.setHeader("Content-Type", "text/plain; charset=utf-8");
+          res.setHeader("X-Accel-Buffering", "no");
+          res.setHeader("Cache-Control", "no-store");
+          if (typeof res.flushHeaders === "function") res.flushHeaders();
+          streamingStarted = true;
+        }
+        res.write(event.delta.text);
+      }
     }
-
-    let parsed;
-    try {
-      parsed = extractJson(text);
-    } catch (e) {
-      console.error("JSON parse fail:", text?.slice(0, 500));
-      return res.status(502).json({ error: "AI 응답 형식이 잘못되었습니다. 잠시 후 다시 시도해주세요." });
-    }
-
-    return res.status(200).json({ result: parsed });
+    res.end();
   } catch (err) {
-    console.error("Anthropic call failed:", err?.message || err);
-    return res.status(502).json({ error: "일시적 오류입니다. 잠시 후 다시 시도해주세요." });
+    console.error("Anthropic stream failed:", err?.message || err);
+    if (!streamingStarted && !res.headersSent) {
+      return res.status(502).json({ error: "일시적 오류입니다. 잠시 후 다시 시도해주세요." });
+    }
+    res.end();
   }
 }
