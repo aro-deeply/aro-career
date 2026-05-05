@@ -78,7 +78,7 @@ function renderScoreRow(scoreKey, scoreValue, rootCause) {
     </tr>`;
 }
 
-function renderEmailHtml({ name, email, submittedAt, diagnosis }) {
+export function renderEmailHtml({ name, email, submittedAt, diagnosis }) {
   const d = diagnosis || {};
   const scores = d.pattern_scores || {};
   const evidence = Array.isArray(d.evidence) ? d.evidence : [];
