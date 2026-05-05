@@ -145,6 +145,12 @@
     --line:#E7E5E4;
     --accent:#8B7355;
     --accent-soft:#F2EAE0;
+    --accent-dark:#5E4A36;
+    --accent-warm:#B48A5A;
+    --surface:#FFFFFF;
+    --surface-warm:#F7F1E8;
+    --callout:#EFE7DC;
+    --callout-green:#E9EFE6;
     --shadow:0 1px 3px rgba(28,25,23,.06),0 4px 12px rgba(28,25,23,.04);
     --shadow-lg:0 2px 6px rgba(28,25,23,.05),0 18px 40px rgba(28,25,23,.07);
     --font-sans:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
@@ -314,7 +320,7 @@
   @media(max-width:560px){.bridge-sub{font-size:.97rem}}
 
   /* Bridge accent highlight */
-  .bridge-accent{text-decoration:underline;text-decoration-thickness:2px;text-decoration-color:rgba(139,115,85,.7);text-underline-offset:6px}
+  .bridge-accent{color:var(--accent-warm);font-weight:inherit}
 
   /* ─────────── EVALUATOR'S LENS ─────────── */
   .evaluator{padding:96px 0;background:var(--bg)}
@@ -327,19 +333,19 @@
   .ev-left .ev-link{margin-top:16px;font-size:1rem;line-height:1.7;color:var(--muted);word-break:keep-all;max-width:60ch}
 
   /* Card — shadcn Card feel */
-  .ev-card{border:1px solid rgba(28,25,23,.08);border-radius:12px;background:rgba(255,255,255,.6);padding:28px 28px 24px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .ev-card{border:1px solid rgba(28,25,23,.10);border-radius:12px;background:rgba(255,255,255,.72);padding:28px 28px 24px;box-shadow:0 1px 2px rgba(28,25,23,.03)}
   @media(min-width:1024px){.ev-card{position:sticky;top:100px}}
 
-  .ev-main-question{font-family:var(--font-sans);font-size:clamp(1.35rem,1.8vw,1.625rem);font-weight:600;line-height:1.36;letter-spacing:-.025em;color:var(--ink);word-break:keep-all;margin:0 0 16px;padding-bottom:16px;border-bottom:1px solid rgba(28,25,23,.08)}
+  .ev-main-question{font-family:var(--font-sans);font-size:clamp(1.35rem,1.8vw,1.625rem);font-weight:600;line-height:1.36;letter-spacing:-.025em;color:var(--accent-dark);word-break:keep-all;margin:0 0 16px;padding-bottom:16px;border-bottom:1px solid rgba(28,25,23,.08)}
 
   .ev-checks{list-style:none;margin:0 0 20px;padding:0}
-  .ev-checks li{padding:10px 12px;position:relative;font-size:1rem;line-height:1.7;color:var(--ink-80);word-break:keep-all;border-radius:6px;border-left:2px solid transparent;transition:all .15s ease;cursor:default}
-  .ev-checks li:hover{background:rgba(139,115,85,.04);border-left-color:var(--accent)}
-  .ev-checks li.ev-supp{font-size:.94rem;color:var(--muted)}
+  .ev-checks li{padding:10px 12px;position:relative;font-size:1rem;line-height:1.7;color:var(--ink);font-weight:500;word-break:keep-all;border-radius:6px;border-left:2px solid transparent;transition:all .15s ease;cursor:default}
+  .ev-checks li:hover{background:rgba(180,138,90,.06);border-left-color:var(--accent)}
+  .ev-checks li.ev-supp{font-size:.94rem;color:var(--muted);font-weight:400}
   .ev-checks li:not(.ev-supp) + li.ev-supp{margin-top:8px;padding-top:10px}
 
   /* ev-note becomes callout inside card */
-  .ev-note{padding:14px 16px;background:rgba(139,115,85,.06);border-left:2px solid var(--accent);border-radius:6px;font-size:.88rem;line-height:1.7;color:var(--muted);word-break:keep-all}
+  .ev-note{padding:14px 16px;background:var(--callout);border-left:2px solid var(--accent);border-radius:6px;font-size:.88rem;line-height:1.7;color:var(--muted);word-break:keep-all}
 
   /* ─────────── METHOD (Tabs) ─────────── */
   .method{padding:96px 0;background:#F8F5EE}
@@ -349,22 +355,25 @@
   .method-head .m-body p{font-size:1rem;line-height:1.7;color:var(--ink-80);word-break:keep-all;max-width:60ch;margin:0}
 
   /* Tabs — shadcn segmented control feel */
-  .method-tabs,.case-tabs{display:inline-flex;padding:4px;background:rgba(28,25,23,.04);border-radius:8px;gap:4px;margin-bottom:0}
+  .method-tabs,.case-tabs{display:inline-flex;padding:4px;background:rgba(28,25,23,.04);border-radius:8px;gap:4px;margin-bottom:0;border:1px solid rgba(28,25,23,.08)}
   .method-tab,.case-tab{padding:8px 16px;font-size:.92rem;font-weight:500;color:var(--muted);border-radius:6px;transition:all .15s ease-out;border:0;background:transparent;cursor:pointer;font-family:var(--font-sans);line-height:1.4}
-  .method-tab:hover,.case-tab:hover{color:var(--ink-80)}
-  .method-tab.is-active,.case-tab.is-active{background:var(--bg);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+  .method-tab:hover{color:var(--ink-80)}
+  .case-tab:hover{color:var(--ink-80);background:rgba(28,25,23,.03)}
+  .method-tab.is-active{background:var(--surface);color:var(--accent-dark);box-shadow:0 1px 2px rgba(0,0,0,.08);font-weight:600}
+  .case-tab.is-active{background:var(--surface);color:var(--accent-dark);box-shadow:0 1px 2px rgba(0,0,0,.08);font-weight:600}
 
   .method-panels{padding-top:24px}
   .method-panel{display:none}
-  .method-panel.is-active{display:block}
+  .method-panel.is-active{display:block;padding:28px;border:1px solid rgba(28,25,23,.08);border-radius:12px;background:rgba(255,255,255,.48);margin-top:0}
 
   /* Keep existing method item styles */
   .method-item{padding:16px 0}
   .method-item:first-child{padding-top:0}
   .method-item:last-child{padding-bottom:0}
   .method-item + .method-item{border-top:1px solid rgba(28,25,23,.06)}
-  .method-item h3{font-family:var(--font-sans);font-size:1.05rem;font-weight:600;color:var(--ink);margin:0 0 6px;letter-spacing:-.01em;word-break:keep-all}
+  .method-item h3{font-family:var(--font-sans);font-size:1.05rem;font-weight:600;color:var(--ink);margin:0 0 6px;letter-spacing:-.01em;word-break:keep-all;display:flex;align-items:baseline;gap:0}
   .method-item p{font-size:.96rem;line-height:1.65;color:var(--muted);word-break:keep-all;margin:0;max-width:42ch}
+  .method-step{display:inline-block;font-size:.68rem;letter-spacing:.08em;color:var(--accent);font-weight:500;margin-right:10px;vertical-align:1px;flex-shrink:0}
 
   /* ─────────── CASE NOTES (Tabs + Cards + Badges) ─────────── */
   .cases{padding:96px 0;background:#F8F5EE}
@@ -385,13 +394,13 @@
   .case-compare{display:grid;grid-template-columns:.9fr 1.2fr;gap:24px;margin-bottom:20px;align-items:start}
   @media(max-width:760px){.case-compare{grid-template-columns:1fr;gap:16px}}
 
-  .case-before{padding:18px 20px;border:1px solid rgba(28,25,23,.1);border-radius:10px;background:rgba(28,25,23,.02)}
+  .case-before{padding:18px 20px;border:1px solid rgba(28,25,23,.08);border-radius:12px;background:rgba(28,25,23,.025)}
   .case-before p{font-size:.96rem;line-height:1.7;color:var(--muted);word-break:keep-all;margin:0;font-weight:400}
 
-  .case-after{padding:22px 24px;border:1px solid rgba(139,115,85,.32);border-radius:10px;background:rgba(139,115,85,.04);box-shadow:0 1px 2px rgba(139,115,85,.06)}
+  .case-after{padding:22px 24px;border:1px solid rgba(139,115,85,.38);border-radius:12px;background:var(--surface-warm);box-shadow:0 1px 2px rgba(139,115,85,.06)}
   .case-after p{font-size:1rem;line-height:1.7;color:var(--ink);word-break:keep-all;margin:0;font-weight:500;letter-spacing:-.005em}
 
-  .case-note{padding:16px 20px;background:rgba(28,25,23,.04);border-left:2px solid var(--accent);border-radius:6px}
+  .case-note{padding:16px 20px;background:var(--callout);border-left:3px solid var(--accent);border-radius:8px}
   .case-note p{font-size:.95rem;line-height:1.7;color:var(--muted);word-break:keep-all;margin:0}
 
   /* Opacity fade for panel transitions */
@@ -421,11 +430,12 @@
 
   /* Details disclosure — ARO 의미 */
   .d-disclosure{margin:32px 0 0;border-top:1px solid rgba(28,25,23,.08)}
-  .d-disclosure summary{list-style:none;cursor:pointer;padding:14px 0;font-size:.92rem;font-weight:500;color:var(--ink-80);display:flex;align-items:center;justify-content:space-between;gap:12px;transition:color .15s ease}
+  .d-disclosure summary{list-style:none;cursor:pointer;padding:14px 16px;font-size:.92rem;font-weight:500;color:var(--ink-80);display:flex;align-items:center;justify-content:space-between;gap:12px;transition:color .15s ease,background .15s ease;border-radius:8px;background:transparent}
+  .d-disclosure summary:hover{background:rgba(28,25,23,.04);cursor:pointer}
   .d-disclosure summary::-webkit-details-marker{display:none}
   .d-disclosure summary::after{content:'+';font-size:1rem;color:var(--muted-soft);transition:transform .2s ease,color .15s ease;flex-shrink:0}
-  .d-disclosure[open] summary{color:var(--accent)}
-  .d-disclosure[open] summary::after{transform:rotate(45deg);color:var(--accent)}
+  .d-disclosure[open] summary{color:var(--accent-dark)}
+  .d-disclosure[open] summary::after{transform:rotate(45deg);color:var(--accent-dark)}
   .d-disclosure-body{padding:0 0 16px;font-size:.92rem;line-height:1.72;color:var(--muted);word-break:keep-all}
 
   .d-pullquote{margin:32px 0 0;padding:0 0 0 18px;border-left:1px solid var(--line);font-family:var(--font-sans);font-size:.97rem;font-weight:400;line-height:1.72;color:var(--muted);word-break:keep-all;font-style:italic}
@@ -445,15 +455,15 @@
   @media(max-width:760px){.prog-cards{grid-template-columns:1fr}}
 
   .prog-card{padding:24px 24px 28px;border:1px solid rgba(28,25,23,.08);border-radius:12px;background:rgba(255,255,255,.5);transition:border-color .2s ease-out,transform .2s ease-out,box-shadow .2s ease-out}
-  .prog-card:hover{border-color:rgba(139,115,85,.4);box-shadow:0 4px 16px rgba(28,25,23,.05);transform:translateY(-2px)}
-  .prog-card.prog-featured{border-color:var(--accent)}
+  .prog-card:hover{border-color:rgba(139,115,85,.4);box-shadow:0 4px 12px rgba(0,0,0,.06);transform:translateY(-1px)}
+  .prog-card.prog-featured{border-top:2px solid var(--accent-dark)}
 
   .prog-name{font-family:var(--font-sans);font-size:1rem;font-weight:500;color:var(--ink);margin-bottom:6px;word-break:keep-all;letter-spacing:-.005em}
-  .prog-price{font-family:var(--font-sans);font-size:1.5rem;font-weight:600;color:var(--ink);letter-spacing:-.02em;margin-bottom:10px}
+  .prog-price{font-family:var(--font-sans);font-size:1.4rem;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:10px}
   .prog-price small{font-size:.78rem;color:var(--muted-soft);font-weight:400;letter-spacing:0;margin-left:4px}
   .prog-desc{font-size:.9rem;line-height:1.7;color:var(--muted);word-break:keep-all;margin:0 0 14px}
   .prog-features{list-style:none;margin:0;padding:0}
-  .prog-features li{font-size:.84rem;line-height:1.65;color:var(--muted-soft);padding:3px 0}
+  .prog-features li{font-size:.84rem;line-height:1.65;color:var(--muted);padding:3px 0}
   .prog-features li::before{content:'·  ';color:var(--accent)}
 
   .prog-cta-row{margin-top:4px}
@@ -571,7 +581,7 @@
 <section id="self-check" class="bridge" aria-label="서류 구조 점검">
   <div class="wrap bridge-inner reveal">
     <p class="bridge-kicker">Before Review</p>
-    <p class="bridge-line">서류를 고쳤는데도 결과가 바뀌지 않는다면, <span class="bridge-accent">표현보다 구조</span>를 먼저 봐야 합니다.</p>
+    <p class="bridge-line">서류를 고쳤는데도 결과가 바뀌지 않는다면, 문제는 <span class="bridge-accent">문장보다 구조</span>일 수 있습니다.</p>
     <p class="bridge-sub">평가자는 문장의 완성도보다, 지원하는 자리에서 판단할 근거가 어디에 배치되어 있는지를 확인합니다.</p>
   </div>
 </section>
@@ -621,11 +631,11 @@
         <div class="method-panel is-active" role="tabpanel" data-panel="check" id="panel-check" aria-labelledby="tab-check">
           <ul role="list" style="list-style:none;margin:0;padding:0">
             <li class="method-item">
-              <h3>지원 기준 확인</h3>
+              <h3><span class="method-step">01</span>지원 기준 확인</h3>
               <p>지원 회사와 직무가 요구하는 역량, 성향, 조직 적합성을 확인합니다.</p>
             </li>
             <li class="method-item">
-              <h3>현재 상태 진단</h3>
+              <h3><span class="method-step">02</span>현재 상태 진단</h3>
               <p>이력서와 면접 답변에서 평가 근거가 충분한 지점과 부족한 지점을 나눕니다.</p>
             </li>
           </ul>
@@ -633,15 +643,15 @@
         <div class="method-panel" role="tabpanel" data-panel="design" id="panel-design" aria-labelledby="tab-design" aria-hidden="true">
           <ul role="list" style="list-style:none;margin:0;padding:0">
             <li class="method-item">
-              <h3>강점과 보완점 선별</h3>
+              <h3><span class="method-step">03</span>강점과 보완점 선별</h3>
               <p>전면에 둘 강점, 보조 근거로 둘 경험, 보완 설명이 필요한 지점을 구분합니다.</p>
             </li>
             <li class="method-item">
-              <h3>서류·면접 구조화</h3>
+              <h3><span class="method-step">04</span>서류·면접 구조화</h3>
               <p>이력서 문장, 자기소개서 흐름, 면접 답변의 핵심 메시지를 재배치합니다.</p>
             </li>
             <li class="method-item">
-              <h3>커리어 방향 정렬</h3>
+              <h3><span class="method-step">05</span>커리어 방향 정렬</h3>
               <p>당장의 지원뿐 아니라 앞으로 가고자 하는 직무·산업·역할과도 일관되게 정리합니다.</p>
             </li>
           </ul>
@@ -680,7 +690,7 @@
             </div>
           </div>
           <div class="case-note">
-            <span class="badge badge-note">Review Note</span>
+            <span class="badge badge-note">ARO 관점</span>
             <p>단순한 소통 능력이 아니라 상황 파악, 기준 조정, 협업 조율의 근거가 드러나야 합니다.</p>
           </div>
         </article>
@@ -698,7 +708,7 @@
             </div>
           </div>
           <div class="case-note">
-            <span class="badge badge-note">Review Note</span>
+            <span class="badge badge-note">ARO 관점</span>
             <p>책임감은 성향이 아니라 행동 근거로 보여야 합니다. 우선순위 판단, 현장 대응, 협업 조율이 드러나면 평가자가 판단하기 쉬워집니다.</p>
           </div>
         </article>
@@ -716,7 +726,7 @@
             </div>
           </div>
           <div class="case-note">
-            <span class="badge badge-note">Review Note</span>
+            <span class="badge badge-note">ARO 관점</span>
             <p>적응력은 '빠르게 익혔다'는 말보다 정보 정리, 기준 파악, 반복 업무 학습 방식으로 설명될 때 근거가 생깁니다.</p>
           </div>
         </article>
@@ -732,13 +742,12 @@
       <aside class="d-profile">
         <span class="dp-tag">Career Director</span>
         <h3>ARO</h3>
-        <div class="dp-role">마음에 아로새기다</div>
+        <div class="dp-role">평가자 관점 커리어 디렉션</div>
         <ul class="dp-facts" aria-label="주요 역량">
           <li><span class="badge badge-soft">기업 인사·채용 실무</span></li>
           <li><span class="badge badge-soft">이력서·면접 답변 진단</span></li>
           <li><span class="badge badge-soft">지원 회사·직무 기준 상담</span></li>
-          <li><span class="badge badge-soft">면접 답변 포커스 설계</span></li>
-          <li><span class="badge badge-soft">커리어 방향 정렬</span></li>
+          <li><span class="badge badge-soft">면접 포커스 설계</span></li>
         </ul>
       </aside>
 
@@ -865,7 +874,7 @@
         <a href="diagnosis.html" class="btn btn-primary" aria-label="평가자 관점으로 진단받기"><span>평가자 관점으로 진단받기</span></a>
         <a href="mailto:naminimiya@gmail.com" class="btn btn-secondary" aria-label="상담 문의 이메일 보내기"><span>상담 문의하기</span></a>
       </div>
-      <p class="final-microcopy">이력서·면접 답변·지원 방향을 함께 점검합니다.</p>
+      <p class="final-microcopy">사전 진단 후 필요한 상담 깊이를 선택할 수 있습니다.</p>
     </div>
   </div>
 </section>
