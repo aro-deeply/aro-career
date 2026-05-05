@@ -9,6 +9,7 @@ import {
 } from "../shared/render-markdown-bold.jsx";
 import ConsultRequestForm from "./ConsultRequestForm.jsx";
 import PatternScoreList from "./sections/PatternScoreList.jsx";
+import RootDiagnosisCard from "./sections/RootDiagnosisCard.jsx";
 
 export default function ResultStep({ result, onReset }) {
   return (
@@ -56,16 +57,7 @@ export default function ResultStep({ result, onReset }) {
         rootCause={result.root_cause}
       />
 
-      <section>
-        <div className="text-[11px] tracking-[0.2em] text-neutral-500 font-semibold mb-6">
-          02 · 근본 진단
-        </div>
-        <div className="bg-neutral-50 border-l-4 border-neutral-900 px-7 py-7">
-          <p className="text-lg md:text-xl text-neutral-800 leading-[1.8]">
-            {renderMarkdownBold(result.root_diagnosis, BOLD_HIGHLIGHT_CLASS)}
-          </p>
-        </div>
-      </section>
+      <RootDiagnosisCard rootDiagnosis={result.root_diagnosis} />
 
       <section>
         <div className="text-[11px] tracking-[0.2em] text-neutral-500 font-semibold mb-8">
