@@ -848,18 +848,18 @@
     .problem-item { padding: 16px 0; font-size: .96rem; }
   }
 
-  /* ─────────── PREVIEW — 진단 결과 미리보기 ─────────── */
+  /* ─────────── PREVIEW — 진단 리포트 샘플 ─────────── */
   .preview {
     padding: 112px 0;
     background: #FAFAF7;
   }
   .preview-grid {
     display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    gap: 80px;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 72px;
     align-items: start;
   }
-  @media (max-width: 900px) { .preview-grid { grid-template-columns: 1fr; gap: 40px; } }
+  @media (max-width: 900px) { .preview-grid { grid-template-columns: 1fr; gap: 36px; } }
 
   .preview-head .section-no {
     display: block;
@@ -875,62 +875,166 @@
     line-height: 1.28;
     letter-spacing: -.035em;
     color: var(--ink);
-    margin-bottom: 16px;
-    max-width: 14em;
+    margin-bottom: 18px;
+    max-width: 16em;
     word-break: keep-all;
   }
   .preview-intro {
     font-size: 1rem;
     line-height: 1.7;
     color: var(--muted);
-    max-width: 38ch;
+    max-width: 42ch;
   }
 
-  .preview-card {
-    border: 1px solid rgba(28,25,23,.1);
+  /* Report-style card */
+  .preview-report {
+    border: 1px solid rgba(28,25,23,.12);
     border-radius: 14px;
-    padding: 28px;
-    background: rgba(255,255,255,.7);
-    box-shadow: 0 1px 2px rgba(28,25,23,.04);
+    padding: 26px 28px 24px;
+    background: #FFFFFF;
+    box-shadow: 0 2px 10px rgba(28,25,23,.04);
+    position: relative;
   }
-  .preview-row {
-    padding: 14px 0;
-    border-bottom: 1px solid rgba(28,25,23,.08);
+  .preview-report-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(28,25,23,.1);
+    margin-bottom: 18px;
+    gap: 16px;
   }
-  .preview-row:last-of-type { border-bottom: 1px solid rgba(28,25,23,.08); }
-  .preview-row-strong {
-    background: linear-gradient(135deg, var(--callout) 0%, var(--surface-warm) 100%);
-    margin: 0 -14px;
-    padding: 14px 14px;
-    border-radius: 8px;
-    border-bottom: none;
-    border-left: 3px solid var(--accent-dark);
+  .preview-report-title {
+    font-size: .68rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    font-weight: 800;
   }
-  .preview-label {
-    display: block;
+  .preview-report-id {
+    font-size: .68rem;
+    letter-spacing: .04em;
+    color: var(--muted-soft);
+    font-family: 'Courier New', ui-monospace, monospace;
+    font-weight: 500;
+  }
+
+  .preview-block { padding: 14px 0; }
+  .preview-block + .preview-block { border-top: 1px solid rgba(28,25,23,.08); }
+
+  .preview-block-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: .68rem;
     letter-spacing: .08em;
     text-transform: uppercase;
     color: var(--accent-dark);
     font-weight: 800;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
   }
-  .preview-label-strong { color: var(--accent-dark); }
-  .preview-text {
+  .preview-block-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: rgba(94,74,54,.12);
+    color: var(--accent-dark);
+    border-radius: 5px;
+    font-size: .66rem;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  /* 1. Core cause — strongest text in the report */
+  .preview-cause {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: var(--ink);
+    font-weight: 700;
+    letter-spacing: -.015em;
+    margin: 0;
+  }
+
+  /* 2. Pattern badges */
+  .preview-patterns {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .preview-patterns li {
+    padding: 6px 12px;
+    background: rgba(94,74,54,.09);
+    color: var(--accent-dark);
+    border: 1px solid rgba(94,74,54,.22);
+    border-radius: 999px;
+    font-size: .82rem;
+    font-weight: 600;
+    letter-spacing: -.005em;
+  }
+
+  /* 3. Original sentence — quiet quote box */
+  .preview-quote {
+    margin: 0;
+    padding: 14px 16px;
+    background: rgba(28,25,23,.04);
+    border-left: 2px solid rgba(28,25,23,.18);
+    border-radius: 6px;
+    font-size: .96rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  /* 4. Evaluator view — plain body */
+  .preview-view {
     font-size: .96rem;
     line-height: 1.65;
     color: var(--ink-80);
     margin: 0;
   }
-  .preview-text.preview-muted { color: var(--muted); }
-  .preview-row-strong .preview-text { color: var(--ink); font-weight: 600; }
+  .preview-view strong { color: var(--ink); font-weight: 700; }
 
-  .preview-cta-row { margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(28,25,23,.08); }
-  .btn-light { display: inline-flex; }
+  /* 5. Direction — full block as warm callout */
+  .preview-block-callout {
+    background: linear-gradient(135deg, var(--callout) 0%, var(--surface-warm) 100%);
+    border-left: 4px solid var(--accent-dark);
+    border-radius: 10px;
+    padding: 16px 18px 18px;
+    margin-top: 10px;
+    border-top: none;
+  }
+  .preview-block-callout + .preview-block { border-top: none; }
+  .preview-direction-text {
+    font-size: .96rem;
+    line-height: 1.65;
+    color: var(--ink-80);
+    margin: 0;
+  }
+  .preview-direction-text strong { color: var(--ink); font-weight: 700; }
+
+  /* CTA row */
+  .preview-cta-row {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(28,25,23,.08);
+  }
   .preview-microcopy {
-    margin-top: 12px;
+    margin-top: 10px;
     font-size: .82rem;
     color: var(--muted);
+  }
+
+  @media (max-width: 640px) {
+    .preview { padding: 80px 0; }
+    .preview-report { padding: 22px 18px 20px; }
+    .preview-report-id { display: none; }
+    .preview-cause { font-size: 1.02rem; line-height: 1.5; }
+    .preview-patterns li { font-size: .78rem; padding: 5px 11px; }
+    .preview-block-callout { padding: 14px 16px 16px; }
   }
 
   /* ─────────── FUNNEL STEPS (Method) ─────────── */
@@ -1093,31 +1197,48 @@
   <div class="wrap preview-grid">
     <div class="preview-head reveal">
       <span class="section-no">03 / Preview</span>
-      <h2>무료 진단에서는 <span class="marker">이런 방향</span>을 먼저 확인합니다.</h2>
-      <p class="preview-intro">3분 입력으로 현재 서류가 평가자 관점에서 어떻게 보이는지 정리됩니다.</p>
+      <h2>무료 진단은 문장을 고쳐주는 것이 아니라, <span class="marker">먼저 막히는 원인</span>을 분류합니다.</h2>
+      <p class="preview-intro">3분 입력 후, 현재 서류와 답변이 평가자에게 어떻게 읽히는지 핵심 원인 · 문제 문장 · 정리 방향으로 확인합니다. 상담 전환은 선택입니다.</p>
     </div>
 
-    <div class="preview-card reveal">
-      <div class="preview-row">
-        <span class="preview-label">문제 유형</span>
-        <p class="preview-text">지원 기준과 경험 근거의 연결이 약합니다.</p>
+    <div class="preview-report reveal" role="figure" aria-label="진단 결과 예시">
+      <div class="preview-report-header">
+        <span class="preview-report-title">진단 결과 · 예시</span>
+        <span class="preview-report-id">SAMPLE / CASE #042</span>
       </div>
-      <div class="preview-row">
-        <span class="preview-label">현재 문장</span>
-        <p class="preview-text preview-muted">"다양한 업무를 경험하며 빠르게 적응했습니다."</p>
+
+      <div class="preview-block">
+        <span class="preview-block-label"><span class="preview-block-num">01</span>핵심 원인</span>
+        <p class="preview-cause">경험은 있지만, 지원 직무 기준으로 번역되지 않았습니다.</p>
       </div>
-      <div class="preview-row">
-        <span class="preview-label">평가자 관점</span>
-        <p class="preview-text">업무 범위와 적응 방식이 모두 모호합니다.</p>
+
+      <div class="preview-block">
+        <span class="preview-block-label"><span class="preview-block-num">02</span>감지된 문제 패턴</span>
+        <ul class="preview-patterns" role="list">
+          <li>직무 기준 연결 부족</li>
+          <li>주장 대비 근거 부족</li>
+          <li>면접 답변 확장 위험</li>
+        </ul>
       </div>
-      <div class="preview-row preview-row-strong">
-        <span class="preview-label preview-label-strong">정리 방향</span>
-        <p class="preview-text">변경 사항을 정리한 방식, 반복 문의를 분류한 기준, 처리 기준을 익힌 과정을 중심으로 재구성해야 합니다.</p>
+
+      <div class="preview-block">
+        <span class="preview-block-label"><span class="preview-block-num">03</span>원문에서 감지된 문장</span>
+        <blockquote class="preview-quote">“<span class="problem-mark">다양한 업무</span>를 경험하며 <span class="problem-mark">빠르게 적응</span>했습니다.”</blockquote>
+      </div>
+
+      <div class="preview-block">
+        <span class="preview-block-label"><span class="preview-block-num">04</span>평가자 관점</span>
+        <p class="preview-view">‘다양한 업무’와 ‘빠르게 적응’은 긍정적인 표현이지만, <strong>업무 범위와 적응 방식이 모두 모호</strong>합니다.</p>
+      </div>
+
+      <div class="preview-block preview-block-callout">
+        <span class="preview-block-label"><span class="preview-block-num">05</span>정리 방향</span>
+        <p class="preview-direction-text"><strong>업무 기준이 바뀐 상황</strong>, <strong>정보를 정리한 방식</strong>, <strong>반복 문의를 분류한 기준</strong>을 중심으로 재구성해야 합니다.</p>
       </div>
 
       <div class="preview-cta-row">
-        <a href="diagnosis.html" class="btn btn-primary btn-light" aria-label="무료로 내 진단 결과 확인하기"><span>무료로 내 진단 결과 확인하기</span></a>
-        <p class="preview-microcopy">3분 진단 · 상담 전환은 선택</p>
+        <a href="diagnosis.html" class="btn btn-primary" aria-label="무료로 내 문제 유형 확인하기"><span>무료로 내 문제 유형 확인하기</span></a>
+        <p class="preview-microcopy">약 3분 입력 · 상담 전환은 선택</p>
       </div>
     </div>
   </div>
