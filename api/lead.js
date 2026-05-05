@@ -1,4 +1,10 @@
 import { Resend } from "resend";
+import {
+  PATTERN_LABELS,
+  SCORE_KEY_TO_PATTERN,
+  NEXT_STEP_LABELS,
+} from "../shared/diagnosis-dictionary.js";
+import { applyBoldHtml } from "../shared/markdown-bold.js";
 
 const OPERATOR_EMAIL = "naminimiya@gmail.com";
 const FROM = "ARO 진단 신청 <onboarding@resend.dev>";
@@ -16,43 +22,16 @@ function escapeHtml(s) {
     .replace(/'/g, "&#39;");
 }
 
-const PATTERN_LABELS = {
-  pattern_01: "규격화된 정형성",
-  pattern_02: "근거 부재와 과장",
-  pattern_03: "차별화 판단 오류",
-  pattern_04: "직무 적합성 어긋남",
-  pattern_05: "업계 맥락 부재",
-};
-
-const SCORE_KEY_TO_PATTERN = {
-  pattern_01_generic_template: "pattern_01",
-  pattern_02_unsupported_claims: "pattern_02",
-  pattern_03_differentiation_mishandling: "pattern_03",
-  pattern_04_job_fit_mismatch: "pattern_04",
-  pattern_05_industry_context_absence: "pattern_05",
-};
-
-const NEXT_STEP_LABELS = {
-  Rewrite: "재작성 (Rewrite)",
-  Rehearse: "리허설 (Rehearse)",
-  Direct: "직접 컨설팅 (Direct)",
-};
-
 function renderBold(text) {
   if (!text) return "";
-  return escapeHtml(text).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  return applyBoldHtml(escapeHtml(text));
 }
 
 function renderParagraphs(text) {
   if (!text) return "";
   return escapeHtml(text)
     .split(/\n\n+/)
-    .map(
-      (p) =>
-        `<p style="margin:0 0 12px">${p
-          .replace(/\n/g, "<br>")
-          .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")}</p>`
-    )
+    .map((p) => `<p style="margin:0 0 12px">${applyBoldHtml(p.replace(/\n/g, "<br>"))}</p>`)
     .join("");
 }
 
