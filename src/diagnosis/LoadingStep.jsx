@@ -43,12 +43,10 @@ export default function LoadingStep() {
           ))}
         </div>
         <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-4 leading-tight">
-          면접관석의 기준으로<br />
-          이력서를 읽고 있습니다.
+          평가자 관점으로 문장을 읽고 있습니다.
         </h2>
         <p className="text-neutral-600 text-sm md:text-base max-w-md mx-auto leading-relaxed">
-          16년간 축적된 진단 체계로 5가지 탈락 패턴을 분석합니다.<br />
-          약 20초에서 40초가 소요됩니다.
+          문제 유형, 위험 문장, 면접 꼬리질문 가능성을 함께 확인합니다. 약 20초에서 40초가 소요될 수 있습니다.
         </p>
         <div className="mt-8 max-w-xs mx-auto">
           <div className="h-1 bg-neutral-100 overflow-hidden rounded-full">

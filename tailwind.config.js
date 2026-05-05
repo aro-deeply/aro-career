@@ -5,6 +5,12 @@ export default {
     "./diagnosis.html",
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
-  theme: { extend: {} },
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['"Pretendard Variable"', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', '"Segoe UI"', '"Apple SD Gothic Neo"', '"Malgun Gothic"', 'sans-serif'],
+      },
+    },
+  },
   plugins: [],
 };

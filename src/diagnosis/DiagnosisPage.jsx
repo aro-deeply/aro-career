@@ -79,7 +79,7 @@ export default function DiagnosisPage() {
     setStep("input");
   }
 
-  const fontStack = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif';
+  const fontStack = '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
 
   return (
     <div className="min-h-screen bg-white text-neutral-900" style={{ fontFamily: fontStack }}>
@@ -121,7 +121,7 @@ export default function DiagnosisPage() {
 
       <footer className="border-t border-neutral-200 mt-24">
         <div className="max-w-5xl mx-auto px-6 py-8 text-center text-xs text-neutral-500">
-          © ARO · Career Direction · AI 진단 엔진
+          © ARO · Career Direction · 무료 서류 문제 유형 진단
         </div>
       </footer>
     </div>
