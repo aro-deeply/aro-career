@@ -61,22 +61,26 @@ export default function InputStep({
       <style>{`
         .diag-hero {
           position: relative;
-          padding: 96px 0 80px;
+          min-height: calc(100vh - 84px);
+          padding: 88px 0 96px;
           background:
             radial-gradient(circle at 80% 20%, rgba(180,138,90,.12), transparent 32%),
             linear-gradient(180deg, #FAFAF7 0%, #F7F1E8 100%);
+          display: flex;
+          align-items: center;
         }
         @media (max-width: 820px) {
-          .diag-hero { padding: 72px 0 56px; }
+          .diag-hero { min-height: auto; padding: 72px 0 64px; }
         }
         .diag-hero-grid {
           max-width: 1024px;
           margin: 0 auto;
           padding: 0 1.5rem;
           display: grid;
-          grid-template-columns: 1.2fr 1fr;
-          gap: 64px;
-          align-items: start;
+          grid-template-columns: 1.05fr .95fr;
+          gap: 72px;
+          align-items: center;
+          width: 100%;
         }
         @media (max-width: 900px) {
           .diag-hero-grid { grid-template-columns: 1fr; gap: 36px; }
@@ -90,30 +94,36 @@ export default function InputStep({
           font-weight: 800;
           margin-bottom: 1.25rem;
         }
-        .diag-hero-copy h1 {
-          font-weight: 700;
-          font-size: clamp(2rem, 4vw, 3.4rem);
-          line-height: 1.16;
-          letter-spacing: -0.04em;
+        .diag-hero h1 {
+          max-width: 10.8em;
+          font-size: clamp(2.8rem, 5vw, 4.6rem);
+          line-height: 1.08;
+          letter-spacing: -0.055em;
+          font-weight: 800;
           color: #1C1917;
           word-break: keep-all;
           margin-bottom: 1.5rem;
         }
+        .diag-hero h1 span { display: block; }
         @media (max-width: 640px) {
-          .diag-hero-copy h1 { font-size: clamp(1.9rem, 9vw, 2.6rem); line-height: 1.18; }
+          .diag-hero h1 {
+            font-size: clamp(2.2rem, 9vw, 3rem);
+            line-height: 1.12;
+            max-width: 100%;
+          }
           .diag-preview-card { padding: 22px 20px !important; }
         }
         .diag-lede {
           font-size: 1.0625rem;
           line-height: 1.7;
-          color: #57534E;
-          max-width: 560px;
-          margin-bottom: 1rem;
+          color: #3C3832;
+          max-width: 540px;
+          margin-bottom: 0.75rem;
         }
         .diag-note {
-          font-size: .92rem;
-          line-height: 1.65;
-          color: #8B7355;
+          font-size: .905rem;
+          line-height: 1.6;
+          color: #6B625C;
           max-width: 540px;
         }
         .diag-cta-row {
@@ -148,11 +158,11 @@ export default function InputStep({
           border-radius: 18px;
           box-shadow: 0 18px 50px rgba(28,25,23,.08);
           padding: 28px;
-          max-width: 360px;
-          align-self: start;
+          max-width: 480px;
+          margin-left: auto;
         }
         @media (max-width: 900px) {
-          .diag-preview-card { max-width: 100%; }
+          .diag-preview-card { max-width: 100%; margin-left: 0; }
         }
         .diag-card-label {
           font-size: .72rem;
@@ -160,35 +170,49 @@ export default function InputStep({
           text-transform: uppercase;
           color: #5E4A36;
           font-weight: 800;
-          margin-bottom: 16px;
+          margin-bottom: 4px;
         }
-        .diag-card-list {
+        .diag-result-list {
           list-style: none;
           margin: 0;
           padding: 0;
         }
-        .diag-card-list li {
-          position: relative;
-          padding: 12px 0 12px 18px;
-          border-top: 1px solid rgba(28,25,23,.06);
+        .diag-result-list li {
+          display: grid;
+          grid-template-columns: 34px 1fr;
+          gap: 12px;
+          padding: 16px 0;
+          border-top: 1px solid rgba(28,25,23,.08);
+          align-items: start;
+        }
+        .diag-result-list li:first-child {
+          border-top: 1px solid rgba(28,25,23,.08);
+        }
+        .diag-result-list li > span {
+          color: #8B7355;
+          font-weight: 800;
+          font-size: .78rem;
+          letter-spacing: .04em;
+          padding-top: 2px;
+        }
+        .diag-result-list strong {
+          display: block;
           color: #1C1917;
-          font-weight: 500;
-          font-size: 1rem;
-        }
-        .diag-card-list li:first-child {
-          border-top: none;
-        }
-        .diag-card-list li::before {
-          content: "—";
-          position: absolute;
-          left: 0;
-          color: #B48A5A;
+          font-size: .98rem;
           font-weight: 700;
+          margin-bottom: 3px;
+          letter-spacing: -.005em;
+        }
+        .diag-result-list p {
+          margin: 0;
+          color: #6B625C;
+          font-size: .9rem;
+          line-height: 1.55;
         }
         .diag-card-foot {
           margin-top: 18px;
           font-size: .8rem;
-          color: #8B7355;
+          color: #9A938D;
         }
         .diag-form-section {
           background: #F7F1E8;
@@ -224,10 +248,13 @@ export default function InputStep({
         <div className="diag-hero-grid">
           {/* Copy column */}
           <div className="diag-hero-copy">
-            <span className="diag-kicker">Evaluator-based Diagnosis</span>
-            <h1>지금 서류를<br />평가자 관점으로 차분히 점검합니다.</h1>
+            <span className="diag-kicker">ARO DIAGNOSIS</span>
+            <h1>
+              <span>현재 서류가</span>
+              <span>평가자에게 남기는 근거를 확인합니다.</span>
+            </h1>
             <p className="diag-lede">
-              이력서와 면접 답변을 입력하면, 지원하는 자리의 기준에서 부족한 근거, 위험 문장, 면접에서 이어질 수 있는 질문을 정리합니다.
+              이력서와 면접 답변을 입력하면, 지원하는 자리의 기준에서 부족한 근거와 모호한 문장, 면접에서 이어질 수 있는 질문을 먼저 정리합니다.
             </p>
             <p className="diag-note">
               사전 진단은 비용 없이 진행되며, 결과 확인 후 상담 여부를 선택할 수 있습니다.
@@ -241,10 +268,35 @@ export default function InputStep({
           {/* Preview card */}
           <aside className="diag-preview-card">
             <p className="diag-card-label">진단 결과에서 확인하는 것</p>
-            <ul className="diag-card-list">
-              {["문제 유형", "위험 문장", "면접 꼬리질문", "정리 방향"].map((item) => (
-                <li key={item}>{item}</li>
-              ))}
+            <ul className="diag-result-list">
+              <li>
+                <span>01</span>
+                <div>
+                  <strong>문제 유형</strong>
+                  <p>지원 기준과 현재 문장의 어긋난 지점</p>
+                </div>
+              </li>
+              <li>
+                <span>02</span>
+                <div>
+                  <strong>위험 문장</strong>
+                  <p>면접에서 질문으로 이어질 수 있는 표현</p>
+                </div>
+              </li>
+              <li>
+                <span>03</span>
+                <div>
+                  <strong>면접 꼬리질문</strong>
+                  <p>평가자가 추가로 확인할 가능성이 높은 질문</p>
+                </div>
+              </li>
+              <li>
+                <span>04</span>
+                <div>
+                  <strong>정리 방향</strong>
+                  <p>어떤 근거를 앞세워 다시 구성할지</p>
+                </div>
+              </li>
             </ul>
             <p className="diag-card-foot">결과는 입력 내용에 따라 달라집니다.</p>
           </aside>
@@ -265,10 +317,10 @@ export default function InputStep({
                 wordBreak: "keep-all",
               }}
             >
-              진단에 필요한 정보를 입력해 주세요.
+              현재 문장을 그대로 입력해 주세요.
             </h2>
             <p style={{ fontSize: "0.875rem", color: "#57534E", lineHeight: 1.6, marginBottom: "0.4rem" }}>
-              완성된 서류가 아니어도 괜찮습니다. 현재 작성한 문장 그대로 입력해 주세요.
+              완성된 서류가 아니어도 괜찮습니다. 지금 작성한 이력서 문장, 자기소개서 일부, 면접 답변 초안을 그대로 넣어 주세요.
             </p>
             <p style={{ fontSize: "0.8125rem", color: "#8B7355", marginBottom: "2.5rem" }}>
               주민등록번호, 주소, 연락처 등 민감한 개인정보는 제외하고 입력해 주세요.
@@ -281,7 +333,7 @@ export default function InputStep({
                   style={{
                     display: "block",
                     fontSize: "0.6875rem",
-                    letterSpacing: "0.2em",
+                    letterSpacing: "0.06em",
                     color: "#57534E",
                     fontWeight: 600,
                     textTransform: "uppercase",
@@ -320,7 +372,7 @@ export default function InputStep({
                   style={{
                     display: "block",
                     fontSize: "0.6875rem",
-                    letterSpacing: "0.2em",
+                    letterSpacing: "0.06em",
                     color: "#57534E",
                     fontWeight: 600,
                     textTransform: "uppercase",
@@ -363,7 +415,7 @@ export default function InputStep({
                   style={{
                     display: "block",
                     fontSize: "0.6875rem",
-                    letterSpacing: "0.2em",
+                    letterSpacing: "0.06em",
                     color: "#57534E",
                     fontWeight: 600,
                     textTransform: "uppercase",
@@ -413,7 +465,7 @@ export default function InputStep({
                   style={{
                     display: "block",
                     fontSize: "0.6875rem",
-                    letterSpacing: "0.2em",
+                    letterSpacing: "0.06em",
                     color: "#57534E",
                     fontWeight: 600,
                     textTransform: "uppercase",
