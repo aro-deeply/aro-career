@@ -160,7 +160,7 @@ export default async function handler(req, res) {
   try {
     const stream = client.messages.stream({
       model: ANTHROPIC_MODEL,
-      max_tokens: 2500,
+      max_tokens: 4000,
       system: [
         {
           type: "text",
