@@ -84,11 +84,16 @@ export default function DiagnosisPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF7] text-[#1C1917]" style={{ fontFamily: fontStack }}>
-      {/* Dark editorial header */}
+      {/* Light sticky header */}
       <header
         style={{
-          background: "#1C1917",
-          borderBottom: "1px solid rgba(250,250,247,.08)",
+          position: "sticky",
+          top: 0,
+          zIndex: 50,
+          background: "rgba(250,250,247,.86)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          borderBottom: "1px solid rgba(28,25,23,.08)",
         }}
       >
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
@@ -109,7 +114,7 @@ export default function DiagnosisPage() {
               style={{
                 fontSize: "0.8rem",
                 fontWeight: 600,
-                color: "rgba(250,250,247,.78)",
+                color: "#1C1917",
                 letterSpacing: "-0.01em",
               }}
             >
@@ -120,12 +125,12 @@ export default function DiagnosisPage() {
             href="index.html"
             style={{
               fontSize: "0.75rem",
-              color: "rgba(250,250,247,.56)",
+              color: "#8B7355",
               transition: "color .2s",
               textDecoration: "none",
             }}
-            onMouseOver={(e) => (e.currentTarget.style.color = "rgba(250,250,247,.9)")}
-            onMouseOut={(e) => (e.currentTarget.style.color = "rgba(250,250,247,.56)")}
+            onMouseOver={(e) => (e.currentTarget.style.color = "#5E4A36")}
+            onMouseOut={(e) => (e.currentTarget.style.color = "#8B7355")}
           >
             ← 메인으로 돌아가기
           </a>
@@ -158,8 +163,8 @@ export default function DiagnosisPage() {
 
       <footer
         style={{
-          borderTop: "1px solid rgba(28,25,23,.1)",
-          marginTop: "6rem",
+          background: "#FAFAF7",
+          borderTop: "1px solid rgba(28,25,23,.08)",
         }}
       >
         <div className="max-w-5xl mx-auto px-6 py-8 text-center" style={{ fontSize: "0.72rem", color: "#8B7355" }}>

@@ -58,426 +58,486 @@ export default function InputStep({
       transition={{ duration: 0.4 }}
       style={{ fontFamily: FONT_STACK }}
     >
-      {/* ── Dark editorial hero ── */}
-      <section
-        style={{
-          background: "#1C1917",
-          padding: "clamp(3rem, 6vw, 5rem) 0",
-        }}
-      >
-        <div
-          className="max-w-5xl mx-auto px-6"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1.2fr 1fr",
-            gap: "clamp(3rem, 5vw, 4.5rem)",
-            alignItems: "start",
-          }}
-        >
+      <style>{`
+        .diag-hero {
+          position: relative;
+          padding: 96px 0 80px;
+          background:
+            radial-gradient(circle at 80% 20%, rgba(180,138,90,.12), transparent 32%),
+            linear-gradient(180deg, #FAFAF7 0%, #F7F1E8 100%);
+        }
+        @media (max-width: 820px) {
+          .diag-hero { padding: 72px 0 56px; }
+        }
+        .diag-hero-grid {
+          max-width: 1024px;
+          margin: 0 auto;
+          padding: 0 1.5rem;
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+          gap: 64px;
+          align-items: start;
+        }
+        @media (max-width: 900px) {
+          .diag-hero-grid { grid-template-columns: 1fr; gap: 36px; }
+        }
+        .diag-kicker {
+          display: block;
+          font-size: .72rem;
+          letter-spacing: .12em;
+          text-transform: uppercase;
+          color: #5E4A36;
+          font-weight: 800;
+          margin-bottom: 1.25rem;
+        }
+        .diag-hero-copy h1 {
+          font-weight: 700;
+          font-size: clamp(2rem, 4vw, 3.4rem);
+          line-height: 1.16;
+          letter-spacing: -0.04em;
+          color: #1C1917;
+          word-break: keep-all;
+          margin-bottom: 1.5rem;
+        }
+        @media (max-width: 640px) {
+          .diag-hero-copy h1 { font-size: clamp(1.9rem, 9vw, 2.6rem); line-height: 1.18; }
+          .diag-preview-card { padding: 22px 20px !important; }
+        }
+        .diag-lede {
+          font-size: 1.0625rem;
+          line-height: 1.7;
+          color: #57534E;
+          max-width: 560px;
+          margin-bottom: 1rem;
+        }
+        .diag-note {
+          font-size: .92rem;
+          line-height: 1.65;
+          color: #8B7355;
+          max-width: 540px;
+        }
+        .diag-cta-row {
+          margin-top: 32px;
+        }
+        .diag-primary-btn {
+          display: inline-block;
+          background: #1C1917;
+          color: #FAFAF7;
+          padding: 16px 32px;
+          border-radius: 4px;
+          font-weight: 700;
+          font-size: .98rem;
+          border: 0;
+          cursor: pointer;
+          transition: background .2s;
+          letter-spacing: -.005em;
+          text-decoration: none;
+        }
+        .diag-primary-btn:hover { background: #000000; }
+        @media (max-width: 640px) {
+          .diag-primary-btn { display: block; width: 100%; text-align: center; box-sizing: border-box; }
+        }
+        .diag-microcopy {
+          font-size: .82rem;
+          color: #8B7355;
+          margin-top: 14px;
+        }
+        .diag-preview-card {
+          background: rgba(255,255,255,.76);
+          border: 1px solid rgba(28,25,23,.10);
+          border-radius: 18px;
+          box-shadow: 0 18px 50px rgba(28,25,23,.08);
+          padding: 28px;
+          max-width: 360px;
+          align-self: start;
+        }
+        @media (max-width: 900px) {
+          .diag-preview-card { max-width: 100%; }
+        }
+        .diag-card-label {
+          font-size: .72rem;
+          letter-spacing: .10em;
+          text-transform: uppercase;
+          color: #5E4A36;
+          font-weight: 800;
+          margin-bottom: 16px;
+        }
+        .diag-card-list {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+        }
+        .diag-card-list li {
+          position: relative;
+          padding: 12px 0 12px 18px;
+          border-top: 1px solid rgba(28,25,23,.06);
+          color: #1C1917;
+          font-weight: 500;
+          font-size: 1rem;
+        }
+        .diag-card-list li:first-child {
+          border-top: none;
+        }
+        .diag-card-list li::before {
+          content: "—";
+          position: absolute;
+          left: 0;
+          color: #B48A5A;
+          font-weight: 700;
+        }
+        .diag-card-foot {
+          margin-top: 18px;
+          font-size: .8rem;
+          color: #8B7355;
+        }
+        .diag-form-section {
+          background: #F7F1E8;
+          padding: 80px 0 120px;
+        }
+        @media (max-width: 640px) {
+          .diag-form-section { padding: 56px 0 80px; }
+        }
+        .diag-form-card {
+          max-width: 920px;
+          margin: 0 auto;
+          background: #FFFFFF;
+          border: 1px solid rgba(28,25,23,.10);
+          border-radius: 18px;
+          box-shadow: 0 12px 36px rgba(28,25,23,.06);
+          padding: 36px 40px;
+          scroll-margin-top: 90px;
+          box-sizing: border-box;
+        }
+        @media (max-width: 640px) {
+          .diag-form-card { padding: 22px 18px; border-radius: 14px; }
+        }
+        .diag-form-section-wrap {
+          padding: 0 1.5rem;
+        }
+        @media (max-width: 640px) {
+          .diag-submit-btn { width: 100% !important; }
+        }
+      `}</style>
+
+      {/* ── Warm-light hero ── */}
+      <section className="diag-hero">
+        <div className="diag-hero-grid">
           {/* Copy column */}
-          <div>
-            <span
-              style={{
-                display: "block",
-                fontSize: "0.72rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#B48A5A",
-                marginBottom: "1.25rem",
-              }}
-            >
-              Evaluator-based Diagnosis
-            </span>
-            <h1
-              style={{
-                fontWeight: 700,
-                letterSpacing: "-0.04em",
-                lineHeight: 1.16,
-                fontSize: "clamp(2rem, 4vw, 3.2rem)",
-                color: "#FAFAF7",
-                wordBreak: "keep-all",
-                marginBottom: "1.5rem",
-              }}
-            >
-              현재 서류가 평가자에게 어떻게 읽히는지 확인합니다.
-            </h1>
-            <p
-              style={{
-                fontSize: "1.0625rem",
-                lineHeight: 1.7,
-                color: "rgba(250,250,247,.78)",
-                maxWidth: "540px",
-                marginBottom: "1rem",
-              }}
-            >
-              이력서와 면접 답변을 입력하면, 지원하는 자리의 기준에서 부족한 근거, 위험 문장, 면접에서 이어질 수 있는 질문을 먼저 정리합니다.
+          <div className="diag-hero-copy">
+            <span className="diag-kicker">Evaluator-based Diagnosis</span>
+            <h1>지금 서류를<br />평가자 관점으로 차분히 점검합니다.</h1>
+            <p className="diag-lede">
+              이력서와 면접 답변을 입력하면, 지원하는 자리의 기준에서 부족한 근거, 위험 문장, 면접에서 이어질 수 있는 질문을 정리합니다.
             </p>
-            <p
-              style={{
-                fontSize: "0.9rem",
-                lineHeight: 1.6,
-                color: "rgba(250,250,247,.56)",
-                maxWidth: "540px",
-              }}
-            >
+            <p className="diag-note">
               사전 진단은 비용 없이 진행되며, 결과 확인 후 상담 여부를 선택할 수 있습니다.
             </p>
+            <div className="diag-cta-row">
+              <a href="#diag-form" className="diag-primary-btn">진단 시작하기</a>
+            </div>
+            <p className="diag-microcopy">약 3분 입력 · 상담 전환은 선택</p>
           </div>
 
-          {/* Card column */}
-          <aside
-            style={{
-              background: "rgba(250,250,247,.05)",
-              border: "1px solid rgba(250,250,247,.12)",
-              borderRadius: "16px",
-              padding: "28px",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "0.65rem",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#B48A5A",
-                marginBottom: "1rem",
-              }}
-            >
-              진단 결과에서 확인하는 것
-            </p>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          {/* Preview card */}
+          <aside className="diag-preview-card">
+            <p className="diag-card-label">진단 결과에서 확인하는 것</p>
+            <ul className="diag-card-list">
               {["문제 유형", "위험 문장", "면접 꼬리질문", "정리 방향"].map((item) => (
-                <li
-                  key={item}
-                  style={{
-                    color: "rgba(250,250,247,.85)",
-                    fontWeight: 500,
-                    fontSize: "0.9375rem",
-                    padding: "8px 0",
-                    borderBottom: "1px solid rgba(250,250,247,.08)",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
-                  <span style={{ color: "#B48A5A", fontSize: "0.7rem" }}>—</span>
-                  {item}
-                </li>
+                <li key={item}>{item}</li>
               ))}
             </ul>
+            <p className="diag-card-foot">결과는 입력 내용에 따라 달라집니다.</p>
           </aside>
         </div>
-
-        {/* Mobile: stack card below copy via CSS */}
-        <style>{`
-          @media (max-width: 900px) {
-            .diag-hero-inner {
-              grid-template-columns: 1fr !important;
-            }
-          }
-        `}</style>
       </section>
 
-      {/* ── Warm paper form section ── */}
-      <section
-        style={{
-          background: "#FAFAF7",
-          padding: "clamp(2.5rem, 5vw, 4rem) 1.5rem",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "920px",
-            margin: "0 auto",
-            background: "#FFFFFF",
-            border: "1px solid rgba(28,25,23,.1)",
-            borderRadius: "16px",
-            padding: "clamp(22px, 4vw, 36px)",
-            boxShadow: "0 1px 8px rgba(28,25,23,.06)",
-          }}
-        >
-          <h2
-            style={{
-              fontWeight: 700,
-              fontSize: "1.25rem",
-              letterSpacing: "-0.02em",
-              color: "#1C1917",
-              marginBottom: "0.5rem",
-              wordBreak: "keep-all",
-            }}
-          >
-            진단에 필요한 정보를 입력해 주세요.
-          </h2>
-          <p style={{ fontSize: "0.875rem", color: "#57534E", lineHeight: 1.6, marginBottom: "0.4rem" }}>
-            완성된 서류가 아니어도 괜찮습니다. 현재 작성한 문장 그대로 입력해 주세요.
-          </p>
-          <p style={{ fontSize: "0.8125rem", color: "#8B7355", marginBottom: "2.5rem" }}>
-            사전 진단은 비용 없이 진행됩니다.
-          </p>
+      {/* ── Form section ── */}
+      <section className="diag-form-section">
+        <div className="diag-form-section-wrap">
+          <div id="diag-form" className="diag-form-card">
+            <h2
+              style={{
+                fontWeight: 700,
+                fontSize: "1.25rem",
+                letterSpacing: "-0.02em",
+                color: "#1C1917",
+                marginBottom: "0.5rem",
+                wordBreak: "keep-all",
+              }}
+            >
+              진단에 필요한 정보를 입력해 주세요.
+            </h2>
+            <p style={{ fontSize: "0.875rem", color: "#57534E", lineHeight: 1.6, marginBottom: "0.4rem" }}>
+              완성된 서류가 아니어도 괜찮습니다. 현재 작성한 문장 그대로 입력해 주세요.
+            </p>
+            <p style={{ fontSize: "0.8125rem", color: "#8B7355", marginBottom: "2.5rem" }}>
+              주민등록번호, 주소, 연락처 등 민감한 개인정보는 제외하고 입력해 주세요.
+            </p>
 
-          <div className="space-y-10">
-            {/* Field 01 */}
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.6875rem",
-                  letterSpacing: "0.2em",
-                  color: "#57534E",
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                01 · 지원하는 자리
-              </label>
-              <p style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.6rem" }}>
-                지원 회사나 직무를 알수록 더 정확한 기준으로 읽을 수 있습니다.
-              </p>
-              <input
-                type="text"
-                value={formData.jobTarget}
-                onChange={(e) => setFormData({ ...formData, jobTarget: e.target.value })}
-                placeholder="예: 패션 브랜드 MD 신입, 제조업 인사 직무, 플랫폼 운영 PM"
-                style={{
-                  width: "100%",
-                  borderBottom: "2px solid #D6CEC6",
-                  background: "transparent",
-                  padding: "10px 0",
-                  fontSize: "1rem",
-                  color: "#1C1917",
-                  outline: "none",
-                  transition: "border-color .2s",
-                  boxSizing: "border-box",
-                }}
-                onFocus={(e) => (e.target.style.borderBottomColor = "#1C1917")}
-                onBlur={(e) => (e.target.style.borderBottomColor = "#D6CEC6")}
-              />
-            </div>
-
-            {/* Field 02 */}
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.6875rem",
-                  letterSpacing: "0.2em",
-                  color: "#57534E",
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  marginBottom: "1rem",
-                }}
-              >
-                02 · 현재 막히는 지점
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {SITUATIONS.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setFormData({ ...formData, situation: s })}
-                    style={{
-                      padding: "14px 12px",
-                      fontSize: "0.875rem",
-                      fontWeight: 500,
-                      border: formData.situation === s
-                        ? "2px solid #1C1917"
-                        : "1px solid rgba(28,25,23,.18)",
-                      background: formData.situation === s ? "#1C1917" : "#FFFFFF",
-                      color: formData.situation === s ? "#FAFAF7" : "#57534E",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      wordBreak: "keep-all",
-                      lineHeight: 1.4,
-                      transition: "all .15s",
-                      textAlign: "left",
-                    }}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Field 03 */}
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "0.6875rem",
-                  letterSpacing: "0.2em",
-                  color: "#57534E",
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                03 · 현재 이력서 또는 면접 답변
-              </label>
-              <p style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.75rem" }}>
-                이력서 문장, 자기소개서 일부, 면접 답변 초안 중 무엇이든 입력할 수 있습니다.
-              </p>
-              <textarea
-                value={formData.resume}
-                onChange={(e) => setFormData({ ...formData, resume: e.target.value.slice(0, 3000) })}
-                placeholder="현재 작성한 문장을 그대로 붙여넣어 주세요."
-                rows={9}
-                style={{
-                  width: "100%",
-                  border: "1.5px solid rgba(28,25,23,.18)",
-                  borderRadius: "10px",
-                  background: "#FAFAF7",
-                  padding: "16px",
-                  fontSize: "0.9375rem",
-                  color: "#1C1917",
-                  outline: "none",
-                  lineHeight: 1.7,
-                  resize: "vertical",
-                  transition: "border-color .2s",
-                  boxSizing: "border-box",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "#5E4A36")}
-                onBlur={(e) => (e.target.style.borderColor = "rgba(28,25,23,.18)")}
-              />
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: "6px" }}>
-                <p style={{ fontSize: "0.72rem", color: "#8B7355" }}>
-                  주민등록번호, 주소, 연락처 등 민감한 개인정보는 제외하고 입력해 주세요.
+            <div className="space-y-10">
+              {/* Field 01 */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.2em",
+                    color: "#57534E",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  01 · 지원하는 자리
+                </label>
+                <p style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.6rem" }}>
+                  지원 회사나 직무를 알수록 더 정확한 기준으로 읽을 수 있습니다.
                 </p>
-                <span style={{ fontSize: "0.72rem", color: "#8B7355", flexShrink: 0, marginLeft: "12px", fontVariantNumeric: "tabular-nums" }}>
-                  {formData.resume.length} / 3,000자
-                </span>
+                <input
+                  type="text"
+                  value={formData.jobTarget}
+                  onChange={(e) => setFormData({ ...formData, jobTarget: e.target.value })}
+                  placeholder="예: 패션 브랜드 MD 신입, 제조업 인사 직무, 플랫폼 운영 PM"
+                  style={{
+                    width: "100%",
+                    borderBottom: "2px solid #D6CEC6",
+                    background: "transparent",
+                    padding: "10px 0",
+                    fontSize: "1rem",
+                    color: "#1C1917",
+                    outline: "none",
+                    transition: "border-color .2s",
+                    boxSizing: "border-box",
+                  }}
+                  onFocus={(e) => (e.target.style.borderBottomColor = "#1C1917")}
+                  onBlur={(e) => (e.target.style.borderBottomColor = "#D6CEC6")}
+                />
               </div>
-            </div>
 
-            {/* Field 04 */}
-            <div>
+              {/* Field 02 */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.2em",
+                    color: "#57534E",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  02 · 현재 막히는 지점
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {SITUATIONS.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setFormData({ ...formData, situation: s })}
+                      style={{
+                        padding: "14px 12px",
+                        fontSize: "0.875rem",
+                        fontWeight: 500,
+                        border: formData.situation === s
+                          ? "2px solid #1C1917"
+                          : "1px solid rgba(28,25,23,.18)",
+                        background: formData.situation === s ? "#1C1917" : "#FFFFFF",
+                        color: formData.situation === s ? "#FAFAF7" : "#57534E",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        wordBreak: "keep-all",
+                        lineHeight: 1.4,
+                        transition: "all .15s",
+                        textAlign: "left",
+                      }}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Field 03 */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.2em",
+                    color: "#57534E",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  03 · 현재 이력서 또는 면접 답변
+                </label>
+                <p style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.75rem" }}>
+                  이력서 문장, 자기소개서 일부, 면접 답변 초안 중 무엇이든 입력할 수 있습니다.
+                </p>
+                <textarea
+                  value={formData.resume}
+                  onChange={(e) => setFormData({ ...formData, resume: e.target.value.slice(0, 3000) })}
+                  placeholder="현재 작성한 문장을 그대로 붙여넣어 주세요."
+                  rows={9}
+                  style={{
+                    width: "100%",
+                    border: "1.5px solid rgba(28,25,23,.18)",
+                    borderRadius: "10px",
+                    background: "#FAFAF7",
+                    padding: "16px",
+                    fontSize: "0.9375rem",
+                    color: "#1C1917",
+                    outline: "none",
+                    lineHeight: 1.7,
+                    resize: "vertical",
+                    transition: "border-color .2s",
+                    boxSizing: "border-box",
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = "#5E4A36")}
+                  onBlur={(e) => (e.target.style.borderColor = "rgba(28,25,23,.18)")}
+                />
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "6px" }}>
+                  <p style={{ fontSize: "0.72rem", color: "#8B7355" }}>
+                    주민등록번호, 주소, 연락처 등 민감한 개인정보는 제외하고 입력해 주세요.
+                  </p>
+                  <span style={{ fontSize: "0.72rem", color: "#8B7355", flexShrink: 0, marginLeft: "12px", fontVariantNumeric: "tabular-nums" }}>
+                    {formData.resume.length} / 3,000자
+                  </span>
+                </div>
+              </div>
+
+              {/* Field 04 */}
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "0.6875rem",
+                    letterSpacing: "0.2em",
+                    color: "#57534E",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  04 · 추가로 확인할 맥락{" "}
+                  <span style={{ color: "#8B7355", fontWeight: 400, fontSize: "0.65rem" }}>(선택)</span>
+                </label>
+                <p style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.6rem" }}>
+                  최근 탈락 경험, 지원 중인 회사, 가장 고민되는 부분을 적어 주세요.
+                </p>
+                <input
+                  type="text"
+                  value={formData.rejection}
+                  onChange={(e) => setFormData({ ...formData, rejection: e.target.value })}
+                  placeholder="예: 서류는 통과하는데 면접에서 답변이 길어집니다."
+                  style={{
+                    width: "100%",
+                    borderBottom: "2px solid #D6CEC6",
+                    background: "transparent",
+                    padding: "10px 0",
+                    fontSize: "1rem",
+                    color: "#1C1917",
+                    outline: "none",
+                    transition: "border-color .2s",
+                    boxSizing: "border-box",
+                  }}
+                  onFocus={(e) => (e.target.style.borderBottomColor = "#1C1917")}
+                  onBlur={(e) => (e.target.style.borderBottomColor = "#D6CEC6")}
+                />
+              </div>
+
+              {error && (
+                <div
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "#b91c1c",
+                    borderLeft: "2px solid #b91c1c",
+                    paddingLeft: "1rem",
+                    paddingTop: "8px",
+                    paddingBottom: "8px",
+                    background: "#fef2f2",
+                  }}
+                >
+                  {error}
+                </div>
+              )}
+
+              <div style={{ marginTop: "24px", marginBottom: "16px" }} ref={turnstileRef}></div>
+
               <label
                 style={{
-                  display: "block",
-                  fontSize: "0.6875rem",
-                  letterSpacing: "0.2em",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "8px",
+                  marginBottom: "16px",
+                  fontSize: "0.875rem",
                   color: "#57534E",
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  marginBottom: "0.5rem",
+                  lineHeight: 1.6,
                 }}
               >
-                04 · 추가로 확인할 맥락{" "}
-                <span style={{ color: "#8B7355", fontWeight: 400, fontSize: "0.65rem" }}>(선택)</span>
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  style={{ marginTop: "3px", flexShrink: 0 }}
+                />
+                <span>
+                  <b>(필수)</b> 입력한 내용은 진단 결과 생성 및 상담 요청 시 참고 목적으로만 사용됩니다.
+                  <br />
+                  <span style={{ color: "#8B7355", fontSize: "0.72rem" }}>
+                    · 보관 기간: 신청 후 6개월 · 문의/삭제:{" "}
+                    <a href="mailto:naminimiya@gmail.com" style={{ textDecoration: "underline" }}>
+                      naminimiya@gmail.com
+                    </a>
+                  </span>
+                </span>
               </label>
-              <p style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.6rem" }}>
-                최근 탈락 경험, 지원 중인 회사, 가장 고민되는 부분을 적어 주세요.
-              </p>
-              <input
-                type="text"
-                value={formData.rejection}
-                onChange={(e) => setFormData({ ...formData, rejection: e.target.value })}
-                placeholder="예: 서류는 통과하는데 면접에서 답변이 길어집니다."
-                style={{
-                  width: "100%",
-                  borderBottom: "2px solid #D6CEC6",
-                  background: "transparent",
-                  padding: "10px 0",
-                  fontSize: "1rem",
-                  color: "#1C1917",
-                  outline: "none",
-                  transition: "border-color .2s",
-                  boxSizing: "border-box",
-                }}
-                onFocus={(e) => (e.target.style.borderBottomColor = "#1C1917")}
-                onBlur={(e) => (e.target.style.borderBottomColor = "#D6CEC6")}
-              />
-            </div>
 
-            {error && (
               <div
                 style={{
-                  fontSize: "0.875rem",
-                  color: "#b91c1c",
-                  borderLeft: "2px solid #b91c1c",
-                  paddingLeft: "1rem",
-                  paddingTop: "8px",
-                  paddingBottom: "8px",
-                  background: "#fef2f2",
+                  paddingTop: "2rem",
+                  borderTop: "1px solid rgba(28,25,23,.1)",
                 }}
               >
-                {error}
+                <button
+                  onClick={onSubmit}
+                  disabled={!consent || !turnstileToken}
+                  className="diag-submit-btn"
+                  style={{
+                    width: "100%",
+                    background: "#1C1917",
+                    color: "#FAFAF7",
+                    padding: "16px 40px",
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.12em",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: (!consent || !turnstileToken) ? "not-allowed" : "pointer",
+                    opacity: (!consent || !turnstileToken) ? 0.5 : 1,
+                    transition: "background .2s",
+                  }}
+                  onMouseOver={(e) => {
+                    if (consent && turnstileToken) e.currentTarget.style.background = "#000000";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = "#1C1917";
+                  }}
+                >
+                  진단 결과 확인하기
+                </button>
+                <p
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "#8B7355",
+                    marginTop: "12px",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  약 3분 입력 · 결과 확인 후 상담 선택
+                </p>
               </div>
-            )}
-
-            <div style={{ marginTop: "24px", marginBottom: "16px" }} ref={turnstileRef}></div>
-
-            <label
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "8px",
-                marginBottom: "16px",
-                fontSize: "0.875rem",
-                color: "#57534E",
-                lineHeight: 1.6,
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={consent}
-                onChange={(e) => setConsent(e.target.checked)}
-                style={{ marginTop: "3px", flexShrink: 0 }}
-              />
-              <span>
-                <b>(필수)</b> 입력한 내용은 진단 결과 생성 및 상담 요청 시 참고 목적으로만 사용됩니다.
-                <br />
-                <span style={{ color: "#8B7355", fontSize: "0.72rem" }}>
-                  · 보관 기간: 신청 후 6개월 · 문의/삭제:{" "}
-                  <a href="mailto:naminimiya@gmail.com" style={{ textDecoration: "underline" }}>
-                    naminimiya@gmail.com
-                  </a>
-                </span>
-              </span>
-            </label>
-
-            <div
-              style={{
-                paddingTop: "2rem",
-                borderTop: "1px solid rgba(28,25,23,.1)",
-              }}
-            >
-              <button
-                onClick={onSubmit}
-                disabled={!consent || !turnstileToken}
-                style={{
-                  width: "100%",
-                  background: "#1C1917",
-                  color: "#FAFAF7",
-                  padding: "16px 40px",
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.12em",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: (!consent || !turnstileToken) ? "not-allowed" : "pointer",
-                  opacity: (!consent || !turnstileToken) ? 0.5 : 1,
-                  transition: "background .2s",
-                }}
-                onMouseOver={(e) => {
-                  if (consent && turnstileToken) e.currentTarget.style.background = "#000000";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = "#1C1917";
-                }}
-              >
-                진단 결과 확인하기
-              </button>
-              <p
-                style={{
-                  fontSize: "0.75rem",
-                  color: "#8B7355",
-                  marginTop: "12px",
-                  lineHeight: 1.5,
-                }}
-              >
-                약 3분 입력 · 결과 확인 후 상담 선택
-              </p>
             </div>
           </div>
         </div>
