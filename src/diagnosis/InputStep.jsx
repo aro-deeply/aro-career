@@ -95,9 +95,9 @@ export default function InputStep({
           margin-bottom: 1.25rem;
         }
         .diag-hero h1 {
-          max-width: 10.8em;
-          font-size: clamp(2.8rem, 5vw, 4.6rem);
-          line-height: 1.08;
+          max-width: 11.5em;
+          font-size: clamp(2.7rem, 4.8vw, 4.4rem);
+          line-height: 1.1;
           letter-spacing: -0.055em;
           font-weight: 800;
           color: #1C1917;
@@ -107,8 +107,8 @@ export default function InputStep({
         .diag-hero h1 span { display: block; }
         @media (max-width: 640px) {
           .diag-hero h1 {
-            font-size: clamp(2.2rem, 9vw, 3rem);
-            line-height: 1.12;
+            font-size: clamp(2.1rem, 8.6vw, 2.85rem);
+            line-height: 1.14;
             max-width: 100%;
           }
           .diag-preview-card { padding: 22px 20px !important; }
@@ -251,7 +251,7 @@ export default function InputStep({
             <span className="diag-kicker">ARO DIAGNOSIS</span>
             <h1>
               <span>현재 서류가</span>
-              <span>평가자에게 남기는 근거를 확인합니다.</span>
+              <span>평가자의 기준에서 어떻게 읽히는지 확인합니다.</span>
             </h1>
             <p className="diag-lede">
               이력서와 면접 답변을 입력하면, 지원하는 자리의 기준에서 부족한 근거와 모호한 문장, 면접에서 이어질 수 있는 질문을 먼저 정리합니다.
