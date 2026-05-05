@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  PATTERN_LABELS,
+  getPatternIdFromScoreKey,
+  getPatternLabel,
+} from "../../shared/diagnosis-dictionary.js";
+import {
+  renderMarkdownBold,
+  BOLD_HIGHLIGHT_CLASS,
+} from "../shared/render-markdown-bold.jsx";
 import "../index.css";
 
 // ============================================================
@@ -117,11 +126,11 @@ function DiagnosisPage() {
   ];
 
   const patternLabels = {
-    pattern_01_generic_template: "Pattern 01 · 규격화된 정형성",
-    pattern_02_unsupported_claims: "Pattern 02 · 근거 부재와 과장",
-    pattern_03_differentiation_mishandling: "Pattern 03 · 차별화 판단 오류",
-    pattern_04_job_fit_mismatch: "Pattern 04 · 직무 적합성 어긋남",
-    pattern_05_industry_context_absence: "Pattern 05 · 업계 맥락 부재",
+    pattern_01_generic_template: `Pattern 01 · ${PATTERN_LABELS.pattern_01}`,
+    pattern_02_unsupported_claims: `Pattern 02 · ${PATTERN_LABELS.pattern_02}`,
+    pattern_03_differentiation_mishandling: `Pattern 03 · ${PATTERN_LABELS.pattern_03}`,
+    pattern_04_job_fit_mismatch: `Pattern 04 · ${PATTERN_LABELS.pattern_04}`,
+    pattern_05_industry_context_absence: `Pattern 05 · ${PATTERN_LABELS.pattern_05}`,
   };
 
   async function runDiagnosis() {
@@ -185,36 +194,6 @@ function DiagnosisPage() {
     setResult(null);
     setError(null);
     setStep("input");
-  }
-
-  function renderWithBold(text, boldClass = "font-bold text-neutral-900") {
-    if (!text) return null;
-    const parts = text.split(/(\*\*[^*]+\*\*)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith("**") && part.endsWith("**")) {
-        return (
-          <strong key={i} className={boldClass}>
-            {part.slice(2, -2)}
-          </strong>
-        );
-      }
-      return <span key={i}>{part}</span>;
-    });
-  }
-
-  function renderWithHighlight(text) {
-    if (!text) return null;
-    const parts = text.split(/(\*\*[^*]+\*\*)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith("**") && part.endsWith("**")) {
-        return (
-          <strong key={i} className="font-bold text-neutral-900 bg-yellow-100 px-1">
-            {part.slice(2, -2)}
-          </strong>
-        );
-      }
-      return <span key={i}>{part}</span>;
-    });
   }
 
   const fontStack = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif';
@@ -428,7 +407,7 @@ function DiagnosisPage() {
                 </h1>
                 <div className="flex flex-wrap gap-2 items-center text-sm">
                   <span className="bg-neutral-900 text-white px-3 py-1.5 font-medium text-xs tracking-wide">
-                    핵심 원인: {patternLabels[Object.keys(patternLabels).find(k => k.startsWith(result.root_cause))]?.split(" · ")[1] || result.root_cause}
+                    핵심 원인: {getPatternLabel(result.root_cause)}
                   </span>
                   <span className="text-neutral-600 px-3 py-1.5">
                     성격: <span className="font-semibold text-neutral-900">{result.correctability}</span>
@@ -456,8 +435,9 @@ function DiagnosisPage() {
                 </div>
                 <div className="space-y-5">
                   {Object.entries(result.pattern_scores).map(([key, score]) => {
-                    const isDominant = key.startsWith(result.dominant_pattern);
-                    const isRoot = key.startsWith(result.root_cause);
+                    const patternId = getPatternIdFromScoreKey(key);
+                    const isDominant = patternId === result.dominant_pattern;
+                    const isRoot = patternId === result.root_cause;
                     return (
                       <div key={key}>
                         <div className="flex justify-between items-baseline mb-2.5">
@@ -490,7 +470,7 @@ function DiagnosisPage() {
                 </div>
                 <div className="bg-neutral-50 border-l-4 border-neutral-900 px-7 py-7">
                   <p className="text-lg md:text-xl text-neutral-800 leading-[1.8]">
-                    {renderWithHighlight(result.root_diagnosis)}
+                    {renderMarkdownBold(result.root_diagnosis, BOLD_HIGHLIGHT_CLASS)}
                   </p>
                 </div>
               </section>
@@ -540,7 +520,7 @@ function DiagnosisPage() {
                               {String(idx + 1).padStart(2, "0")}
                             </span>
                           )}
-                          {renderWithBold(paragraph, "font-bold text-neutral-900 bg-yellow-100 px-1")}
+                          {renderMarkdownBold(paragraph, BOLD_HIGHLIGHT_CLASS)}
                         </p>
                       ))}
                   </div>
