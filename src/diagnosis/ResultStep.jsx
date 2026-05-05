@@ -8,6 +8,7 @@ import PatternScoreList from "./sections/PatternScoreList.jsx";
 import RootDiagnosisCard from "./sections/RootDiagnosisCard.jsx";
 import EvidenceList from "./sections/EvidenceList.jsx";
 import OnePagerSummary from "./sections/OnePagerSummary.jsx";
+import ReflectionQuestions from "./sections/ReflectionQuestions.jsx";
 
 export default function ResultStep({ result, onReset }) {
   return (
@@ -61,23 +62,7 @@ export default function ResultStep({ result, onReset }) {
 
       <OnePagerSummary summary={result.one_pager_summary} />
 
-      <section>
-        <div className="text-[11px] tracking-[0.2em] text-neutral-500 font-semibold mb-8">
-          05 · 다음 상담 전 자가 성찰 질문
-        </div>
-        <div className="space-y-6">
-          {result.self_reflection_questions.map((q, i) => (
-            <div key={i} className="flex gap-5 items-start">
-              <div className="text-3xl font-bold text-neutral-300 leading-none tabular-nums flex-shrink-0">
-                {String(i + 1).padStart(2, "0")}
-              </div>
-              <p className="text-base md:text-lg text-neutral-900 leading-relaxed pt-1 font-medium">
-                {q}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <ReflectionQuestions questions={result.self_reflection_questions} />
 
       <section className="border-t border-neutral-200 pt-10 mt-16">
         <div className="text-[11px] tracking-[0.2em] text-neutral-500 font-semibold mb-4">
