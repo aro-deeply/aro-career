@@ -39,52 +39,133 @@ export default function ConsultRequestForm({ result }) {
 
   if (status === "sent") {
     return (
-      <div className="mt-12 p-8 bg-emerald-50 border border-emerald-200 rounded-lg text-center">
-        <p className="text-emerald-900 font-semibold">잘 접수되었습니다.</p>
-        <p className="text-emerald-700 text-sm mt-2">운영자가 확인 후 회신드립니다. (영업일 기준 1~2일)</p>
+      <div
+        style={{
+          marginTop: "3rem",
+          padding: "2rem",
+          background: "#f0fdf4",
+          border: "1px solid #bbf7d0",
+          borderRadius: "12px",
+          textAlign: "center",
+        }}
+      >
+        <p style={{ color: "#14532d", fontWeight: 600 }}>잘 접수되었습니다.</p>
+        <p style={{ color: "#166534", fontSize: "0.875rem", marginTop: "0.5rem" }}>
+          운영자가 확인 후 회신드립니다. (영업일 기준 1~2일)
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="mt-12 p-8 bg-neutral-50 border border-neutral-200 rounded-lg">
-      <h3 className="text-xl font-bold mb-2">진단 결과를 바탕으로 상담 문의하기</h3>
-      <p className="text-sm text-neutral-600 mb-6">
+    <div
+      style={{
+        marginTop: "3rem",
+        padding: "clamp(1.5rem, 4vw, 2rem)",
+        background: "#F7F1E8",
+        border: "1px solid rgba(28,25,23,.1)",
+        borderRadius: "12px",
+      }}
+    >
+      <h3
+        style={{
+          fontSize: "1.125rem",
+          fontWeight: 700,
+          color: "#1C1917",
+          marginBottom: "0.5rem",
+          letterSpacing: "-0.015em",
+          wordBreak: "keep-all",
+        }}
+      >
+        진단 결과를 바탕으로 상담 문의하기
+      </h3>
+      <p style={{ fontSize: "0.875rem", color: "#6B625C", marginBottom: "1.5rem", lineHeight: 1.6 }}>
         결과를 보고 더 깊게 정리하고 싶은 경우에만 남겨 주세요. 상담 신청은 선택입니다.
       </p>
-      <div className="grid gap-3">
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <input
           type="text"
           placeholder="이름"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="border border-neutral-300 rounded px-3 py-2"
+          style={{
+            border: "1px solid rgba(28,25,23,.18)",
+            borderRadius: "8px",
+            padding: "10px 14px",
+            fontSize: "0.9375rem",
+            color: "#1C1917",
+            background: "#FFFFFF",
+            outline: "none",
+          }}
+          onFocus={(e) => (e.target.style.borderColor = "#5E4A36")}
+          onBlur={(e) => (e.target.style.borderColor = "rgba(28,25,23,.18)")}
         />
         <input
           type="email"
           placeholder="이메일"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border border-neutral-300 rounded px-3 py-2"
+          style={{
+            border: "1px solid rgba(28,25,23,.18)",
+            borderRadius: "8px",
+            padding: "10px 14px",
+            fontSize: "0.9375rem",
+            color: "#1C1917",
+            background: "#FFFFFF",
+            outline: "none",
+          }}
+          onFocus={(e) => (e.target.style.borderColor = "#5E4A36")}
+          onBlur={(e) => (e.target.style.borderColor = "rgba(28,25,23,.18)")}
         />
-        <label className="flex items-start gap-2 text-sm text-neutral-700">
+        <label
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "8px",
+            fontSize: "0.8125rem",
+            color: "#57534E",
+            lineHeight: 1.6,
+          }}
+        >
           <input
             type="checkbox"
             checked={agree}
             onChange={(e) => setAgree(e.target.checked)}
-            className="mt-1"
+            style={{ marginTop: "3px", flexShrink: 0 }}
           />
           <span>
-            <b>(필수)</b> 위 이름·이메일과 진단 결과가 운영자에게 전달됨에 동의합니다.
-            입력한 정보는 상담 안내와 회신 목적으로만 사용됩니다.
-            보관 기간 6개월. 문의/삭제: <a href="mailto:naminimiya@gmail.com" className="underline">naminimiya@gmail.com</a>
+            <b>(필수)</b> 위 이름·이메일과 진단 결과가 운영자에게 전달됨에 동의합니다.{" "}
+            입력한 정보는 상담 안내와 회신 목적으로만 사용됩니다.{" "}
+            보관 기간 6개월. 문의/삭제:{" "}
+            <a href="mailto:naminimiya@gmail.com" style={{ textDecoration: "underline" }}>
+              naminimiya@gmail.com
+            </a>
           </span>
         </label>
-        {errMsg && <p className="text-red-600 text-sm">{errMsg}</p>}
+        {errMsg && (
+          <p style={{ color: "#b91c1c", fontSize: "0.875rem" }}>{errMsg}</p>
+        )}
         <button
           onClick={submit}
           disabled={status === "sending" || !agree}
-          className="bg-neutral-900 text-white py-3 rounded font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            background: "#1C1917",
+            color: "#FAFAF7",
+            padding: "14px",
+            borderRadius: "8px",
+            fontWeight: 600,
+            fontSize: "0.9375rem",
+            border: "none",
+            cursor: (status === "sending" || !agree) ? "not-allowed" : "pointer",
+            opacity: (status === "sending" || !agree) ? 0.5 : 1,
+            transition: "background .2s",
+          }}
+          onMouseOver={(e) => {
+            if (status !== "sending" && agree) e.currentTarget.style.background = "#5E4A36";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = "#1C1917";
+          }}
         >
           {status === "sending" ? "전송 중..." : "상담 문의 보내기"}
         </button>
