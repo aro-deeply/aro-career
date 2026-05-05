@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { DEMO_RESULT } from "./demo-result.js";
 import LoadingStep from "./LoadingStep.jsx";
 import InputStep from "./InputStep.jsx";
 import ResultStep from "./ResultStep.jsx";
+
 export default function DiagnosisPage() {
   const [step, setStep] = useState("input");
   const [formData, setFormData] = useState({
@@ -16,6 +16,7 @@ export default function DiagnosisPage() {
   const [error, setError] = useState(null);
   const [consent, setConsent] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState(null);
+
   async function runDiagnosis() {
     if (!formData.jobTarget || !formData.situation || !formData.resume) {
       setError("필수 항목을 모두 입력해주세요.");
@@ -82,20 +83,56 @@ export default function DiagnosisPage() {
   const fontStack = '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
 
   return (
-    <div className="min-h-screen bg-white text-neutral-900" style={{ fontFamily: fontStack }}>
-      <header className="border-b border-neutral-200">
+    <div className="min-h-screen bg-[#FAFAF7] text-[#1C1917]" style={{ fontFamily: fontStack }}>
+      {/* Dark editorial header */}
+      <header
+        style={{
+          background: "#1C1917",
+          borderBottom: "1px solid rgba(250,250,247,.08)",
+        }}
+      >
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
           <div>
-            <div className="text-[10px] tracking-[0.25em] text-neutral-500 font-medium">ARO</div>
-            <div className="text-sm font-semibold text-neutral-900 tracking-tight">Career Direction</div>
+            <div
+              style={{
+                fontSize: "0.65rem",
+                letterSpacing: "0.22em",
+                color: "#B48A5A",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                marginBottom: "2px",
+              }}
+            >
+              ARO
+            </div>
+            <div
+              style={{
+                fontSize: "0.8rem",
+                fontWeight: 600,
+                color: "rgba(250,250,247,.78)",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Career Direction
+            </div>
           </div>
-          <a href="index.html" className="text-xs text-neutral-600 hover:text-neutral-900 transition-colors">
-            ← 메인으로
+          <a
+            href="index.html"
+            style={{
+              fontSize: "0.75rem",
+              color: "rgba(250,250,247,.56)",
+              transition: "color .2s",
+              textDecoration: "none",
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.color = "rgba(250,250,247,.9)")}
+            onMouseOut={(e) => (e.currentTarget.style.color = "rgba(250,250,247,.56)")}
+          >
+            ← 메인으로 돌아가기
           </a>
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 py-16 md:py-20">
+      <main>
         <AnimatePresence mode="wait">
           {step === "input" && (
             <InputStep
@@ -119,9 +156,14 @@ export default function DiagnosisPage() {
         </AnimatePresence>
       </main>
 
-      <footer className="border-t border-neutral-200 mt-24">
-        <div className="max-w-5xl mx-auto px-6 py-8 text-center text-xs text-neutral-500">
-          © ARO · Career Direction · 무료 서류 문제 유형 진단
+      <footer
+        style={{
+          borderTop: "1px solid rgba(28,25,23,.1)",
+          marginTop: "6rem",
+        }}
+      >
+        <div className="max-w-5xl mx-auto px-6 py-8 text-center" style={{ fontSize: "0.72rem", color: "#8B7355" }}>
+          © ARO · Career Direction · 서류 문제 유형 진단
         </div>
       </footer>
     </div>
