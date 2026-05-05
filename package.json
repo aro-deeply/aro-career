@@ -11,7 +11,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --import tsx --test \"tests/**/*.test.js\""
+    "test": "node --import tsx --test \"tests/**/*.test.{js,jsx}\""
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.40.0",
