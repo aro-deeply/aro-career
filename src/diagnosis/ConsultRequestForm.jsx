@@ -48,9 +48,9 @@ export default function ConsultRequestForm({ result }) {
 
   return (
     <div className="mt-12 p-8 bg-neutral-50 border border-neutral-200 rounded-lg">
-      <h3 className="text-xl font-bold mb-2">전문가 상담 신청</h3>
+      <h3 className="text-xl font-bold mb-2">진단 결과를 바탕으로 상담 문의하기</h3>
       <p className="text-sm text-neutral-600 mb-6">
-        진단 결과를 바탕으로 한 1:1 상담을 신청합니다. 위 진단 결과가 운영자에게 함께 전달됩니다.
+        결과를 보고 더 깊게 정리하고 싶은 경우에만 남겨 주세요. 상담 신청은 선택입니다.
       </p>
       <div className="grid gap-3">
         <input
@@ -76,6 +76,7 @@ export default function ConsultRequestForm({ result }) {
           />
           <span>
             <b>(필수)</b> 위 이름·이메일과 진단 결과가 운영자에게 전달됨에 동의합니다.
+            입력한 정보는 상담 안내와 회신 목적으로만 사용됩니다.
             보관 기간 6개월. 문의/삭제: <a href="mailto:naminimiya@gmail.com" className="underline">naminimiya@gmail.com</a>
           </span>
         </label>
@@ -85,7 +86,7 @@ export default function ConsultRequestForm({ result }) {
           disabled={status === "sending" || !agree}
           className="bg-neutral-900 text-white py-3 rounded font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {status === "sending" ? "전송 중..." : "상담 신청"}
+          {status === "sending" ? "전송 중..." : "상담 문의 보내기"}
         </button>
       </div>
     </div>
