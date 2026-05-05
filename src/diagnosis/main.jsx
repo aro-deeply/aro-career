@@ -62,8 +62,26 @@ function DiagnosisPage() {
   const [error, setError] = useState(null);
   const [consent, setConsent] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState(null);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const turnstileRef = React.useRef(null);
   const widgetIdRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (step !== "loading") {
+      setLoadingProgress(0);
+      return;
+    }
+    const startedAt = Date.now();
+    // 평균 응답 시간(30초) 기준으로 점근적으로 95%까지 차오름.
+    // 응답이 늦어져도 100%에 도달하지 않아 "방금 끝남" 인상을 주지 않음.
+    const expectedMs = 30000;
+    const id = setInterval(() => {
+      const elapsed = Date.now() - startedAt;
+      const pct = 95 * (1 - Math.exp(-elapsed / expectedMs));
+      setLoadingProgress(pct);
+    }, 250);
+    return () => clearInterval(id);
+  }, [step]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -377,6 +395,18 @@ function DiagnosisPage() {
                   16년간 축적된 진단 체계로 5가지 탈락 패턴을 분석합니다.<br />
                   약 20초에서 40초가 소요됩니다.
                 </p>
+                <div className="mt-8 max-w-xs mx-auto">
+                  <div className="h-1 bg-neutral-100 overflow-hidden rounded-full">
+                    <motion.div
+                      className="h-full bg-neutral-900"
+                      animate={{ width: `${loadingProgress}%` }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                    />
+                  </div>
+                  <div className="text-[10px] tracking-[0.2em] text-neutral-500 font-medium mt-3 tabular-nums">
+                    분석 중 · {Math.round(loadingProgress)}%
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
