@@ -290,18 +290,31 @@
   .hero-caption p{font-size:.66rem;color:rgba(250,250,247,.32);letter-spacing:.16em;text-transform:uppercase}
 
   /* ─────────── SELF-CHECK (dark continuation) ─────────── */
-  .self-check{padding:120px 0;background:#1C1917;color:rgba(250,250,247,.92)}
-  .sc-head{margin-bottom:64px}
-  .sc-head .sc-overtitle{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:20px;display:block}
-  .sc-head h2{font-family:var(--font-sans);font-size:clamp(1.8rem,3.2vw,2.2rem);font-weight:600;line-height:1.32;letter-spacing:-.035em;color:rgba(250,250,247,.95);word-break:keep-all;margin-bottom:28px}
-  .sc-head p{font-size:.97rem;line-height:1.95;color:rgba(250,250,247,.6);word-break:keep-all;max-width:58ch}
+  .self-check{padding:128px 0 136px;background:#1C1917;color:rgba(250,250,247,.92);position:relative}
+  /* Soft top edge — picks up the hero without a hard seam */
+  .self-check::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent 0%,rgba(250,250,247,.06) 50%,transparent 100%);pointer-events:none}
+
+  .sc-head{margin-bottom:88px;max-width:780px}
+  .sc-head .sc-overtitle{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:24px;display:block}
+  .sc-head h2{font-family:var(--font-sans);font-size:clamp(1.75rem,3.4vw,2.625rem);font-weight:700;line-height:1.24;letter-spacing:-.035em;color:rgba(250,250,247,.96);word-break:keep-all;margin-bottom:28px;max-width:720px}
+  .sc-head p{font-size:1rem;line-height:1.7;color:rgba(250,250,247,.66);word-break:keep-all;max-width:620px}
   .sc-head p + p{margin-top:14px}
 
-  .sc-list{list-style:none;margin:0;padding:0;border-top:1px solid rgba(250,250,247,.1)}
-  .sc-row{display:grid;grid-template-columns:72px 1fr;gap:28px;align-items:baseline;padding:28px 0;border-bottom:1px solid rgba(250,250,247,.08)}
-  @media(max-width:560px){.sc-row{grid-template-columns:48px 1fr;gap:16px}}
-  .sc-n{font-family:var(--font-sans);font-size:1.1rem;font-weight:500;color:var(--accent);letter-spacing:.04em;line-height:1}
-  .sc-row p{font-size:1rem;line-height:1.85;color:rgba(250,250,247,.82);word-break:keep-all;font-weight:400;margin:0}
+  /* 핵심 3개 — 같은 무게로 묶이지 않게 한 단 위로 띄움 */
+  .sc-primary{list-style:none;margin:0 0 96px;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:0 40px}
+  @media(max-width:820px){.sc-primary{grid-template-columns:1fr;gap:0;margin-bottom:80px}}
+  .sc-pri{padding:30px 0 8px;border-top:1px solid rgba(250,250,247,.22)}
+  @media(max-width:820px){.sc-pri{padding:26px 0 28px}.sc-pri:last-child{border-bottom:1px solid rgba(250,250,247,.22)}}
+  .sc-pri-n{display:block;font-size:.74rem;letter-spacing:.16em;color:var(--accent);font-weight:500;margin-bottom:18px}
+  .sc-pri p{font-size:clamp(1.125rem,1.55vw,1.4rem);line-height:1.5;letter-spacing:-.02em;color:rgba(250,250,247,.92);word-break:keep-all;font-weight:500;margin:0}
+
+  /* 보조 4개 — 작고 조용한 텍스트 리스트 */
+  .sc-secondary{padding-top:44px;border-top:1px solid rgba(250,250,247,.1)}
+  .sc-sec-label{display:block;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(250,250,247,.48);font-weight:500;margin-bottom:24px}
+  .sc-sec-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);column-gap:56px;row-gap:14px}
+  @media(max-width:720px){.sc-sec-list{grid-template-columns:1fr;row-gap:12px}}
+  .sc-sec-list li{font-size:.94rem;line-height:1.65;color:rgba(250,250,247,.62);word-break:keep-all;padding-left:20px;position:relative}
+  .sc-sec-list li::before{content:'';position:absolute;left:0;top:.74em;width:10px;height:1px;background:rgba(250,250,247,.32)}
 
   /* ─────────── EVALUATOR'S LENS ─────────── */
   .evaluator{padding:136px 0;background:var(--bg)}
@@ -519,36 +532,30 @@
       <p>현재 서류와 답변이 지원 회사와 직무 기준에서 무엇을 증명하고 있는지 확인해야 합니다.</p>
     </div>
 
-    <ol class="sc-list reveal-stagger" role="list">
-      <li class="sc-row">
-        <span class="sc-n">01</span>
-        <p>활동은 적혀 있지만, 내가 맡은 역할과 기여 범위가 구체적으로 보이지 않는다.</p>
+    <ol class="sc-primary reveal-stagger" role="list">
+      <li class="sc-pri">
+        <span class="sc-pri-n">01</span>
+        <p>활동은 적혀 있지만, 맡은 역할과 기여 범위가 구체적으로 보이지 않는다.</p>
       </li>
-      <li class="sc-row">
-        <span class="sc-n">02</span>
-        <p>성실함, 책임감, 소통 능력처럼 넓은 표현이 반복된다.</p>
-      </li>
-      <li class="sc-row">
-        <span class="sc-n">03</span>
+      <li class="sc-pri">
+        <span class="sc-pri-n">02</span>
         <p>지원 직무와 연결되는 역량 근거가 문장 안에 충분히 드러나지 않는다.</p>
       </li>
-      <li class="sc-row">
-        <span class="sc-n">04</span>
+      <li class="sc-pri">
+        <span class="sc-pri-n">03</span>
         <p>면접 답변이 길어지지만, 질문자가 확인하려는 핵심에는 늦게 도달한다.</p>
       </li>
-      <li class="sc-row">
-        <span class="sc-n">05</span>
-        <p>지원동기는 썼지만, 왜 이 회사와 이 직무인지의 근거가 약하다.</p>
-      </li>
-      <li class="sc-row">
-        <span class="sc-n">06</span>
-        <p>경력 공백, 직무 전환, 짧은 경력 등 보완해야 할 지점에 대한 설명 전략이 없다.</p>
-      </li>
-      <li class="sc-row">
-        <span class="sc-n">07</span>
-        <p>이력서, 자기소개서, 면접 답변이 각각 다른 메시지를 말하고 있다.</p>
-      </li>
     </ol>
+
+    <div class="sc-secondary reveal">
+      <span class="sc-sec-label">함께 확인할 지점</span>
+      <ul class="sc-sec-list" role="list">
+        <li>성실함, 책임감, 소통 능력처럼 넓은 표현이 반복된다.</li>
+        <li>지원동기는 썼지만, 왜 이 회사와 이 직무인지의 근거가 약하다.</li>
+        <li>경력 공백, 직무 전환, 짧은 경력 등 보완해야 할 지점에 대한 설명 전략이 없다.</li>
+        <li>이력서, 자기소개서, 면접 답변이 각각 다른 메시지를 말하고 있다.</li>
+      </ul>
+    </div>
   </div>
 </section>
 
