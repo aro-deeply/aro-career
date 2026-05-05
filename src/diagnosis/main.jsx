@@ -8,7 +8,6 @@ import {
 } from "../../shared/diagnosis-dictionary.js";
 import {
   renderMarkdownBold,
-  BOLD_DEFAULT_CLASS,
   BOLD_HIGHLIGHT_CLASS,
 } from "../shared/render-markdown-bold.jsx";
 import "../index.css";
