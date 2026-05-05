@@ -156,9 +156,8 @@ export default async function handler(req, res) {
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-  let streamingStarted = false;
   try {
-    const stream = client.messages.stream({
+    const response = await client.messages.create({
       model: ANTHROPIC_MODEL,
       max_tokens: 4000,
       system: [
@@ -173,24 +172,32 @@ export default async function handler(req, res) {
       ],
     });
 
-    for await (const event of stream) {
-      if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
-        if (!streamingStarted) {
-          res.setHeader("Content-Type", "text/plain; charset=utf-8");
-          res.setHeader("X-Accel-Buffering", "no");
-          res.setHeader("Cache-Control", "no-store");
-          if (typeof res.flushHeaders === "function") res.flushHeaders();
-          streamingStarted = true;
-        }
-        res.write(event.delta.text);
-      }
+    const text = response.content?.[0]?.text;
+    if (!text) {
+      return res.status(502).json({ error: "AI 응답이 비어있습니다. 잠시 후 다시 시도해주세요." });
     }
-    res.end();
+
+    const cleaned = text
+      .trim()
+      .replace(/^```json\s*/i, "")
+      .replace(/```\s*$/, "")
+      .trim();
+
+    let parsed;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (e) {
+      console.error("JSON parse fail. stop_reason:", response.stop_reason, "preview:", text.slice(0, 500));
+      const hint =
+        response.stop_reason === "max_tokens"
+          ? "AI 응답이 한도를 넘겨 끊겼습니다. 입력 길이를 줄이고 다시 시도해주세요."
+          : "AI 응답 형식이 잘못되었습니다. 잠시 후 다시 시도해주세요.";
+      return res.status(502).json({ error: hint });
+    }
+
+    return res.status(200).json({ result: parsed });
   } catch (err) {
-    console.error("Anthropic stream failed:", err?.message || err);
-    if (!streamingStarted && !res.headersSent) {
-      return res.status(502).json({ error: "일시적 오류입니다. 잠시 후 다시 시도해주세요." });
-    }
-    res.end();
+    console.error("Anthropic call failed:", err?.message || err);
+    return res.status(502).json({ error: "일시적 오류입니다. 잠시 후 다시 시도해주세요." });
   }
 }

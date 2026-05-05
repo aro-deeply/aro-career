@@ -62,7 +62,6 @@ function DiagnosisPage() {
   const [error, setError] = useState(null);
   const [consent, setConsent] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState(null);
-  const [streamProgress, setStreamProgress] = useState(0);
   const turnstileRef = React.useRef(null);
   const widgetIdRef = React.useRef(null);
 
@@ -125,7 +124,6 @@ function DiagnosisPage() {
       return;
     }
     setError(null);
-    setStreamProgress(0);
     setStep("loading");
 
     const controller = new AbortController();
@@ -143,42 +141,14 @@ function DiagnosisPage() {
         }),
         signal: controller.signal,
       });
-
+      clearTimeout(timeoutId);
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        clearTimeout(timeoutId);
-        const data = await response.json().catch(() => ({}));
         setError(data?.error || "일시적 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
         setStep("input");
         return;
       }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        buffer += chunk;
-        setStreamProgress(buffer.length);
-      }
-      clearTimeout(timeoutId);
-
-      const cleaned = buffer
-        .trim()
-        .replace(/^```json\s*/i, "")
-        .replace(/```\s*$/, "")
-        .trim();
-      let parsed;
-      try {
-        parsed = JSON.parse(cleaned);
-      } catch (e) {
-        console.error("JSON parse fail:", cleaned.slice(0, 500));
-        setError("AI 응답 형식이 잘못되었습니다. 잠시 후 다시 시도해주세요.");
-        setStep("input");
-        return;
-      }
-      setResult(parsed);
+      setResult(data.result);
       setStep("result");
     } catch (err) {
       clearTimeout(timeoutId);
@@ -407,20 +377,6 @@ function DiagnosisPage() {
                   16년간 축적된 진단 체계로 5가지 탈락 패턴을 분석합니다.<br />
                   약 20초에서 40초가 소요됩니다.
                 </p>
-                {streamProgress > 0 && (
-                  <div className="mt-8 max-w-xs mx-auto">
-                    <div className="h-1 bg-neutral-100 overflow-hidden rounded-full">
-                      <motion.div
-                        className="h-full bg-neutral-900"
-                        animate={{ width: `${Math.min(95, (streamProgress / 2200) * 100)}%` }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
-                      />
-                    </div>
-                    <div className="text-[10px] tracking-[0.2em] text-neutral-500 font-medium mt-3 tabular-nums">
-                      분석 생성 중 · {streamProgress.toLocaleString()}자
-                    </div>
-                  </div>
-                )}
               </div>
             </motion.div>
           )}
