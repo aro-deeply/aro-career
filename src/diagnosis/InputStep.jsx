@@ -330,6 +330,7 @@ export default function InputStep({
               {/* Field 01 */}
               <div>
                 <label
+                  htmlFor="diag-job-target"
                   style={{
                     display: "block",
                     fontSize: "0.6875rem",
@@ -342,10 +343,12 @@ export default function InputStep({
                 >
                   01 · 지원하는 자리
                 </label>
-                <p style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.6rem" }}>
+                <p id="diag-job-target-hint" style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.6rem" }}>
                   지원 회사나 직무를 알수록 더 정확한 기준으로 읽을 수 있습니다.
                 </p>
                 <input
+                  id="diag-job-target"
+                  aria-describedby="diag-job-target-hint"
                   type="text"
                   value={formData.jobTarget}
                   onChange={(e) => setFormData({ ...formData, jobTarget: e.target.value })}
@@ -367,8 +370,8 @@ export default function InputStep({
               </div>
 
               {/* Field 02 */}
-              <div>
-                <label
+              <fieldset style={{ border: 0, padding: 0, margin: 0 }}>
+                <legend
                   style={{
                     display: "block",
                     fontSize: "0.6875rem",
@@ -377,41 +380,49 @@ export default function InputStep({
                     fontWeight: 600,
                     textTransform: "uppercase",
                     marginBottom: "1rem",
+                    padding: 0,
                   }}
                 >
                   02 · 현재 막히는 지점
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  {SITUATIONS.map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => setFormData({ ...formData, situation: s })}
-                      style={{
-                        padding: "14px 12px",
-                        fontSize: "0.875rem",
-                        fontWeight: 500,
-                        border: formData.situation === s
-                          ? "2px solid #1C1917"
-                          : "1px solid rgba(28,25,23,.18)",
-                        background: formData.situation === s ? "#1C1917" : "#FFFFFF",
-                        color: formData.situation === s ? "#FAFAF7" : "#57534E",
-                        borderRadius: "8px",
-                        cursor: "pointer",
-                        wordBreak: "keep-all",
-                        lineHeight: 1.4,
-                        transition: "all .15s",
-                        textAlign: "left",
-                      }}
-                    >
-                      {s}
-                    </button>
-                  ))}
+                </legend>
+                <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="현재 막히는 지점">
+                  {SITUATIONS.map((s) => {
+                    const selected = formData.situation === s;
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => setFormData({ ...formData, situation: s })}
+                        style={{
+                          padding: "14px 12px",
+                          fontSize: "0.875rem",
+                          fontWeight: 500,
+                          border: selected
+                            ? "2px solid #1C1917"
+                            : "1px solid rgba(28,25,23,.18)",
+                          background: selected ? "#1C1917" : "#FFFFFF",
+                          color: selected ? "#FAFAF7" : "#57534E",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                          wordBreak: "keep-all",
+                          lineHeight: 1.4,
+                          transition: "all .15s",
+                          textAlign: "left",
+                        }}
+                      >
+                        {s}
+                      </button>
+                    );
+                  })}
                 </div>
-              </div>
+              </fieldset>
 
               {/* Field 03 */}
               <div>
                 <label
+                  htmlFor="diag-resume"
                   style={{
                     display: "block",
                     fontSize: "0.6875rem",
@@ -424,10 +435,12 @@ export default function InputStep({
                 >
                   03 · 현재 이력서 또는 면접 답변
                 </label>
-                <p style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.75rem" }}>
+                <p id="diag-resume-hint" style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.75rem" }}>
                   이력서 문장, 자기소개서 일부, 면접 답변 초안 중 무엇이든 입력할 수 있습니다.
                 </p>
                 <textarea
+                  id="diag-resume"
+                  aria-describedby="diag-resume-hint diag-resume-counter"
                   value={formData.resume}
                   onChange={(e) => setFormData({ ...formData, resume: e.target.value.slice(0, 3000) })}
                   placeholder="현재 작성한 문장을 그대로 붙여넣어 주세요."
@@ -453,7 +466,7 @@ export default function InputStep({
                   <p style={{ fontSize: "0.72rem", color: "#8B7355" }}>
                     주민등록번호, 주소, 연락처 등 민감한 개인정보는 제외하고 입력해 주세요.
                   </p>
-                  <span style={{ fontSize: "0.72rem", color: "#8B7355", flexShrink: 0, marginLeft: "12px", fontVariantNumeric: "tabular-nums" }}>
+                  <span id="diag-resume-counter" style={{ fontSize: "0.72rem", color: "#8B7355", flexShrink: 0, marginLeft: "12px", fontVariantNumeric: "tabular-nums" }}>
                     {formData.resume.length} / 3,000자
                   </span>
                 </div>
@@ -462,6 +475,7 @@ export default function InputStep({
               {/* Field 04 */}
               <div>
                 <label
+                  htmlFor="diag-rejection"
                   style={{
                     display: "block",
                     fontSize: "0.6875rem",
@@ -475,10 +489,12 @@ export default function InputStep({
                   04 · 추가로 확인할 맥락{" "}
                   <span style={{ color: "#8B7355", fontWeight: 400, fontSize: "0.65rem" }}>(선택)</span>
                 </label>
-                <p style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.6rem" }}>
+                <p id="diag-rejection-hint" style={{ fontSize: "0.75rem", color: "#8B7355", marginBottom: "0.6rem" }}>
                   최근 탈락 경험, 지원 중인 회사, 가장 고민되는 부분을 적어 주세요.
                 </p>
                 <input
+                  id="diag-rejection"
+                  aria-describedby="diag-rejection-hint"
                   type="text"
                   value={formData.rejection}
                   onChange={(e) => setFormData({ ...formData, rejection: e.target.value })}
@@ -501,6 +517,7 @@ export default function InputStep({
 
               {error && (
                 <div
+                  role="alert"
                   style={{
                     fontSize: "0.875rem",
                     color: "#b91c1c",

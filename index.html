@@ -650,7 +650,7 @@
   .dp-facts{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
 
   /* Director body */
-  .d-body h2{display:none} /* heading replaced by d-quote */
+  /* h2 is sr-only — visual heading is the d-quote below; SR users still hear the section heading */
   .d-quote { border-left: 4px solid var(--accent-dark); padding-left: 20px; margin:0 0 28px; position: relative; isolation: isolate; }
   .d-quote p {
     font-size: clamp(1.4rem, 2.4vw, 1.9rem);
@@ -1476,8 +1476,7 @@
 
       <div class="d-body">
         <span class="section-no">07 / Director</span>
-        <!-- hidden h2 kept for structure, visual heading is blockquote -->
-        <h2 aria-hidden="true">이력서에서 화려한 단어보다 <em>평가자가 납득할 근거를</em> 먼저 봅니다.</h2>
+        <h2 class="sr-only">디렉터 소개 — 평가자가 납득할 근거를 먼저 봅니다.</h2>
 
         <blockquote class="d-quote">
           <p>화려한 단어보다, <span class="text-marker">평가자가 납득할 근거</span>를 먼저 봅니다.</p>

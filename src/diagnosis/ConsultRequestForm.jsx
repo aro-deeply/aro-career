@@ -1,5 +1,17 @@
 import React from "react";
 
+const SR_ONLY_STYLE = {
+  position: "absolute",
+  width: "1px",
+  height: "1px",
+  padding: 0,
+  margin: "-1px",
+  overflow: "hidden",
+  clip: "rect(0,0,0,0)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
+
 export default function ConsultRequestForm({ result }) {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -40,6 +52,7 @@ export default function ConsultRequestForm({ result }) {
   if (status === "sent") {
     return (
       <div
+        role="status"
         style={{
           marginTop: "3rem",
           padding: "2rem",
@@ -83,7 +96,9 @@ export default function ConsultRequestForm({ result }) {
         결과를 보고 더 깊게 정리하고 싶은 경우에만 남겨 주세요. 상담 신청은 선택입니다.
       </p>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <label htmlFor="consult-name" style={SR_ONLY_STYLE}>이름</label>
         <input
+          id="consult-name"
           type="text"
           placeholder="이름"
           value={name}
@@ -100,7 +115,9 @@ export default function ConsultRequestForm({ result }) {
           onFocus={(e) => (e.target.style.borderColor = "#5E4A36")}
           onBlur={(e) => (e.target.style.borderColor = "rgba(28,25,23,.18)")}
         />
+        <label htmlFor="consult-email" style={SR_ONLY_STYLE}>이메일</label>
         <input
+          id="consult-email"
           type="email"
           placeholder="이메일"
           value={email}
@@ -143,7 +160,7 @@ export default function ConsultRequestForm({ result }) {
           </span>
         </label>
         {errMsg && (
-          <p style={{ color: "#b91c1c", fontSize: "0.875rem" }}>{errMsg}</p>
+          <p role="alert" style={{ color: "#b91c1c", fontSize: "0.875rem" }}>{errMsg}</p>
         )}
         <button
           onClick={submit}
