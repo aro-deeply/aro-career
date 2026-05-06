@@ -17,3 +17,7 @@ Thumbs.db
 # Editor
 .vscode/
 .idea/
+.claude/
+
+# Vite dev-time temp files
+vite.config.*.timestamp-*.*

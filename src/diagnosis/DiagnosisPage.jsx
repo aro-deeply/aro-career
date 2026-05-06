@@ -46,8 +46,8 @@ export default function DiagnosisPage() {
       setError("필수 항목을 모두 입력해주세요.");
       return;
     }
-    if (formData.resume.length < 50) {
-      setError("이력서 본문은 50자 이상 입력해주세요.");
+    if (formData.resume.length < 200) {
+      setError("이력서 본문은 200자 이상 입력해주세요. 정확한 진단을 위해 필요합니다.");
       return;
     }
     if (!consent) {

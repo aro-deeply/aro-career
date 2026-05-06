@@ -464,10 +464,10 @@ export default function InputStep({
                 />
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: "6px" }}>
                   <p style={{ fontSize: "0.72rem", color: "#8B7355" }}>
-                    주민등록번호, 주소, 연락처 등 민감한 개인정보는 제외하고 입력해 주세요.
+                    주민등록번호, 주소, 연락처 등 민감한 개인정보는 제외하고 입력해 주세요. 최소 200자 이상 입력해야 정확한 진단이 가능합니다.
                   </p>
-                  <span id="diag-resume-counter" style={{ fontSize: "0.72rem", color: "#8B7355", flexShrink: 0, marginLeft: "12px", fontVariantNumeric: "tabular-nums" }}>
-                    {formData.resume.length} / 3,000자
+                  <span id="diag-resume-counter" style={{ fontSize: "0.72rem", color: formData.resume.length > 0 && formData.resume.length < 200 ? "#b91c1c" : "#8B7355", flexShrink: 0, marginLeft: "12px", fontVariantNumeric: "tabular-nums" }}>
+                    {formData.resume.length} / 3,000자 {formData.resume.length > 0 && formData.resume.length < 200 ? `(${200 - formData.resume.length}자 더 필요)` : ""}
                   </span>
                 </div>
               </div>

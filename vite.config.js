@@ -9,6 +9,11 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         diagnosis: resolve(__dirname, "diagnosis.html"),
+        blogIndex: resolve(__dirname, "blog/index.html"),
+        blogPostResumeFeedback: resolve(
+          __dirname,
+          "blog/why-resume-feedback-fails.html"
+        ),
       },
     },
   },

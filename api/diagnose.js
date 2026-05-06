@@ -1,6 +1,55 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
-const ANTHROPIC_MODEL = "claude-sonnet-4-6";
+// Model can be overridden by env var without code changes (for A/B, upgrades)
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
+
+// Input length guards (server-side enforcement, mirrors client UI)
+const RESUME_MIN_LENGTH = 200;
+const RESUME_MAX_LENGTH = 3000;
+
+// ─── Rate Limiting (IP 기반) ─────────────────────────────────────────────────
+// Upstash Redis 무료 티어 사용. UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN
+// 환경변수가 없으면 rate limit는 자동 비활성화(개발 편의·환경변수 누락 시 fail-open).
+// 정책: IP당 1분 5회, 1일 20회. 둘 중 하나라도 초과하면 429.
+let limiterPerMinute = null;
+let limiterPerDay = null;
+if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+  const redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+  });
+  limiterPerMinute = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(5, "60 s"),
+    analytics: false,
+    prefix: "aro:diagnose:1m",
+  });
+  limiterPerDay = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(20, "1 d"),
+    analytics: false,
+    prefix: "aro:diagnose:1d",
+  });
+}
+
+async function checkRateLimit(ip) {
+  if (!limiterPerMinute || !limiterPerDay || !ip) {
+    return { ok: true };
+  }
+  const [minute, day] = await Promise.all([
+    limiterPerMinute.limit(ip),
+    limiterPerDay.limit(ip),
+  ]);
+  if (!minute.success) {
+    return { ok: false, scope: "1분", reset: minute.reset };
+  }
+  if (!day.success) {
+    return { ok: false, scope: "1일", reset: day.reset };
+  }
+  return { ok: true };
+}
 
 const SYSTEM_PROMPT = `당신은 ARO 스튜디오의 커리어 디렉터 관점으로 이력서를 진단합니다. 16년 HR 경력, 1,000회 이상의 면접 진행, 150건 이상의 컨설팅 사례를 가진 평가자의 시선으로 판단합니다.
 
@@ -137,14 +186,26 @@ export default async function handler(req, res) {
   if (!jobTarget || !situation || !resume) {
     return res.status(400).json({ error: "필수 항목이 누락되었습니다." });
   }
-  if (typeof resume !== "string" || resume.length < 50) {
-    return res.status(400).json({ error: "이력서 본문은 50자 이상이어야 합니다." });
+  if (typeof resume !== "string" || resume.length < RESUME_MIN_LENGTH) {
+    return res.status(400).json({ error: `이력서 본문은 ${RESUME_MIN_LENGTH}자 이상이어야 합니다.` });
+  }
+  if (resume.length > RESUME_MAX_LENGTH) {
+    return res.status(400).json({ error: `이력서 본문은 ${RESUME_MAX_LENGTH}자를 초과할 수 없습니다.` });
   }
   if (!turnstileToken) {
     return res.status(400).json({ error: "봇 검증 토큰이 누락되었습니다." });
   }
 
   const ip = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || null;
+
+  // Rate limit는 Turnstile 검증 이전에 — 외부 API 호출 비용 절약
+  const rl = await checkRateLimit(ip);
+  if (!rl.ok) {
+    const seconds = rl.reset ? Math.max(0, Math.ceil((rl.reset - Date.now()) / 1000)) : null;
+    const wait = seconds ? `약 ${seconds}초 후 다시 시도해주세요.` : "잠시 후 다시 시도해주세요.";
+    return res.status(429).json({ error: `요청이 너무 많습니다 (${rl.scope} 한도 초과). ${wait}` });
+  }
+
   const turnstileOk = await verifyTurnstile(turnstileToken, ip);
   if (!turnstileOk) {
     return res.status(403).json({ error: "봇 검증에 실패했습니다. 다시 시도해주세요." });

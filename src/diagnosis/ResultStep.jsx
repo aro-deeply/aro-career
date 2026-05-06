@@ -5,6 +5,8 @@ import {
   BOLD_HIGHLIGHT_CLASS,
 } from "../shared/render-markdown-bold.jsx";
 import ConsultRequestForm from "./ConsultRequestForm.jsx";
+import FeedbackCard from "./FeedbackCard.jsx";
+import { KAKAO_CHANNEL_URL, OPERATOR_EMAIL } from "../shared/contact.js";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -183,15 +185,87 @@ export default function ResultStep({ result, onReset }) {
       transition={{ duration: 0.5 }}
       style={{ background: VAR_BG }}
     >
+      {/* Print-only styles: hide chrome, expand result, B/W text */}
+      <style>{`
+        @media print {
+          @page { size: A4; margin: 18mm 16mm; }
+          /* Hide non-essential UI elements */
+          .aro-print-hide,
+          header[style*="sticky"],
+          .aro-skip-link,
+          a[href^="#"]:not(.aro-print-keep) {
+            display: none !important;
+          }
+          html, body { background: #FFFFFF !important; }
+          .aro-print-card {
+            box-shadow: none !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            max-width: 100% !important;
+          }
+          .aro-print-wrap {
+            padding: 0 !important;
+          }
+          /* Avoid orphaned headings */
+          h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
+          /* Each block stays together if possible */
+          section, article { page-break-inside: avoid; break-inside: avoid; }
+        }
+      `}</style>
+
       {/* Result content card */}
       <div
+        className="aro-print-wrap"
         style={{
           maxWidth: "860px",
           margin: "0 auto",
           padding: "clamp(2rem, 5vw, 4rem) 1.5rem",
         }}
       >
+        {/* Print/PDF action bar — hidden during print */}
         <div
+          className="aro-print-hide"
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "8px",
+            marginBottom: "1rem",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => window.print()}
+            aria-label="진단 결과 인쇄 또는 PDF로 저장"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "8px 14px",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              color: VAR_ACCENT,
+              background: "#FFFFFF",
+              border: `1px solid ${VAR_ACCENT}`,
+              borderRadius: "8px",
+              cursor: "pointer",
+              transition: "background .2s, color .2s",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = VAR_ACCENT;
+              e.currentTarget.style.color = "#FFFFFF";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = "#FFFFFF";
+              e.currentTarget.style.color = VAR_ACCENT;
+            }}
+          >
+            <span aria-hidden="true">⤓</span> PDF로 저장 / 인쇄
+          </button>
+        </div>
+
+        <div
+          className="aro-print-card"
           style={{
             background: "#FFFFFF",
             border: `1px solid ${VAR_BORDER10}`,
@@ -684,6 +758,7 @@ export default function ResultStep({ result, onReset }) {
 
         {/* Bottom CTA */}
         <div
+          className="aro-print-hide"
           style={{
             marginTop: "3rem",
             paddingTop: "2.5rem",
@@ -735,24 +810,48 @@ export default function ResultStep({ result, onReset }) {
             }}
           >
             <a
-              href="mailto:naminimiya@gmail.com"
+              href={KAKAO_CHANNEL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
-                background: VAR_INK,
-                color: "#FAFAF7",
+                background: "#FEE500",
+                color: "#191600",
                 padding: "15px 28px",
                 fontSize: "0.875rem",
-                fontWeight: 600,
-                letterSpacing: "0.1em",
+                fontWeight: 700,
+                letterSpacing: "0.04em",
                 textDecoration: "none",
                 borderRadius: "8px",
-                display: "inline-block",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
                 transition: "background .2s",
                 textAlign: "center",
               }}
-              onMouseOver={(e) => (e.currentTarget.style.background = "#000")}
-              onMouseOut={(e) => (e.currentTarget.style.background = VAR_INK)}
+              onMouseOver={(e) => (e.currentTarget.style.background = "#FFDD00")}
+              onMouseOut={(e) => (e.currentTarget.style.background = "#FEE500")}
+              aria-label="카카오톡 채널로 상담 문의"
             >
-              진단 결과를 바탕으로 상담 문의하기
+              <span aria-hidden="true">💬</span> 카카오톡으로 상담 문의하기
+            </a>
+            <a
+              href={`mailto:${OPERATOR_EMAIL}`}
+              style={{
+                background: "transparent",
+                color: VAR_INK,
+                padding: "15px 28px",
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                letterSpacing: "0.04em",
+                textDecoration: "none",
+                borderRadius: "8px",
+                display: "inline-block",
+                border: `1px solid rgba(28,25,23,.25)`,
+                transition: "border-color .2s, color .2s",
+                textAlign: "center",
+              }}
+            >
+              이메일 문의
             </a>
             <button
               onClick={onReset}
@@ -791,7 +890,10 @@ export default function ResultStep({ result, onReset }) {
           </p>
         </div>
 
-        <ConsultRequestForm result={result} />
+        <div className="aro-print-hide">
+          <FeedbackCard result={result} />
+          <ConsultRequestForm result={result} />
+        </div>
       </div>
     </motion.div>
   );
