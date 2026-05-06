@@ -165,6 +165,7 @@ export default function ConsultRequestForm({ result }) {
         <button
           onClick={submit}
           disabled={status === "sending" || !agree}
+          aria-busy={status === "sending"}
           style={{
             background: "#1C1917",
             color: "#FAFAF7",

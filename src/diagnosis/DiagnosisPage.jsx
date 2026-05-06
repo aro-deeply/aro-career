@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { AnimatePresence, MotionConfig } from "framer-motion";
 import LoadingStep from "./LoadingStep.jsx";
 import InputStep from "./InputStep.jsx";
 import ResultStep from "./ResultStep.jsx";
@@ -13,9 +13,22 @@ const STEP_STATUS_MESSAGE = {
 export default function DiagnosisPage() {
   const [step, setStep] = useState("input");
   const [statusMessage, setStatusMessage] = useState("");
+  const mainRef = useRef(null);
+  const previousStepRef = useRef(step);
 
   useEffect(() => {
     setStatusMessage(STEP_STATUS_MESSAGE[step] || "");
+
+    // After a step transition (not on first mount), move keyboard focus to <main>
+    // so SR/keyboard users land on the new content instead of staying at the form/old position.
+    if (previousStepRef.current !== step && mainRef.current) {
+      const t = setTimeout(() => {
+        mainRef.current?.focus({ preventScroll: false });
+      }, 80);
+      previousStepRef.current = step;
+      return () => clearTimeout(t);
+    }
+    previousStepRef.current = step;
   }, [step]);
   const [formData, setFormData] = useState({
     jobTarget: "",
@@ -94,6 +107,7 @@ export default function DiagnosisPage() {
   const fontStack = '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="min-h-screen bg-[#FAFAF7] text-[#1C1917]" style={{ fontFamily: fontStack }}>
       <style>{`
         .aro-skip-link {
@@ -125,6 +139,17 @@ export default function DiagnosisPage() {
           clip: rect(0,0,0,0);
           white-space: nowrap;
           border: 0;
+        }
+        /* Keyboard focus indicator — applies to interactive elements; main itself opts out via inline outline:none */
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible,
+        select:focus-visible,
+        summary:focus-visible {
+          outline: 2px solid #5E4A36;
+          outline-offset: 3px;
+          border-radius: 3px;
         }
       `}</style>
 
@@ -187,7 +212,7 @@ export default function DiagnosisPage() {
         </div>
       </header>
 
-      <main id="main-content" tabIndex={-1} style={{ scrollMarginTop: "84px", outline: "none" }}>
+      <main id="main-content" ref={mainRef} tabIndex={-1} style={{ scrollMarginTop: "84px", outline: "none" }}>
         <AnimatePresence mode="wait">
           {step === "input" && (
             <InputStep
@@ -222,5 +247,6 @@ export default function DiagnosisPage() {
         </div>
       </footer>
     </div>
+    </MotionConfig>
   );
 }
