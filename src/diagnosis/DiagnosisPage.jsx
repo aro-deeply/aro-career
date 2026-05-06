@@ -1,11 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import LoadingStep from "./LoadingStep.jsx";
 import InputStep from "./InputStep.jsx";
 import ResultStep from "./ResultStep.jsx";
 
+const STEP_STATUS_MESSAGE = {
+  input: "",
+  loading: "진단을 시작합니다. 잠시만 기다려 주세요.",
+  result: "진단 결과가 도착했습니다.",
+};
+
 export default function DiagnosisPage() {
   const [step, setStep] = useState("input");
+  const [statusMessage, setStatusMessage] = useState("");
+
+  useEffect(() => {
+    setStatusMessage(STEP_STATUS_MESSAGE[step] || "");
+  }, [step]);
   const [formData, setFormData] = useState({
     jobTarget: "",
     situation: "",
@@ -84,6 +95,45 @@ export default function DiagnosisPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF7] text-[#1C1917]" style={{ fontFamily: fontStack }}>
+      <style>{`
+        .aro-skip-link {
+          position: absolute;
+          top: -48px;
+          left: 16px;
+          z-index: 200;
+          padding: 12px 20px;
+          background: #1C1917;
+          color: #FAFAF7;
+          font-size: 0.9rem;
+          font-weight: 500;
+          border-radius: 4px;
+          transition: top .15s;
+          text-decoration: none;
+        }
+        .aro-skip-link:focus {
+          top: 12px;
+          outline: 3px solid #B48A5A;
+          outline-offset: 2px;
+        }
+        .aro-sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0,0,0,0);
+          white-space: nowrap;
+          border: 0;
+        }
+      `}</style>
+
+      <a className="aro-skip-link" href="#main-content">본문으로 바로가기</a>
+
+      <div className="aro-sr-only" role="status" aria-live="polite">
+        {statusMessage}
+      </div>
+
       {/* Light sticky header */}
       <header
         style={{
@@ -137,7 +187,7 @@ export default function DiagnosisPage() {
         </div>
       </header>
 
-      <main>
+      <main id="main-content" tabIndex={-1} style={{ scrollMarginTop: "84px", outline: "none" }}>
         <AnimatePresence mode="wait">
           {step === "input" && (
             <InputStep
