@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { JWT } from "google-auth-library";
 import {
   PATTERN_LABELS,
   SCORE_KEY_TO_PATTERN,
@@ -7,7 +8,59 @@ import {
 import { applyBoldHtml } from "../shared/markdown-bold.js";
 
 const OPERATOR_EMAIL = "naminimiya@gmail.com";
-const FROM = "ARO 진단 신청 <onboarding@resend.dev>";
+// 발신지. 도메인 인증 전에는 onboarding@resend.dev (수신함이 가입 이메일=OPERATOR로 한정).
+// Resend 도메인 인증 완료 후, Vercel 환경변수 RESEND_FROM 으로 본인 도메인 발신지로 교체:
+//   예) RESEND_FROM="ARO Career Direction <notice@arocareer.com>"
+const FROM = process.env.RESEND_FROM || "ARO 진단 신청 <onboarding@resend.dev>";
+
+// Sheets 탭 이름. 한국 계정 기본값은 "시트1". 영문 계정은 "Sheet1". 환경변수로 덮어쓰기 가능.
+const SHEETS_TAB_NAME = process.env.GOOGLE_SHEETS_TAB_NAME || "Sheet1";
+
+// ─── Google Sheets 적재 (선택, 환경변수 없으면 자동 비활성화) ────────────────
+async function appendToSheet({ submittedAt, name, email, diagnosis }) {
+  if (
+    !process.env.GOOGLE_SHEETS_ID ||
+    !process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ||
+    !process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+  ) {
+    return; // 미설정 — 조용히 스킵
+  }
+  try {
+    const auth = new JWT({
+      email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, "\n"),
+      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+    });
+    const { access_token } = await auth.authorize();
+
+    const d = diagnosis || {};
+    const rootLabel = PATTERN_LABELS[d.root_cause] || d.root_cause || "";
+    const nextStep = NEXT_STEP_LABELS[d.next_step_recommendation] || d.next_step_recommendation || "";
+    const verdict = String(d.key_verdict || "").replace(/\*\*/g, "");
+
+    const range = `${SHEETS_TAB_NAME}!A:G`;
+    const url =
+      `https://sheets.googleapis.com/v4/spreadsheets/${process.env.GOOGLE_SHEETS_ID}` +
+      `/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED`;
+
+    const r = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        values: [[submittedAt, name, email, rootLabel, nextStep, d.correctability || "", verdict]],
+      }),
+    });
+    if (!r.ok) {
+      const text = await r.text().catch(() => "");
+      console.error("Google Sheets append failed:", r.status, text.slice(0, 300));
+    }
+  } catch (e) {
+    console.error("Google Sheets append exception:", e?.message || e);
+  }
+}
 
 function isValidEmail(s) {
   return typeof s === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
@@ -55,6 +108,40 @@ function renderScoreRow(scoreKey, scoreValue, rootCause) {
       </td>
       <td style="padding:4px 0 4px 8px;font-size:13px;font-family:'Courier New',monospace;text-align:right;width:50px;vertical-align:middle">${num.toFixed(2)}</td>
     </tr>`;
+}
+
+// ─── Applicant confirmation email (sent to user, NOT operator) ───────────────
+// 신청자에게는 진단 핵심 판정 + 회신 안내만 전달. 전체 JSON·인용 근거는 운영자 메일에만.
+export function renderApplicantEmailHtml({ name, diagnosis }) {
+  const d = diagnosis || {};
+  const rootLabel = PATTERN_LABELS[d.root_cause] || "";
+  const nextStep = NEXT_STEP_LABELS[d.next_step_recommendation] || "";
+
+  const verdictBlock = d.key_verdict
+    ? `<div style="background:#fff8e1;border-left:4px solid #B48A5A;padding:14px 18px;margin:24px 0;font-size:14px"><div style="font-size:10px;letter-spacing:0.18em;color:#5E4A36;margin-bottom:8px;text-transform:uppercase;font-weight:700">핵심 판정</div><div style="font-weight:600">${renderBold(d.key_verdict)}</div></div>`
+    : "";
+
+  const rootRow = rootLabel
+    ? `<tr><td style="padding:6px 0;color:#8B7355;width:120px">근본 패턴</td><td style="padding:6px 0;font-weight:600">${escapeHtml(rootLabel)}</td></tr>`
+    : "";
+
+  const nextStepRow = nextStep
+    ? `<tr><td style="padding:6px 0;color:#8B7355">권장 다음 단계</td><td style="padding:6px 0;font-weight:600">${escapeHtml(nextStep)}</td></tr>`
+    : "";
+
+  return `<div style="font-family:'Apple SD Gothic Neo','Noto Sans KR',-apple-system,sans-serif;line-height:1.7;color:#1C1917;max-width:560px;margin:0 auto;padding:0;background:#FAFAF7">
+  <div style="background:#1C1917;color:#FAFAF7;padding:14px 24px;font-size:11px;letter-spacing:0.22em;font-weight:700;text-transform:uppercase">ARO · CAREER DIRECTION</div>
+  <div style="padding:24px">
+    <h2 style="font-size:18px;margin:0 0 14px;letter-spacing:-0.01em;color:#1C1917">${escapeHtml(name)}님, 진단 신청이 접수되었습니다.</h2>
+    <p style="margin:0 0 24px;font-size:14px;color:#57534E">평가자 관점의 진단 결과를 함께 검토한 뒤, 영업일 기준 1~2일 안에 본 메일 주소로 회신드립니다.</p>
+    ${verdictBlock}
+    <table style="width:100%;border-collapse:collapse;font-size:13px;margin:20px 0">${rootRow}${nextStepRow}</table>
+    <hr style="border:0;border-top:1px solid rgba(28,25,23,.08);margin:28px 0">
+    <p style="font-size:13px;color:#57534E;margin:0 0 12px"><strong style="color:#1C1917">회신 안내.</strong> 본 메일에 직접 답장하거나, <a href="mailto:${OPERATOR_EMAIL}" style="color:#5E4A36">${OPERATOR_EMAIL}</a> 으로 문의하실 수 있습니다. 진단의 상세 해석과 정리 방향은 회신 메일에 포함됩니다.</p>
+    <p style="font-size:12px;color:#8B7355;margin:20px 0 0">상담 전환은 결과 회신을 받은 뒤 선택하실 수 있습니다. 1:1 단일 상담(90분, 18만원), 1:1 패키지(총 3회, 50만원) 중 필요한 깊이만큼만 결정하시면 됩니다.</p>
+    <p style="font-size:11px;color:#8B7355;margin:32px 0 0;border-top:1px solid rgba(28,25,23,.08);padding-top:16px">입력 정보는 신청 후 6개월 자동 폐기됩니다. · ARO Career Direction · <a href="https://aro-career.vercel.app" style="color:#5E4A36">aro-career.vercel.app</a></p>
+  </div>
+</div>`;
 }
 
 export function renderEmailHtml({ name, email, submittedAt, diagnosis }) {
@@ -162,21 +249,47 @@ export default async function handler(req, res) {
   }
 
   const submittedAt = new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
-  const subject = `[ARO 진단 신청] ${name} / ${submittedAt}`;
-  const html = renderEmailHtml({ name, email, submittedAt, diagnosis });
+  const operatorSubject = `[ARO 진단 신청] ${name} / ${submittedAt}`;
+  const operatorHtml = renderEmailHtml({ name, email, submittedAt, diagnosis });
+  const applicantSubject = `[ARO] ${name}님, 진단 신청이 접수되었습니다`;
+  const applicantHtml = renderApplicantEmailHtml({ name, diagnosis });
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
-    const { error } = await resend.emails.send({
+
+    // 1. 운영자 알림 메일 (전체 진단 결과 포함)
+    const operatorResult = await resend.emails.send({
       from: FROM,
       to: [OPERATOR_EMAIL],
       replyTo: email,
-      subject,
-      html,
+      subject: operatorSubject,
+      html: operatorHtml,
     });
-    if (error) {
-      console.error("Resend error:", error);
+    if (operatorResult.error) {
+      console.error("Resend operator email error:", operatorResult.error);
     }
+
+    // 2. 신청자 확인 메일 (요약만 포함). 실패해도 사용자 응답에 영향 X.
+    // ⚠ 도메인 미인증 + Resend 무료 티어에서는 가입 이메일(=OPERATOR_EMAIL) 외 발송이 차단됨.
+    //    도메인 인증 후에만 신청자에게 실제로 도착함. 미인증 상태에서는 시도만 하고 로그.
+    try {
+      const applicantResult = await resend.emails.send({
+        from: FROM,
+        to: [email],
+        replyTo: OPERATOR_EMAIL,
+        subject: applicantSubject,
+        html: applicantHtml,
+      });
+      if (applicantResult.error) {
+        console.error("Resend applicant email error:", applicantResult.error);
+      }
+    } catch (e) {
+      console.error("Applicant email failed (non-blocking):", e?.message || e);
+    }
+
+    // 3. Google Sheets 적재 (실패해도 사용자 응답에 영향 X)
+    await appendToSheet({ submittedAt, name, email, diagnosis });
+
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error("lead handler failed:", err?.message || err);
