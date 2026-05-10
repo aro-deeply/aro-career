@@ -556,8 +556,8 @@ export default function InputStep({
                   <br />
                   <span style={{ color: "#8B7355", fontSize: "0.72rem" }}>
                     · 보관 기간: 신청 후 6개월 · 문의/삭제:{" "}
-                    <a href="mailto:naminimiya@gmail.com" style={{ textDecoration: "underline" }}>
-                      naminimiya@gmail.com
+                    <a href="mailto:info@aro-career.com" style={{ textDecoration: "underline" }}>
+                      info@aro-career.com
                     </a>
                   </span>
                 </span>
