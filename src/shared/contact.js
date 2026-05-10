@@ -4,4 +4,4 @@
 export const KAKAO_CHANNEL_URL = "https://pf.kakao.com/_WjxexbX/chat";
 
 // 운영자 이메일 (카카오톡이 막히는 환경 fallback)
-export const OPERATOR_EMAIL = "naminimiya@gmail.com";
+export const OPERATOR_EMAIL = "info@aro-career.com";
