@@ -4,4 +4,5 @@
 export const KAKAO_CHANNEL_URL = "https://pf.kakao.com/_WjxexbX/chat";
 
 // 운영자 이메일 (카카오톡이 막히는 환경 fallback)
+// info@aro-career.com → Cloudflare Email Routing 으로 naminimiya@gmail.com 으로 자동 포워딩.
 export const OPERATOR_EMAIL = "info@aro-career.com";

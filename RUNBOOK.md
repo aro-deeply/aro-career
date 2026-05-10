@@ -57,9 +57,14 @@ console.anthropic.com → Plans & Billing → Add credits.
 
 ### 운영자 메일 주소 변경
 
-`api/lead.js` 의 `OPERATOR_EMAIL` 상수 변경. **단, Resend 가입 이메일과 일치해야 발송 가능** (도메인 인증 안 한 무료 티어 제약).
+수신지/표시 주소가 두 곳에 분리되어 있다. **둘 다 갱신해야 함** (Chrome 익스텐션류 mass-replace는 백엔드를 자주 누락):
 
-도메인 인증을 진행하면 임의 발신/수신 가능.
+- **백엔드 실제 수신지**: `api/lead.js`의 `OPERATOR_EMAIL` 상수
+- **프론트 표시**: `src/shared/contact.js`의 `OPERATOR_EMAIL` + `index.html`/`blog/index.html` footer mailto + `src/diagnosis/InputStep.jsx`·`ConsultRequestForm.jsx`의 동의 문구 mailto
+
+발송이 가능하려면 **발신지(`from`)가 Resend에서 verified된 도메인을 써야** 임의 수신지로 보낼 수 있음. 코드 default(`onboarding@resend.dev`)는 Resend 공유 샌드박스라 verified 도메인이 있어도 무시되고 Resend 가입 이메일에만 발송 가능. 발신지는 `RESEND_FROM` 환경변수로 지정 (예: `ARO Career Direction <notice@aro-career.com>`).
+
+⚠ `RESEND_FROM`은 **Sensitive로 마킹하지 말 것** — 한 번 저장 후 값을 누구도(대시보드/CLI) 다시 못 봐서 디버깅이 어려워짐. 발신지는 비밀이 아님.
 
 ### 커스텀 도메인 연결 (예: aro.kr)
 
@@ -146,6 +151,13 @@ console.anthropic.com → Plans & Billing → Add credits.
 - **증상**: 운영자 알림 메일이 raw JSON 텍스트로 와서 가독성 낮음.
 - **해결**: `api/lead.js`의 `renderEmailHtml`을 카드 형식 HTML로 재작성. JSON 원본은 `<details>` 안에 보존.
 - **교훈**: 운영자도 사람. 데이터 보존성 + 가독성 둘 다 챙기기.
+
+### 4.8 메일이 안 도착함 — Resend 403 validation_error
+
+- **증상**: 진단은 정상 처리되는데 운영자/신청자 알림 메일 모두 미도착. Vercel 함수 로그에 `Resend operator email error: { statusCode: 403, name: 'validation_error', message: 'You can only send testing emails to your own email address (...).' }`.
+- **원인**: `RESEND_FROM` 미설정 또는 잘못된 형식. 코드 default(`onboarding@resend.dev`)는 Resend 공유 샌드박스라 **verified 도메인이 있어도 무시**되고 Resend 가입 이메일에만 발송 가능. DNS 레코드 박혀 있고 Resend 대시보드에서 Verified 떠도, `from`을 그 도메인으로 실제로 사용해야 무료 티어 제약이 풀림.
+- **해결**: Vercel 환경변수 `RESEND_FROM = "ARO Career Direction <notice@aro-career.com>"` 추가 (Sensitive 체크 해제) → Redeploy. 발신 메일박스(`notice@`)는 실제로 만들 필요 없음 (헤더 문자열일 뿐). 답장 경로는 코드 `replyTo`에서 분리됨.
+- **교훈**: DNS 인증 ≠ 발신 사용. Resend는 `from`을 보고 무료 티어 제약 적용 여부를 결정한다. 그리고 환경변수 Sensitive 플래그는 비밀 아닌 값에 쓰면 디버깅 자해.
 
 ---
 
