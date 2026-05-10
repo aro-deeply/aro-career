@@ -7,7 +7,7 @@ import {
 } from "../shared/diagnosis-dictionary.js";
 import { applyBoldHtml } from "../shared/markdown-bold.js";
 
-const OPERATOR_EMAIL = "naminimiya@gmail.com";
+const OPERATOR_EMAIL = "info@aro-career.com";
 // 발신지. 도메인 인증 전에는 onboarding@resend.dev (수신함이 가입 이메일=OPERATOR로 한정).
 // Resend 도메인 인증 완료 후, Vercel 환경변수 RESEND_FROM 으로 본인 도메인 발신지로 교체:
 //   예) RESEND_FROM="ARO Career Direction <notice@arocareer.com>"
