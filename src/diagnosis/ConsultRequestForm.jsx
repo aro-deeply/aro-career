@@ -154,8 +154,8 @@ export default function ConsultRequestForm({ result }) {
             <b>(필수)</b> 위 이름·이메일과 진단 결과가 운영자에게 전달됨에 동의합니다.{" "}
             입력한 정보는 상담 안내와 회신 목적으로만 사용됩니다.{" "}
             보관 기간 6개월. 문의/삭제:{" "}
-            <a href="mailto:naminimiya@gmail.com" style={{ textDecoration: "underline" }}>
-              naminimiya@gmail.com
+            <a href="mailto:info@aro-career.com" style={{ textDecoration: "underline" }}>
+              info@aro-career.com
             </a>
           </span>
         </label>
