@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-export default function LoadingStep() {
-  const [loadingProgress, setLoadingProgress] = useState(0);
+export default function LoadingStep({ progress = 0, preview = null }) {
+  const [timeBasedProgress, setTimeBasedProgress] = useState(0);
 
   useEffect(() => {
     const startedAt = Date.now();
@@ -10,10 +10,13 @@ export default function LoadingStep() {
     const id = setInterval(() => {
       const elapsed = Date.now() - startedAt;
       const pct = 95 * (1 - Math.exp(-elapsed / expectedMs));
-      setLoadingProgress(pct);
+      setTimeBasedProgress(pct);
     }, 250);
     return () => clearInterval(id);
   }, []);
+
+  // 스트리밍 수신량 기반 진행률이 우선, 첫 응답 전에는 시간 기반 곡선이 바닥을 받친다
+  const loadingProgress = Math.max(timeBasedProgress, progress);
 
   return (
     <motion.div
@@ -106,6 +109,76 @@ export default function LoadingStep() {
           >
             분석 중 · {Math.round(loadingProgress)}%
           </div>
+        </div>
+
+        <div aria-live="polite">
+          {preview?.keyVerdict && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              style={{
+                marginTop: "2.5rem",
+                maxWidth: "480px",
+                marginLeft: "auto",
+                marginRight: "auto",
+                padding: "1.25rem 1.5rem",
+                background: "#FFFFFF",
+                border: "1px solid rgba(28,25,23,.08)",
+                borderRadius: "8px",
+                textAlign: "left",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "0.625rem",
+                  letterSpacing: "0.2em",
+                  color: "#B48A5A",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                핵심 판정 먼저 확인
+              </div>
+              <div
+                style={{
+                  fontSize: "1rem",
+                  fontWeight: 700,
+                  color: "#1C1917",
+                  lineHeight: 1.5,
+                  wordBreak: "keep-all",
+                }}
+              >
+                {preview.keyVerdict}
+              </div>
+              {preview.rootDiagnosis && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4 }}
+                  style={{
+                    marginTop: "0.75rem",
+                    fontSize: "0.875rem",
+                    color: "#57534E",
+                    lineHeight: 1.7,
+                    wordBreak: "keep-all",
+                  }}
+                >
+                  {preview.rootDiagnosis}
+                </motion.p>
+              )}
+              <p
+                style={{
+                  marginTop: "0.75rem",
+                  fontSize: "0.75rem",
+                  color: "#8B7355",
+                }}
+              >
+                상세 근거와 정리 방향을 계속 분석하고 있습니다…
+              </p>
+            </motion.div>
+          )}
         </div>
       </div>
     </motion.div>

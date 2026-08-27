@@ -3,6 +3,13 @@ import { AnimatePresence, MotionConfig } from "framer-motion";
 import LoadingStep from "./LoadingStep.jsx";
 import InputStep from "./InputStep.jsx";
 import ResultStep from "./ResultStep.jsx";
+import { readDiagnosisStream, parseDiagnosisJson } from "./diagnose-stream.js";
+import { extractStreamPreview } from "./stream-preview.js";
+
+// 진행률 추정용 예상 응답 길이 (eval 실측: 평균 약 1,950토큰 ≈ 2,800자)
+const EXPECTED_RESPONSE_CHARS = 2800;
+// 스트리밍 delta마다 리렌더하지 않도록 UI 갱신 최소 간격
+const STREAM_UI_UPDATE_MS = 150;
 
 const STEP_STATUS_MESSAGE = {
   input: "",
@@ -40,6 +47,8 @@ export default function DiagnosisPage() {
   const [error, setError] = useState(null);
   const [consent, setConsent] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState(null);
+  const [streamProgress, setStreamProgress] = useState(0);
+  const [streamPreview, setStreamPreview] = useState(null);
 
   async function runDiagnosis() {
     if (!formData.jobTarget || !formData.situation || !formData.resume) {
@@ -59,6 +68,8 @@ export default function DiagnosisPage() {
       return;
     }
     setError(null);
+    setStreamProgress(0);
+    setStreamPreview(null);
     setStep("loading");
 
     const controller = new AbortController();
@@ -76,20 +87,42 @@ export default function DiagnosisPage() {
         }),
         signal: controller.signal,
       });
-      clearTimeout(timeoutId);
-      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
+        clearTimeout(timeoutId);
+        const data = await response.json().catch(() => ({}));
         setError(data?.error || "일시적 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
         setStep("input");
         return;
       }
-      setResult(data.result);
+
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        // 스트리밍 이전 버전 서버와의 호환 (배포 전환기·롤백 대비)
+        clearTimeout(timeoutId);
+        const data = await response.json().catch(() => ({}));
+        setResult(data.result);
+        setStep("result");
+        return;
+      }
+
+      let lastUiUpdate = 0;
+      const accumulated = await readDiagnosisStream(response.body, (acc) => {
+        const now = Date.now();
+        if (now - lastUiUpdate < STREAM_UI_UPDATE_MS) return;
+        lastUiUpdate = now;
+        setStreamProgress(Math.min(95, (acc.length / EXPECTED_RESPONSE_CHARS) * 100));
+        setStreamPreview(extractStreamPreview(acc));
+      });
+      clearTimeout(timeoutId);
+      setResult(parseDiagnosisJson(accumulated));
       setStep("result");
     } catch (err) {
       clearTimeout(timeoutId);
       console.error(err);
       if (err?.name === "AbortError") {
         setError("진단이 90초 안에 완료되지 않았습니다. 잠시 후 다시 시도해주세요.");
+      } else if (err?.userMessage) {
+        setError(err.userMessage);
       } else {
         setError("네트워크 오류입니다. 잠시 후 다시 시도해주세요.");
       }
@@ -228,7 +261,9 @@ export default function DiagnosisPage() {
             />
           )}
 
-          {step === "loading" && <LoadingStep key="loading" />}
+          {step === "loading" && (
+            <LoadingStep key="loading" progress={streamProgress} preview={streamPreview} />
+          )}
 
           {step === "result" && result && (
             <ResultStep key="result" result={result} onReset={resetForm} />

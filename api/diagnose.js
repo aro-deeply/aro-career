@@ -110,10 +110,12 @@ evidence의 quote는 이력서 원문에서 발췌하되, 다음 정보는 반�
 - 기타 고유명사로 개인을 특정할 수 있는 정보
 식별정보가 포함된 문장이라면 해당 부분을 [...]로 가리거나, 식별정보가 없는 다른 문장을 발췌합니다.
 
-【JSON 스키마】
+【JSON 스키마 · 반드시 아래 필드 순서 그대로 출력】
 {
   "root_cause": "pattern_01|pattern_02|pattern_03|pattern_04|pattern_05",
   "dominant_pattern": "동일 enum",
+  "key_verdict": "전체 진단을 한 문장으로 압축한 핵심 판정. 최대 60자 이내",
+  "root_diagnosis": "근본 진단 2-3문장. 가장 핵심 구문은 **별표 두 개**로 감싸 강조",
   "pattern_scores": {
     "pattern_01_generic_template": 0.0-1.0,
     "pattern_02_unsupported_claims": 0.0-1.0,
@@ -122,8 +124,6 @@ evidence의 quote는 이력서 원문에서 발췌하되, 다음 정보는 반�
     "pattern_05_industry_context_absence": 0.0-1.0
   },
   "evidence": [{"quote": "원문 발췌 (식별정보 마스킹)", "signal": "Pattern 번호 · 신호명", "why": "평가 근거 (경어체)"}] — 정확히 3건,
-  "root_diagnosis": "근본 진단 2-3문장. 가장 핵심 구문은 **별표 두 개**로 감싸 강조",
-  "key_verdict": "전체 진단을 한 문장으로 압축한 핵심 판정. 최대 60자 이내",
   "one_pager_summary": "정확히 3개 단락으로 \\n\\n 구분. 각 단락에서 핵심 구문은 **별표 두 개**로 강조. 400~600자",
   "correctability": "근본 결함 | 교정 가능 | 교정 가능하나 재검토 필요",
   "next_step_recommendation": "Rewrite | Rehearse | Direct",
@@ -162,6 +162,7 @@ ${resume}
 
 export const config = {
   maxDuration: 60,
+  supportsResponseStreaming: true,
 };
 
 export default async function handler(req, res) {
@@ -205,8 +206,11 @@ export default async function handler(req, res) {
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+  // 응답은 NDJSON 스트리밍: {"t":"delta","text":...} 이벤트가 생성 즉시 흘러가고,
+  // 마지막에 {"t":"done"} 또는 {"t":"error","message":...}로 끝난다.
+  // 첫 delta 이전의 실패는 기존과 동일하게 JSON 상태 응답으로 처리한다.
   try {
-    const response = await client.messages.create({
+    const stream = client.messages.stream({
       model: ANTHROPIC_MODEL,
       max_tokens: 4000,
       system: [
@@ -221,7 +225,18 @@ export default async function handler(req, res) {
       ],
     });
 
-    const text = response.content?.[0]?.text;
+    stream.on("text", (delta) => {
+      if (!res.headersSent) {
+        res.writeHead(200, {
+          "content-type": "application/x-ndjson; charset=utf-8",
+          "cache-control": "no-cache",
+        });
+      }
+      res.write(JSON.stringify({ t: "delta", text: delta }) + "\n");
+    });
+
+    const finalMessage = await stream.finalMessage();
+    const text = finalMessage.content?.[0]?.text;
     if (!text) {
       return res.status(502).json({ error: "AI 응답이 비어있습니다. 잠시 후 다시 시도해주세요." });
     }
@@ -232,21 +247,26 @@ export default async function handler(req, res) {
       .replace(/```\s*$/, "")
       .trim();
 
-    let parsed;
     try {
-      parsed = JSON.parse(cleaned);
+      JSON.parse(cleaned);
     } catch (e) {
-      console.error("JSON parse fail. stop_reason:", response.stop_reason, "preview:", text.slice(0, 500));
+      console.error("JSON parse fail. stop_reason:", finalMessage.stop_reason, "preview:", text.slice(0, 500));
       const hint =
-        response.stop_reason === "max_tokens"
+        finalMessage.stop_reason === "max_tokens"
           ? "AI 응답이 한도를 넘겨 끊겼습니다. 입력 길이를 줄이고 다시 시도해주세요."
           : "AI 응답 형식이 잘못되었습니다. 잠시 후 다시 시도해주세요.";
-      return res.status(502).json({ error: hint });
+      res.write(JSON.stringify({ t: "error", message: hint }) + "\n");
+      return res.end();
     }
 
-    return res.status(200).json({ result: parsed });
+    res.write(JSON.stringify({ t: "done" }) + "\n");
+    return res.end();
   } catch (err) {
     console.error("Anthropic call failed:", err?.message || err);
-    return res.status(502).json({ error: "일시적 오류입니다. 잠시 후 다시 시도해주세요." });
+    if (!res.headersSent) {
+      return res.status(502).json({ error: "일시적 오류입니다. 잠시 후 다시 시도해주세요." });
+    }
+    res.write(JSON.stringify({ t: "error", message: "일시적 오류입니다. 잠시 후 다시 시도해주세요." }) + "\n");
+    return res.end();
   }
 }

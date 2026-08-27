@@ -24,10 +24,12 @@ const SYSTEM_PROMPT = `당신은 ARO 스튜디오의 커리어 디렉터 관점�
 【출력】
 반드시 유효한 JSON 한 덩어리. 다른 텍스트 불가. evidence는 원문에서 직접 발췌하되 정확히 3건. one_pager_summary는 400~600자. root_cause와 dominant_pattern은 반드시 pattern_01~pattern_05 형태의 짧은 ID만 사용(긴 접미사 금지). 모든 한국어 문장은 반드시 경어체(~합니다)로 작성.
 
-【JSON 스키마】
+【JSON 스키마 · 반드시 아래 필드 순서 그대로 출력】
 {
   "root_cause": "pattern_01|pattern_02|pattern_03|pattern_04|pattern_05",
   "dominant_pattern": "동일 enum",
+  "key_verdict": "전체 진단을 한 문장으로 압축. 60자 이내",
+  "root_diagnosis": "근본 진단 2-3문장",
   "pattern_scores": {
     "pattern_01_generic_template": 0.0-1.0,
     "pattern_02_unsupported_claims": 0.0-1.0,
@@ -36,8 +38,6 @@ const SYSTEM_PROMPT = `당신은 ARO 스튜디오의 커리어 디렉터 관점�
     "pattern_05_industry_context_absence": 0.0-1.0
   },
   "evidence": [{"quote": "원문 발췌", "signal": "Pattern 번호 · 신호명", "why": "평가 근거"}] — 정확히 3건,
-  "root_diagnosis": "근본 진단 2-3문장",
-  "key_verdict": "전체 진단을 한 문장으로 압축. 60자 이내",
   "one_pager_summary": "정확히 3개 단락으로 \\n\\n 구분. 400~600자",
   "correctability": "근본 결함 | 교정 가능 | 교정 가능하나 재검토 필요",
   "next_step_recommendation": "Rewrite | Rehearse | Direct",
