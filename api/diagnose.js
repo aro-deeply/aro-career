@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { checkRateLimit } from "./_rate-limit.js";
 
 // Model can be overridden by env var without code changes (for A/B, upgrades)
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
@@ -11,7 +12,8 @@ const RESUME_MAX_LENGTH = 3000;
 
 // ─── Rate Limiting (IP 기반) ─────────────────────────────────────────────────
 // Upstash Redis 무료 티어 사용. UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN
-// 환경변수가 없으면 rate limit는 자동 비활성화(개발 편의·환경변수 누락 시 fail-open).
+// 환경변수가 없거나 Redis 호출이 실패하면(예: DB 소멸) rate limit는 자동
+// 비활성화 — fail-open 판정 규칙은 api/_rate-limit.js 참조.
 // 정책: IP당 1분 5회, 1일 20회. 둘 중 하나라도 초과하면 429.
 let limiterPerMinute = null;
 let limiterPerDay = null;
@@ -32,23 +34,6 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
     analytics: false,
     prefix: "aro:diagnose:1d",
   });
-}
-
-async function checkRateLimit(ip) {
-  if (!limiterPerMinute || !limiterPerDay || !ip) {
-    return { ok: true };
-  }
-  const [minute, day] = await Promise.all([
-    limiterPerMinute.limit(ip),
-    limiterPerDay.limit(ip),
-  ]);
-  if (!minute.success) {
-    return { ok: false, scope: "1분", reset: minute.reset };
-  }
-  if (!day.success) {
-    return { ok: false, scope: "1일", reset: day.reset };
-  }
-  return { ok: true };
 }
 
 const SYSTEM_PROMPT = `당신은 ARO 스튜디오의 커리어 디렉터 관점으로 이력서를 진단합니다. 16년 HR 경력, 1,000회 이상의 면접 진행, 150건 이상의 컨설팅 사례를 가진 평가자의 시선으로 판단합니다.
@@ -199,7 +184,7 @@ export default async function handler(req, res) {
   const ip = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || null;
 
   // Rate limit는 Turnstile 검증 이전에 — 외부 API 호출 비용 절약
-  const rl = await checkRateLimit(ip);
+  const rl = await checkRateLimit({ limiterPerMinute, limiterPerDay }, ip);
   if (!rl.ok) {
     const seconds = rl.reset ? Math.max(0, Math.ceil((rl.reset - Date.now()) / 1000)) : null;
     const wait = seconds ? `약 ${seconds}초 후 다시 시도해주세요.` : "잠시 후 다시 시도해주세요.";
