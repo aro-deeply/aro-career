@@ -66,6 +66,15 @@ console.anthropic.com → Plans & Billing → Add credits.
 
 ⚠ `RESEND_FROM`은 **Sensitive로 마킹하지 말 것** — 한 번 저장 후 값을 누구도(대시보드/CLI) 다시 못 봐서 디버깅이 어려워짐. 발신지는 비밀이 아님.
 
+### 레이트리밋(Upstash Redis) 관리
+
+진단 API는 IP당 1분 5회 / 1일 20회 제한 (`api/diagnose.js` + `api/_rate-limit.js`).
+
+- **DB**: Vercel Marketplace 공식 연동으로 프로비저닝된 `aro-career-ratelimit` (Upstash for Redis, iad1, Free 플랜 — 월 500,000 커맨드). Vercel 프로젝트 → Storage에서 관리.
+- **환경변수**: 연동이 자동 생성하는 이름은 `UPSTASH_REDIS_REST_*`가 **아니라** `KV_REST_API_URL` / `KV_REST_API_TOKEN` (레거시 Vercel KV 호환 명명, Sensitive라 값 열람 불가). 코드는 `UPSTASH_REDIS_REST_*` → `KV_REST_API_*` 순으로 fallback해서 읽는다. **수동으로 UPSTASH_* 이름을 만들면 연동 값을 가리므로 만들지 말 것.**
+- **DB가 또 사라지면**: 진단은 죽지 않는다(fail-open, 레이트리밋만 조용히 꺼짐). Storage에서 새 DB 생성 → 프로젝트 Connect → Redeploy만 하면 코드 수정 없이 복구.
+- **작동 검증**: 가짜 Turnstile 토큰으로 `/api/diagnose`에 연속 POST → 5회 403 후 6회째 429면 정상. 계속 403만 나오면 Redis 연결 안 됨(fail-open 상태).
+
 ### 커스텀 도메인 연결 (예: aro.kr)
 
 1. 도메인 사두기 (가비아·카페24·Cloudflare Registrar 등)
@@ -82,6 +91,7 @@ console.anthropic.com → Plans & Billing → Add credits.
 | RESEND_API_KEY | Resend Dashboard → API Keys → 옛 키 Revoke + 새 키 발급 → Vercel 업데이트 |
 | TURNSTILE_SECRET_KEY | Cloudflare → Turnstile → 위젯 → Rotate Secret → Vercel 업데이트 |
 | TURNSTILE_SITE_KEY | 거의 회전 불필요 (공개 키). 필요시 위젯 재생성 후 코드의 sitekey 직접 박힌 곳도 수정 |
+| KV_REST_API_TOKEN (Upstash) | Marketplace 연동 관리 변수 — Vercel에서 직접 수정하지 말 것. Upstash 콘솔(Storage → Open in Upstash)에서 토큰 회전하면 연동이 갱신. 이후 Redeploy |
 
 > **Vercel 환경변수 변경 후엔 항상 Redeploy 필요** (자동 안 됨).
 
@@ -159,6 +169,17 @@ console.anthropic.com → Plans & Billing → Add credits.
 - **해결**: Vercel 환경변수 `RESEND_FROM = "ARO Career Direction <notice@aro-career.com>"` 추가 (Sensitive 체크 해제) → Redeploy. 발신 메일박스(`notice@`)는 실제로 만들 필요 없음 (헤더 문자열일 뿐). 답장 경로는 코드 `replyTo`에서 분리됨.
 - **교훈**: DNS 인증 ≠ 발신 사용. Resend는 `from`을 보고 무료 티어 제약 적용 여부를 결정한다. 그리고 환경변수 Sensitive 플래그는 비밀 아닌 값에 쓰면 디버깅 자해.
 
+### 4.9 진단 엔진 전면 불통 — Upstash DB 소멸로 500 (2026-08-27)
+
+- **증상**: 진단 제출 시 "일시적 오류가 발생했습니다" 표시. `/api/diagnose`가 HTTP 500. Vercel 로그에 `Error: getaddrinfo ENOTFOUND national-kiwi-70429.upstash.io`.
+- **원인**: 두 겹. (1) Upstash 무료 티어가 장기 미사용 DB를 삭제해 레이트리밋용 Redis 호스트가 DNS에서 소멸. (2) `checkRateLimit()`이 try/catch 밖에서 await되어 Redis 예외가 함수 전체를 크래시 — 부가 기능(레이트리밋) 장애가 핵심 기능(진단)을 죽였다. 코드 주석은 "환경변수 누락 시 fail-open"이었지만 "환경변수는 있는데 DB만 죽은" 경우는 fail-closed였음.
+- **해결**: ① 판정 로직을 `api/_rate-limit.js`로 추출하고 Redis 예외 시 fail-open (커밋 94ebc71) — 이것만으로 진단 즉시 복구. ② Marketplace 공식 연동으로 새 DB `aro-career-ratelimit` 프로비저닝 + 코드에 `KV_REST_API_*` fallback 추가 (커밋 1e88210). ③ 죽은 DB를 가리키던 수동 `UPSTASH_REDIS_REST_URL/TOKEN` 변수 삭제 (코드가 그 이름을 우선 읽어 새 값을 가리므로).
+- **교훈**:
+  - 부가 기능의 인프라 장애가 핵심 기능을 죽이면 안 된다. 외부 의존 호출은 fail-open/fail-closed를 명시적으로 설계하고, 주석의 약속("fail-open")과 실제 동작을 일치시킬 것.
+  - 무료 티어 DB는 저트래픽 서비스에서 소리 없이 사라질 수 있다. 진단 500이면 Vercel 로그에서 `ENOTFOUND *.upstash.io`부터 확인.
+  - Marketplace 연동의 자동 env 이름은 SDK 문서와 다를 수 있다 (Upstash인데 `KV_REST_API_*`). 연동 후 반드시 환경변수 페이지에서 실제 생성된 이름 확인.
+  - 429 응답이 곧 헬스체크다: 한도 초과가 발생해야 Redis가 살아있다는 뜻.
+
 ---
 
 ## 5. 응급 절차
@@ -221,5 +242,5 @@ b3e7328  fix: Site key 오타 (TOP → T0P, O → 0)
 - Resend 본인 도메인 인증 (운영자 메일 주소 자유롭게 변경 가능)
 - Google Sheets 연동 (Resend 메일 외에 명단 자동 누적)
 - 진단 결과 → 사용자에게도 PDF로 발송 (옵션)
-- 사용량 ↑ 시 IP 기반 일일 제한 추가 (Upstash Redis)
+- ~~사용량 ↑ 시 IP 기반 일일 제한 추가 (Upstash Redis)~~ → 완료 (1분 5회 / 1일 20회, 2장 "레이트리밋 관리" 참조)
 - 다국어 (영어 진단 옵션)
