@@ -80,13 +80,13 @@ const SYSTEM_PROMPT = `당신은 ARO 스튜디오의 커리어 디렉터 관점�
 
 【매우 중요 · 종합 진단(one_pager_summary) 작성 규칙】
 one_pager_summary는 반드시 다음 구조로 작성합니다:
-1. 3~4개 단락으로 분리. 각 단락은 두 번의 줄바꿈(\\n\\n)으로 구분
-2. 각 단락은 3~5문장 내외
-3. 단락별 주제 분리: (1) 뿌리 원인 진단 (2) 표면 증상 분석 (3) 구체 지점 지적 (4) 교정 가능성과 다음 단계
+1. 정확히 3개 단락으로 분리. 각 단락은 두 번의 줄바꿈(\\n\\n)으로 구분
+2. 각 단락은 2~4문장 내외
+3. 단락별 주제 분리: (1) 뿌리 원인 진단 (2) 표면 증상과 구체 지점 (3) 교정 가능성과 다음 단계
 4. 각 단락에서 가장 중요한 핵심 문장이나 구문은 **별표 두 개**로 감싸서 강조 (마크다운 볼드 문법). 단락당 1~2회 사용
 
 【출력】
-반드시 유효한 JSON 한 덩어리. 다른 텍스트 불가. evidence는 원문에서 직접 발췌. one_pager_summary는 600~900자. 모든 한국어 문장은 반드시 경어체(~합니다)로 작성.
+반드시 유효한 JSON 한 덩어리. 다른 텍스트 불가. evidence는 원문에서 직접 발췌하되 정확히 3건. one_pager_summary는 400~600자. root_cause와 dominant_pattern은 반드시 pattern_01~pattern_05 형태의 짧은 ID만 사용(긴 접미사 금지). 모든 한국어 문장은 반드시 경어체(~합니다)로 작성.
 
 【어휘 다양성 추가 지시】
 진단 생성 시 "뿌리"라는 단어는 내부 개념 설명용으로만 사용하고, 실제 출력 텍스트(root_diagnosis, one_pager_summary 등)에서는 다음과 같이 유사어로 분산합니다:
@@ -121,10 +121,10 @@ evidence의 quote는 이력서 원문에서 발췌하되, 다음 정보는 반�
     "pattern_04_job_fit_mismatch": 0.0-1.0,
     "pattern_05_industry_context_absence": 0.0-1.0
   },
-  "evidence": [{"quote": "원문 발췌 (식별정보 마스킹)", "signal": "Pattern 번호 · 신호명", "why": "평가 근거 (경어체)"}],
+  "evidence": [{"quote": "원문 발췌 (식별정보 마스킹)", "signal": "Pattern 번호 · 신호명", "why": "평가 근거 (경어체)"}] — 정확히 3건,
   "root_diagnosis": "근본 진단 2-3문장. 가장 핵심 구문은 **별표 두 개**로 감싸 강조",
   "key_verdict": "전체 진단을 한 문장으로 압축한 핵심 판정. 최대 60자 이내",
-  "one_pager_summary": "3~4개 단락으로 \\n\\n 구분. 각 단락에서 핵심 구문은 **별표 두 개**로 강조. 600~900자",
+  "one_pager_summary": "정확히 3개 단락으로 \\n\\n 구분. 각 단락에서 핵심 구문은 **별표 두 개**로 강조. 400~600자",
   "correctability": "근본 결함 | 교정 가능 | 교정 가능하나 재검토 필요",
   "next_step_recommendation": "Rewrite | Rehearse | Direct",
   "self_reflection_questions": ["자가 성찰 질문 3개 (경어체, 물음표로 끝)"]
@@ -155,7 +155,7 @@ ${resume}
 위 입력에 대해 JSON 스키마에 따라 진단 결과를 생성해주세요.
 - 모든 한국어 문장은 경어체(~합니다)로 작성
 - root_diagnosis와 one_pager_summary에서 핵심 구문은 **별표 두 개**로 감싸 강조
-- one_pager_summary는 반드시 3~4개 단락으로 \\n\\n 구분
+- one_pager_summary는 반드시 정확히 3개 단락으로 \\n\\n 구분, 400~600자
 - key_verdict는 전체 진단을 한 문장으로 압축
 - JSON 외의 텍스트는 절대 포함하지 마세요`;
 }

@@ -22,7 +22,7 @@ const RUNS_PER_INPUT = Number(process.env.EVAL_RUNS) || 3;
 const SYSTEM_PROMPT = `당신은 ARO 스튜디오의 커리어 디렉터 관점으로 이력서를 진단합니다. 16년 HR 경력, 1,000회 이상의 면접 진행, 150건 이상의 컨설팅 사례를 가진 평가자의 시선으로 판단합니다.
 
 【출력】
-반드시 유효한 JSON 한 덩어리. 다른 텍스트 불가. evidence는 원문에서 직접 발췌. one_pager_summary는 600~900자. 모든 한국어 문장은 반드시 경어체(~합니다)로 작성.
+반드시 유효한 JSON 한 덩어리. 다른 텍스트 불가. evidence는 원문에서 직접 발췌하되 정확히 3건. one_pager_summary는 400~600자. root_cause와 dominant_pattern은 반드시 pattern_01~pattern_05 형태의 짧은 ID만 사용(긴 접미사 금지). 모든 한국어 문장은 반드시 경어체(~합니다)로 작성.
 
 【JSON 스키마】
 {
@@ -35,10 +35,10 @@ const SYSTEM_PROMPT = `당신은 ARO 스튜디오의 커리어 디렉터 관점�
     "pattern_04_job_fit_mismatch": 0.0-1.0,
     "pattern_05_industry_context_absence": 0.0-1.0
   },
-  "evidence": [{"quote": "원문 발췌", "signal": "Pattern 번호 · 신호명", "why": "평가 근거"}],
+  "evidence": [{"quote": "원문 발췌", "signal": "Pattern 번호 · 신호명", "why": "평가 근거"}] — 정확히 3건,
   "root_diagnosis": "근본 진단 2-3문장",
   "key_verdict": "전체 진단을 한 문장으로 압축. 60자 이내",
-  "one_pager_summary": "3~4단락",
+  "one_pager_summary": "정확히 3개 단락으로 \\n\\n 구분. 400~600자",
   "correctability": "근본 결함 | 교정 가능 | 교정 가능하나 재검토 필요",
   "next_step_recommendation": "Rewrite | Rehearse | Direct",
   "self_reflection_questions": ["질문 3개"]
@@ -55,15 +55,18 @@ ${resume}
 }
 
 async function callDiagnose(client, input) {
+  const startedAt = Date.now();
   const response = await client.messages.create({
     model: ANTHROPIC_MODEL,
     max_tokens: 4000,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: buildUserMessage(input) }],
   });
+  const elapsedMs = Date.now() - startedAt;
   const text = response.content?.[0]?.text || "";
   const cleaned = text.trim().replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim();
-  return JSON.parse(cleaned);
+  const parsed = JSON.parse(cleaned);
+  return { parsed, elapsedMs, outputTokens: response.usage?.output_tokens ?? null };
 }
 
 function stdev(arr) {
@@ -98,14 +101,20 @@ async function main() {
   console.log(`────────────────────────────────────────────`);
 
   const allResults = [];
+  const allLatencies = [];
+  const allOutputTokens = [];
   for (const input of EVAL_INPUTS) {
     console.log(`\n▶ ${input.id} — ${input.label}`);
     const runs = [];
     for (let i = 0; i < RUNS_PER_INPUT; i++) {
       try {
-        const result = await callDiagnose(client, input);
-        runs.push(result);
-        process.stdout.write(`  run ${i + 1}/${RUNS_PER_INPUT}: root=${result.root_cause}\n`);
+        const { parsed, elapsedMs, outputTokens } = await callDiagnose(client, input);
+        runs.push(parsed);
+        allLatencies.push(elapsedMs);
+        if (outputTokens != null) allOutputTokens.push(outputTokens);
+        process.stdout.write(
+          `  run ${i + 1}/${RUNS_PER_INPUT}: root=${parsed.root_cause} · ${(elapsedMs / 1000).toFixed(1)}s · ${outputTokens ?? "?"} out-tokens\n`
+        );
       } catch (e) {
         console.error(`  run ${i + 1}/${RUNS_PER_INPUT} 실패:`, e.message);
         runs.push(null);
@@ -158,6 +167,16 @@ async function main() {
   const allStdevs = allResults.flatMap((r) => Object.values(r.scoreStats).map((s) => s.stdev));
   console.log(`pattern_scores 평균 표준편차: ${mean(allStdevs).toFixed(3)} (낮을수록 좋음)`);
   console.log(`최대 표준편차: ${Math.max(...allStdevs).toFixed(3)}`);
+  if (allLatencies.length) {
+    const sorted = [...allLatencies].sort((a, b) => a - b);
+    const p50 = sorted[Math.floor(sorted.length / 2)];
+    console.log(
+      `응답 시간: 평균 ${(mean(allLatencies) / 1000).toFixed(1)}s · 중앙값 ${(p50 / 1000).toFixed(1)}s · 최대 ${(Math.max(...allLatencies) / 1000).toFixed(1)}s`
+    );
+  }
+  if (allOutputTokens.length) {
+    console.log(`출력 토큰: 평균 ${Math.round(mean(allOutputTokens))} · 최대 ${Math.max(...allOutputTokens)}`);
+  }
   console.log(`────────────────────────────────────────────\n`);
 }
 
