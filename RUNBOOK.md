@@ -36,6 +36,17 @@
 5. https://aro-career.vercel.app 에서 확인
 ```
 
+### 진단 응답 구조 — 스트리밍 (2026-08-28~)
+
+`/api/diagnose`는 JSON 한 방이 아니라 **NDJSON 스트리밍**으로 응답한다:
+`{"t":"delta","text":...}` 반복 → 마지막에 `{"t":"done"}` 또는 `{"t":"error","message":...}`.
+검증 실패·레이트리밋(400/403/429) 등 스트림 시작 전 오류는 기존처럼 JSON 상태 응답.
+
+- 로딩 화면의 진행률은 실제 수신량 기반. `key_verdict`가 도착하면(제출 후 4~6초경) "핵심 판정 먼저 확인" 카드가 뜬다 — 안 뜨면 스트리밍이 죽었다는 신호 (콘솔·Vercel 로그 확인).
+- 관련 파일: `api/diagnose.js`(서버 중계) · `src/diagnosis/diagnose-stream.js`(리더) · `stream-preview.js`(미리보기 추출) · `LoadingStep.jsx`(표시)
+- 프롬프트의 JSON 스키마는 **필드 순서가 계약**이다 (key_verdict·root_diagnosis가 앞이라 미리보기가 초반에 도착). 스키마 수정 시 순서 유지 + `tests/eval/run-eval.js` 동기화 + eval 재실행.
+- 속도 이력: 44초(원본) → 33초(출력 다이어트, cc522dd) + 스트리밍 미리보기(a4e9622). 총 시간을 더 줄이려면 출력 분량 추가 축소가 유일한 레버.
+
 ### Anthropic 크레딧 추가 충전
 
 console.anthropic.com → Plans & Billing → Add credits.
