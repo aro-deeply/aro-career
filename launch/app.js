@@ -26,21 +26,20 @@ function splitHeadingIntoLines(heading) {
     .map((html, i) => `<span class="line" style="--d:${(i * 0.09).toFixed(2)}s"><span>${html.trim()}</span></span>`)
     .join('');
 }
-const headings = document.querySelectorAll('.display, .title, .about-quote, .cta-title');
+const headings = document.querySelectorAll('.display, .title, .about-title, .cta-title');
 headings.forEach(splitHeadingIntoLines);
 
 // ── 떠오르며 나타날 요소들: 같은 묶음 안에서는 순서대로 조금씩 늦게 ──
 const revealGroups = [
-  '.hero .announce, .hero .hero-lead, .hero .actions',
-  '.bento > *',
-  '.kicker',
-  '.section-lead, .tree-note, .fine, .ai-actions, .service-note',
+  '.hero .announce, .hero .hero-lead, .hero .actions, .hero .hero-proof',
+  '.help-grid > *',
+  '.eyebrow',
+  '.section-lead, .fine, .ai-actions, .sub-title, .margin-note',
   '.flow-step',
   '.qa li',
-  '.tree .tier',
-  '.talk-row, .talk-q',
-  '.steps li',
+  '.compare, .patterns',
   '.service-item',
+  '.steps li',
   '.report',
   '.faq details',
   '.about-text, .about-sign',
@@ -60,6 +59,27 @@ for (const selector of revealGroups) {
     });
   }
 }
+
+// ── 다듬은 문장을 한 글자씩 나타나게 ──
+function splitIntoCharacters(el) {
+  let index = 0;
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  for (const node of nodes) {
+    const fragment = document.createDocumentFragment();
+    for (const char of node.textContent) {
+      const span = document.createElement('span');
+      span.className = 'ch';
+      span.style.setProperty('--i', index++);
+      span.textContent = char;
+      fragment.append(span);
+    }
+    node.replaceWith(fragment);
+  }
+  el.setAttribute('aria-label', el.textContent);
+}
+document.querySelectorAll('[data-type]').forEach(splitIntoCharacters);
 
 // ── 숫자가 0부터 올라가게 ──
 function countUp(el) {
@@ -100,12 +120,11 @@ const observer = new IntersectionObserver(entries => {
     const el = entry.target;
     el.classList.add('is-in');
     if (el.matches('.bars')) playBars(el);
-    if (el.matches('.stat')) countUp(el);
     observer.unobserve(el);
   }
 }, {rootMargin: '0px 0px -10% 0px', threshold: 0.15});
 
-document.querySelectorAll('[data-reveal], .display, .title, .about-quote, .cta-title, .flow, .stat').forEach(el => observer.observe(el));
+document.querySelectorAll('[data-reveal], .display, .title, .about-title, .cta-title, .flow, .demo, .chat').forEach(el => observer.observe(el));
 document.querySelectorAll('.bars').forEach(el => {
   if (!el.closest('[hidden]')) observer.observe(el);
 });
