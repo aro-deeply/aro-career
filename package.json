@@ -9,7 +9,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run build:launch && node scripts/merge-launch-output.mjs",
+    "build:launch": "vite build --config launch.vite.config.js",
     "preview": "vite preview",
     "test": "node --import tsx --test \"tests/**/*.test.{js,jsx}\"",
     "eval": "node --import tsx tests/eval/run-eval.js"

@@ -3,6 +3,5 @@
 // 채팅 직진 URL — 클릭 시 1:1 채팅 화면으로 바로 이동. 채널 홈으로 보내려면 "/chat" 제거.
 export const KAKAO_CHANNEL_URL = "https://pf.kakao.com/_WjxexbX/chat";
 
-// 운영자 이메일 (카카오톡이 막히는 환경 fallback)
-// info@aro-career.com → Cloudflare Email Routing 으로 naminimiya@gmail.com 으로 자동 포워딩.
-export const OPERATOR_EMAIL = "info@aro-career.com";
+// 운영자가 문의를 직접 확인하는 주소 (카카오톡이 막히는 환경 fallback)
+export const OPERATOR_EMAIL = "aro.deeply@gmail.com";

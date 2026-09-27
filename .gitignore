@@ -21,3 +21,6 @@ Thumbs.db
 
 # Vite dev-time temp files
 vite.config.*.timestamp-*.*
+.env
+.env.*
+!.env.example

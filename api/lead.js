@@ -7,7 +7,7 @@ import {
 } from "../shared/diagnosis-dictionary.js";
 import { applyBoldHtml } from "../shared/markdown-bold.js";
 
-const OPERATOR_EMAIL = "info@aro-career.com";
+const OPERATOR_EMAIL = "aro.deeply@gmail.com";
 // 발신지. 도메인 인증 전에는 onboarding@resend.dev (수신함이 가입 이메일=OPERATOR로 한정).
 // Resend 도메인 인증 완료 후, Vercel 환경변수 RESEND_FROM 으로 본인 도메인 발신지로 교체:
 //   예) RESEND_FROM="ARO Career Direction <notice@arocareer.com>"
@@ -267,6 +267,9 @@ export default async function handler(req, res) {
     });
     if (operatorResult.error) {
       console.error("Resend operator email error:", operatorResult.error);
+      return res.status(502).json({
+        error: "문의 메일을 전달하지 못했습니다. 잠시 후 다시 시도하거나 이메일로 문의해 주세요.",
+      });
     }
 
     // 2. 신청자 확인 메일 (요약만 포함). 실패해도 사용자 응답에 영향 X.
@@ -293,6 +296,8 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error("lead handler failed:", err?.message || err);
-    return res.status(200).json({ ok: true });
+    return res.status(502).json({
+      error: "문의 메일을 전달하지 못했습니다. 잠시 후 다시 시도하거나 이메일로 문의해 주세요.",
+    });
   }
 }
