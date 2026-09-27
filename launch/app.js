@@ -113,6 +113,43 @@ function playBars(list) {
   });
 }
 
+// ── 대화: 한 메시지씩, ARO 답 앞에는 '입력 중' 표시 ──
+function playChat(chat) {
+  const messages = [...chat.querySelectorAll('.msg')];
+  if (reduceMotion) {
+    messages.forEach(m => { if (!m.matches('.msg--typing')) m.classList.add('show'); });
+    chat.classList.add('flagged');
+    return;
+  }
+  let delay = 150;
+  messages.forEach(message => {
+    const isTyping = message.matches('.msg--typing');
+    setTimeout(() => {
+      message.classList.add('show');
+      // 첫 답이 나온 뒤 모호한 표현에 밑줄
+      if (message.querySelector('.vague')) setTimeout(() => chat.classList.add('flagged'), 450);
+      if (isTyping) setTimeout(() => message.classList.remove('show'), 1100);
+    }, delay);
+    delay += isTyping ? 1100 : 900;
+  });
+}
+
+// ── 추천 단계: 하나씩 훑은 뒤 추천에 멈춘다 ──
+function playNextSteps(next) {
+  const steps = [...next.querySelectorAll('.next-step')];
+  if (reduceMotion) { next.classList.add('done'); return; }
+  const order = [...steps, ...steps];
+  order.forEach((step, i) => {
+    setTimeout(() => {
+      steps.forEach(s => s.classList.toggle('scan', s === step));
+    }, 300 + i * 220);
+  });
+  setTimeout(() => {
+    steps.forEach(s => s.classList.remove('scan'));
+    next.classList.add('done');
+  }, 300 + order.length * 220);
+}
+
 // ── 화면에 들어오면 .is-in ──
 const observer = new IntersectionObserver(entries => {
   for (const entry of entries) {
@@ -120,11 +157,13 @@ const observer = new IntersectionObserver(entries => {
     const el = entry.target;
     el.classList.add('is-in');
     if (el.matches('.bars')) playBars(el);
+    if (el.matches('.chat-seq')) playChat(el);
+    if (el.matches('.next')) playNextSteps(el);
     observer.unobserve(el);
   }
 }, {rootMargin: '0px 0px -10% 0px', threshold: 0.15});
 
-document.querySelectorAll('[data-reveal], .display, .title, .about-title, .cta-title, .flow, .demo, .chat').forEach(el => observer.observe(el));
+document.querySelectorAll('[data-reveal], .display, .title, .about-title, .cta-title, .flow, .demo, .chat, .chat-seq, .next').forEach(el => observer.observe(el));
 document.querySelectorAll('.bars').forEach(el => {
   if (!el.closest('[hidden]')) observer.observe(el);
 });
@@ -133,7 +172,7 @@ document.querySelectorAll('.bars').forEach(el => {
 const tabs = [...document.querySelectorAll('.tabs [role="tab"]')];
 const panels = tabs.map(tab => document.getElementById(tab.getAttribute('aria-controls')));
 
-function selectTab(index, {focus = false} = {}) {
+function selectTab(index, {focus = false, replay = true} = {}) {
   tabs.forEach((tab, i) => {
     const selected = i === index;
     tab.setAttribute('aria-selected', String(selected));
@@ -142,7 +181,7 @@ function selectTab(index, {focus = false} = {}) {
   });
   if (focus) tabs[index].focus();
   const bars = panels[index].querySelector('.bars');
-  if (bars) {
+  if (bars && replay) {
     // 트랜지션 없이 0으로 되돌린 뒤 다시 채운다
     bars.classList.add('is-reset');
     bars.classList.remove('is-in');
@@ -154,7 +193,7 @@ function selectTab(index, {focus = false} = {}) {
 }
 
 if (tabs.length) {
-  selectTab(0);
+  selectTab(0, {replay: false});
   tabs.forEach((tab, i) => {
     tab.addEventListener('click', () => selectTab(i));
     tab.addEventListener('keydown', event => {

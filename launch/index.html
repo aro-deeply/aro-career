@@ -38,7 +38,7 @@
           <a class="pill pill--dark" href="#contact">상담 문의하기 <span class="pill-arrow" aria-hidden="true">→</span></a>
           <a class="pill pill--soft" href="#help">무엇을 도와주나요?</a>
         </div>
-        <p class="hero-proof"><span class="proof-mark" aria-hidden="true"></span>기업 HR에서 약 16년간 채용·평가·교육을 맡았던 사람이 직접 봅니다.</p>
+        <p class="hero-proof"><span class="proof-mark" aria-hidden="true"></span><span>기업 HR에서 <strong>약 16년간 채용·평가·교육</strong>을 맡았던 사람이 직접 봅니다.</span></p>
       </div>
     </section>
 
@@ -69,11 +69,12 @@
             <p class="help-no">02 · 면접 연습</p>
             <h3>써놓은 경험을,<br>내 말로 답하게</h3>
             <p class="help-desc">직접 답해보고 피드백을 들은 뒤<br>다시 답하며 다듬습니다.</p>
-            <div class="demo demo--chat" data-demo>
-              <p class="bubble bubble--q">그 기준은 어떻게 정했나요?</p>
-              <p class="bubble bubble--me"><span class="bubble-who">처음 답</span>중요한 건 팀장님께 올렸습니다.</p>
-              <p class="bubble bubble--aro"><span class="bubble-who">ARO</span>‘중요하다’의 기준이 빠졌어요.</p>
-              <p class="bubble bubble--me bubble--good"><span class="bubble-who">다시 답</span>규정과 신청 상태를 먼저 확인했습니다.</p>
+            <div class="demo demo--chat chat-seq" data-demo>
+              <div class="msg msg--them"><span class="avatar avatar--q" aria-hidden="true">면</span><p class="bubble bubble--q">그 기준은 어떻게 정했나요?</p></div>
+              <div class="msg msg--me"><p class="bubble bubble--me"><span class="bubble-who">처음 답</span><span class="vague">중요한 건</span> 팀장님께 올렸습니다.</p></div>
+              <div class="msg msg--them msg--typing" aria-hidden="true"><span class="avatar avatar--aro">A</span><p class="bubble bubble--typing"><i></i><i></i><i></i></p></div>
+              <div class="msg msg--them"><span class="avatar avatar--aro" aria-hidden="true">A</span><p class="bubble bubble--aro">‘중요하다’의 기준이 빠졌어요.</p></div>
+              <div class="msg msg--me"><p class="bubble bubble--me bubble--good"><span class="bubble-who">다시 답</span><mark>규정에 없는 취소·환불</mark>은 팀장님께 올렸습니다.</p></div>
             </div>
             <a class="help-link" href="#interview">연습 장면 보기 <span aria-hidden="true">↓</span></a>
           </article>
@@ -144,11 +145,13 @@
           <h2 id="interview-title" class="title">써놓은 말을,<br><em>내 말로</em> 할 수 있게.</h2>
           <p class="section-lead">서류에 쓴 경험을 면접관 앞에서 설명해봅니다.<br>빠진 부분을 짚고, 다시 답하며 다듬습니다.</p>
         </div>
-        <div class="card card--flat chat">
-          <p class="bubble bubble--q">그 기준은 어떻게 정했나요?</p>
-          <p class="bubble bubble--me"><span class="bubble-who">처음 답</span>중요한 건 팀장님께 올렸습니다.</p>
-          <p class="bubble bubble--aro"><span class="bubble-who">ARO</span>‘중요하다’의 기준이 빠졌어요.<br>확인한 것부터 말해보세요.</p>
-          <p class="bubble bubble--me bubble--good"><span class="bubble-who">다시 답</span>규정과 신청 상태를 보고,<br>제가 안내할 수 있는지 먼저 확인했습니다.</p>
+        <div class="card card--flat chat chat-seq">
+          <div class="chat-legend" aria-hidden="true"><span><i class="avatar avatar--q">면</i>면접관</span><span><i class="avatar avatar--me">나</i>지원자</span><span><i class="avatar avatar--aro">A</i>ARO</span></div>
+          <div class="msg msg--them"><span class="avatar avatar--q" aria-hidden="true">면</span><div><p class="msg-name">면접관</p><p class="bubble bubble--q">직접 답할 문의와 넘길 문의,<br>그 기준은 어떻게 정했나요?</p></div></div>
+          <div class="msg msg--me"><div><p class="msg-name">처음 답</p><p class="bubble bubble--me"><span class="vague">중요한 건</span> 팀장님께 올렸습니다.</p></div></div>
+          <div class="msg msg--them msg--typing" aria-hidden="true"><span class="avatar avatar--aro">A</span><div><p class="msg-name">ARO</p><p class="bubble bubble--typing"><i></i><i></i><i></i></p></div></div>
+          <div class="msg msg--them"><span class="avatar avatar--aro" aria-hidden="true">A</span><div><p class="msg-name">ARO</p><p class="bubble bubble--aro">‘중요하다’는 기준이 아니에요.<br>무엇을 보고 올렸는지 말해보세요.</p></div></div>
+          <div class="msg msg--me"><div><p class="msg-name">다시 답</p><p class="bubble bubble--me bubble--good"><mark>규정에 없는 취소·환불 요청</mark>은<br>팀장님께 올렸습니다.<br>규정으로 답할 수 있는 문의는<br>제가 바로 안내했습니다.</p><p class="msg-check"><span aria-hidden="true">✓</span> 판단 기준이 드러났습니다</p></div></div>
         </div>
         <p class="fine">* 상담 방식을 보여주기 위해 만든 장면입니다.</p>
       </div>
@@ -159,8 +162,8 @@
       <div class="narrow">
         <div class="section-head">
           <p class="eyebrow">AI 서류 진단 · 비용 없음</p>
-          <h2 id="ai-title" class="title">평가자의 기준을 넣어<br><em>직접 만든</em> AI 진단입니다.</h2>
-          <p class="section-lead">기업 HR에서 서류를 읽던 기준을 엔진에 담았습니다.<br>문장을 다듬기 전에, <strong>왜 걸리는지</strong>부터 찾습니다.</p>
+          <h2 id="ai-title" class="title">직접 만든,<br><em>평가자 관점</em>의 AI 서류 진단</h2>
+          <p class="section-lead">기업 HR에서 약 16년간 지원서를 평가하며<br>보아온 기준을 그대로 엔진에 넣었습니다.<br>문장을 다듬기 전에, <strong>왜 걸리는지</strong>부터 찾습니다.</p>
         </div>
 
         <div class="compare" role="table" aria-label="일반 AI 첨삭과 ARO AI 진단 비교">
@@ -186,46 +189,30 @@
           </div>
         </div>
 
-        <h3 class="sub-title">엔진이 보는 5가지 패턴</h3>
-        <div class="patterns">
-          <div class="pattern pattern--root">
-            <p class="pattern-group">근본 원인</p>
-            <p class="pattern-name">업계 맥락 부재</p>
-            <p class="pattern-desc">이 회사, 이 직무를 이해했는지 보이지 않습니다.</p>
-          </div>
-          <div class="pattern-branch" aria-hidden="true"></div>
-          <div class="pattern-list">
-            <p class="pattern-group pattern-group--list">여기서 번지는 증상</p>
-            <div class="pattern"><p class="pattern-name">규격화된 정형성</p><p class="pattern-desc">누구의 서류인지 구분되지 않습니다.</p></div>
-            <div class="pattern"><p class="pattern-name">직무 적합성 어긋남</p><p class="pattern-desc">직무가 원하는 것과 강조점이 다릅니다.</p></div>
-            <div class="pattern"><p class="pattern-name">근거 부재와 과장</p><p class="pattern-desc">주장은 있는데 뒷받침이 없습니다.</p></div>
-            <div class="pattern"><p class="pattern-name">차별화 판단 오류</p><p class="pattern-desc">약점을 스스로 먼저 드러냅니다.</p></div>
-          </div>
-        </div>
-
         <h3 class="sub-title">진단 결과는 이렇게 나옵니다</h3>
         <article class="card report" aria-label="진단 결과 화면">
           <header class="report-head">
             <span>ARO 진단 결과</span>
             <div class="tabs" role="tablist" aria-label="결과 항목">
-              <button type="button" role="tab" id="tab-verdict" aria-controls="panel-verdict" aria-selected="true">핵심 판정</button>
-              <button type="button" role="tab" id="tab-pattern" aria-controls="panel-pattern" aria-selected="false" tabindex="-1">패턴 점수</button>
+              <button type="button" role="tab" id="tab-pattern" aria-controls="panel-pattern" aria-selected="true">5가지 패턴</button>
+              <button type="button" role="tab" id="tab-verdict" aria-controls="panel-verdict" aria-selected="false" tabindex="-1">핵심 판정</button>
               <button type="button" role="tab" id="tab-evidence" aria-controls="panel-evidence" aria-selected="false" tabindex="-1">원문 근거</button>
             </div>
           </header>
+          <div class="report-panel" role="tabpanel" id="panel-pattern" aria-labelledby="tab-pattern">
+            <p class="report-q-label report-q-label--top">평가자가 보는 5가지 패턴 · 점수가 높을수록 걸리는 지점</p>
+            <ol class="bars">
+              <li class="bar bar--desc bar--root" style="--v:0.88"><span class="bar-name">업계 맥락 부재<em>근본 원인</em><small>이 회사·직무를 이해했는지 보이지 않음</small></span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">88</span></li>
+              <li class="bar bar--desc" style="--v:0.78"><span class="bar-name">규격화된 정형성<small>누구의 서류인지 구분되지 않음</small></span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">78</span></li>
+              <li class="bar bar--desc" style="--v:0.62"><span class="bar-name">근거 부재와 과장<small>주장은 있는데 뒷받침이 없음</small></span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">62</span></li>
+              <li class="bar bar--desc" style="--v:0.55"><span class="bar-name">직무 적합성 어긋남<small>직무가 원하는 것과 강조점이 다름</small></span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">55</span></li>
+              <li class="bar bar--desc" style="--v:0.41"><span class="bar-name">차별화 판단 오류<small>약점을 스스로 먼저 드러냄</small></span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">41</span></li>
+            </ol>
+          </div>
           <div class="report-panel" role="tabpanel" id="panel-verdict" aria-labelledby="tab-verdict">
             <p class="report-verdict">업계 맥락 부재에서<br>범용 문구·근거 부재로 번지는 구조입니다.</p>
             <p class="report-q-label">스스로 점검할 질문</p>
             <p class="report-q">‘귀사’를 실제 회사명으로 바꿔도<br>여전히 자연스럽습니까?</p>
-          </div>
-          <div class="report-panel" role="tabpanel" id="panel-pattern" aria-labelledby="tab-pattern">
-            <ol class="bars">
-              <li class="bar bar--root" style="--v:.88"><span class="bar-name">업계 맥락 부재<em>근본 원인</em></span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">88</span></li>
-              <li class="bar" style="--v:.78"><span class="bar-name">규격화된 정형성</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">78</span></li>
-              <li class="bar" style="--v:.62"><span class="bar-name">근거 부재와 과장</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">62</span></li>
-              <li class="bar" style="--v:.55"><span class="bar-name">직무 적합성 어긋남</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">55</span></li>
-              <li class="bar" style="--v:.41"><span class="bar-name">차별화 판단 오류</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">41</span></li>
-            </ol>
           </div>
           <div class="report-panel" role="tabpanel" id="panel-evidence" aria-labelledby="tab-evidence">
             <blockquote class="evidence">“귀사의 인재상에 부합하는<br>성실하고 책임감 있는 인재가 되겠습니다.”</blockquote>
@@ -233,7 +220,7 @@
           </div>
           <footer class="report-foot">
             <span class="status"><span class="status-dot" aria-hidden="true"></span>교정 가능</span>
-            <span class="next"><span class="next-label">추천하는 다음 단계</span><span class="next-on">재작성</span><span>리허설</span><span>직접 상담</span></span>
+            <span class="next"><span class="next-label">추천하는 다음 단계</span><span class="next-step next-on"><span class="next-check" aria-hidden="true">✓</span>재작성</span><span class="next-step">리허설</span><span class="next-step">직접 상담</span></span>
           </footer>
         </article>
         <p class="fine">* 실제 결과 화면과 같은 형식입니다.<br>입력 문장은 설명을 위해 넣었습니다.</p>
