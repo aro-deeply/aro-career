@@ -13,6 +13,7 @@
   --night:#1D222C;      /* 소개 영역 */
   --night-ink:#E9E8E3;
   --night-soft:#A3A7B0;
+  --pencil-night:#AEBBF2; /* 어두운 면 위의 파란 연필 */
 
   --display:'SUIT Variable','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
   --sans:'SUIT Variable','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
@@ -70,6 +71,12 @@ main:focus{outline:none}
 .title{font-family:var(--display);font-weight:300;font-size:var(--t-title);line-height:1.4;letter-spacing:-.035em;text-wrap:balance;margin-bottom:48px}
 .fine{margin-top:40px;font-size:var(--t-caption);color:var(--ink-soft)}
 .muted-text{color:var(--ink-soft)}
+
+/* 강조: 제목은 핵심어 하나만 파란 연필색, 설명문은 핵심 구절만 진하게. */
+h1 em,h2 em{font-style:normal;color:var(--pencil)}
+.about h2 em{color:var(--pencil-night)}
+p strong{font-weight:600;color:var(--ink)}
+.about p strong{color:var(--night-ink)}
 
 /* 버튼 */
 .actions{display:flex;flex-wrap:wrap;gap:12px}
@@ -143,14 +150,17 @@ section{padding-block:var(--section)}
 .ai{background:var(--sheet);border-block:1px solid var(--line)}
 .ai-lead{font-size:var(--t-lead);color:var(--ink-soft);line-height:1.75;margin:-24px 0 56px}
 
-.tree{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;align-items:stretch;border-top:1px solid var(--ink);padding-top:20px}
-.tier{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
-.tier-name{font-size:var(--t-caption);color:var(--ink-soft);margin-bottom:4px}
-.tier--root .tier-name{color:var(--pencil);font-weight:600}
-.tier-arrow{position:relative;margin-top:44px;height:1px;background:var(--ink-soft)}
-.tier-arrow::after{content:"";position:absolute;right:0;top:-3px;border-left:6px solid var(--ink-soft);border-top:3.5px solid transparent;border-bottom:3.5px solid transparent}
-.chip{padding:6px 14px;border:1px solid var(--line);border-radius:999px;font-size:.9375rem;background:var(--paper);white-space:nowrap}
-.chip--root{border-color:var(--pencil);background:var(--pencil);color:var(--sheet)}
+/* 원인 구조: 도형·화살표 없이 세 칸의 표로. 방향은 머리글 줄의 작은 꺾쇠 하나로만 표시한다. */
+.tree{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink)}
+.tier{padding:0 24px 4px;border-left:1px solid var(--line)}
+.tier:first-child{padding-left:0;border-left:0}
+.tier-head{position:relative;display:flex;align-items:baseline;gap:10px;padding-block:14px;margin-bottom:18px;border-bottom:1px solid var(--line);font-size:var(--t-caption);color:var(--ink-soft)}
+.tier:not(:last-child) .tier-head::after{content:"";position:absolute;right:-28px;top:50%;width:7px;height:7px;border-top:1px solid var(--ink-soft);border-right:1px solid var(--ink-soft);transform:translateY(-50%) rotate(45deg);background:var(--sheet);z-index:1}
+.tier-no{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+.tier ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.tier li{font-size:var(--t-lead);line-height:1.5;letter-spacing:-.02em}
+.tier--root .tier-no,.tier--root .tier-head{color:var(--pencil)}
+.tier--root li{color:var(--pencil);font-weight:600}
 .tree-note{margin:20px 0 72px;font-size:.9375rem;color:var(--ink-soft)}
 
 .report{background:var(--paper);border:1px solid var(--line);padding:clamp(24px,5vw,44px);box-shadow:0 24px 48px -32px rgba(27,28,30,.22)}
@@ -211,11 +221,10 @@ section{padding-block:var(--section)}
   .service-list{grid-template-columns:1fr}
   .actions .btn{flex:1 1 100%}
   .talk-row{grid-template-columns:1fr;gap:6px}
-  .tree{grid-template-columns:1fr;gap:0}
-  .tier-arrow{margin:12px 0 12px 20px;width:1px;height:20px}
-  .tier-arrow::after{right:-3px;top:auto;bottom:0;border-top:6px solid var(--ink-soft);border-left:3.5px solid transparent;border-right:3.5px solid transparent;border-bottom:0}
-  .tier{flex-direction:row;flex-wrap:wrap;align-items:center}
-  .tier-name{width:100%;margin-bottom:0}
+  .tree{grid-template-columns:1fr}
+  .tier,.tier:first-child{padding:0 0 20px;border-left:0}
+  .tier-head{margin-bottom:12px}
+  .tier:not(:last-child) .tier-head::after{display:none}
   .bar{grid-template-columns:1fr 32px;row-gap:4px}
   .bar-name{grid-column:1 / -1}
   .bar-track{grid-column:1}

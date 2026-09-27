@@ -28,8 +28,9 @@ test('예시는 직장인 사례이고 수업·과제 예시를 쓰지 않는다
   assert.doesNotMatch(html, /수업|팀 과제|동아리|발표 자료/);
 });
 
-test('가상 예시임을 밝히고 검증되지 않은 실적·가격을 넣지 않는다', () => {
-  assert.match(html, /가상 예시입니다/);
+test('만든 사례임을 밝히고 검증되지 않은 실적·가격을 넣지 않는다', () => {
+  assert.match(html, /상담 방식을 보여주기 위해 만든 사례입니다/);
+  assert.match(html, /입력 문장은 설명을 위해 넣었습니다/);
   assert.match(html, /약 16년/);
   assert.doesNotMatch(html, /36만|21만|150건|1,000회|1000회|상담심리학|15년|보장합니다|최고의|완벽한/);
   assert.doesNotMatch(html, /—/);
