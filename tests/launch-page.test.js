@@ -35,9 +35,9 @@ test('가상 예시임을 밝히고 검증되지 않은 실적·가격을 넣지
   assert.doesNotMatch(html, /—/);
 });
 
-test('외부 연결은 AI 진단·카카오톡·이메일·웹폰트만 쓰고 데이터를 보내지 않는다', () => {
+test('외부 연결은 AI 진단·카카오톡·이메일만 쓰고 데이터를 보내지 않는다', () => {
   const external = [...html.matchAll(/href="(https?:\/\/[^"]+)"/g)].map(m => new URL(m[1]).host);
-  assert.deepEqual([...new Set(external)].sort(), ['aro-career.vercel.app', 'fonts.googleapis.com', 'fonts.gstatic.com', 'pf.kakao.com'].sort());
+  assert.deepEqual([...new Set(external)].sort(), ['aro-career.vercel.app', 'pf.kakao.com']);
   for (const tag of html.matchAll(/<a [^>]*target="_blank"[^>]*>/g)) assert.match(tag[0], /rel="noopener noreferrer"/);
   assert.match(html, /mailto:aro\.deeply@gmail\.com/);
   assert.doesNotMatch(app, /\b(fetch|XMLHttpRequest|sendBeacon|localStorage|sessionStorage)\b/);
@@ -48,4 +48,10 @@ test('글자 크기는 다섯 단계 변수로만 정의한다', () => {
   const sizes = [...css.matchAll(/--t-([a-z]+):/g)].map(m => m[1]);
   assert.deepEqual(sizes, ['display', 'title', 'lead', 'body', 'caption']);
   assert.doesNotMatch(css, /linear-gradient\(\s*(?:\d|to |#)/);
+});
+
+test('글꼴은 사이트 안의 SUIT 파일을 쓰고 명조체를 쓰지 않는다', () => {
+  assert.match(css, /url\('\/fonts\/SUIT-Variable\.woff2'\)/);
+  assert.doesNotMatch(css + html, /Myeongjo|Batang|Serif KR|(?<!sans-)serif/);
+  assert.ok(readFileSync(new URL('../launch/public/fonts/SUIT-OFL.txt', import.meta.url), 'utf8').includes('Open Font License'));
 });
