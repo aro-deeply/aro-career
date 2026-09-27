@@ -19,6 +19,7 @@
       <nav class="nav" aria-label="주요 메뉴">
         <a href="#example" class="nav-link">예시</a>
         <a href="#service" class="nav-link">상담</a>
+        <a href="#ai" class="nav-link">AI 진단</a>
         <a href="#contact" class="nav-cta">문의하기</a>
       </nav>
     </div>
@@ -35,6 +36,7 @@
           <a class="btn btn-solid" href="#contact">상담 문의하기</a>
           <a class="btn btn-line" href="#example">예시 먼저 보기</a>
         </div>
+        <a class="hero-ai" href="#ai">비용 없이, AI 진단부터 해보기 <span aria-hidden="true">↓</span></a>
         <p class="hero-foot">기업 HR 약 16년 · 채용·평가·교육·인사제도</p>
       </div>
     </section>
@@ -122,7 +124,30 @@
           </article>
         </div>
         <p class="service-note">비용과 일정은 상황을 들은 뒤 안내합니다.</p>
-        <a class="ai-link" href="https://aro-career.vercel.app/diagnosis" target="_blank" rel="noopener noreferrer">혼자 먼저 점검해보려면 · AI 서류 진단 <span aria-hidden="true">↗</span><span class="visually-hidden"> (새 창)</span></a>
+      </div>
+    </section>
+
+    <section class="ai" id="ai" aria-labelledby="ai-title">
+      <div class="wrap">
+        <p class="kicker">AI 진단</p>
+        <h2 id="ai-title" class="title">지금 쓴 문장부터,<br>AI로 점검해보세요.</h2>
+        <p class="ai-lead">붙여넣은 서류를<br>평가자의 기준으로 읽어봅니다.</p>
+
+        <div class="engine" aria-label="AI 진단 결과 예시">
+          <div class="engine-top"><span>입력한 문장</span><span class="engine-tag">가상 예시</span></div>
+          <p class="engine-input">“다양한 프로젝트를 통해<br><span class="flag">폭넓은 역량</span>을 쌓았습니다.”</p>
+          <dl class="engine-grid">
+            <div><dt>문제 유형</dt><dd>맡은 역할이 보이지 않음</dd></div>
+            <div><dt>위험 문장</dt><dd>‘폭넓은 역량’</dd></div>
+            <div><dt>면접 꼬리질문</dt><dd>“그중 직접 맡은 일은요?”</dd></div>
+            <div><dt>정리 방향</dt><dd>한 가지 일을 골라 구체적으로</dd></div>
+          </dl>
+        </div>
+
+        <div class="ai-actions">
+          <a class="btn btn-solid" href="https://aro-career.vercel.app/diagnosis" target="_blank" rel="noopener noreferrer">AI 진단 시작하기 <span aria-hidden="true">↗</span><span class="visually-hidden"> (새 창)</span></a>
+          <p class="ai-meta">약 3분 입력 · 비용 없음 · 상담은 선택</p>
+        </div>
       </div>
     </section>
 

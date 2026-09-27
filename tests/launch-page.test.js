@@ -13,7 +13,7 @@ function visibleSentences(source) {
     .replace(/<(script|style|head)[^>]*>[\s\S]*?<\/\1>/g, '')
     .replace(/<p class="doc-after">[\s\S]*?<\/p>/, '');
   return body
-    .split(/<br\s*\/?>|<\/(?:p|h1|h2|h3|li|summary|blockquote|figcaption|a|span|del)>/)
+    .split(/<br\s*\/?>|<\/(?:p|h1|h2|h3|li|summary|blockquote|figcaption|a|span|del|dt|dd|div)>/)
     .map(chunk => chunk.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim())
     .filter(Boolean);
 }
