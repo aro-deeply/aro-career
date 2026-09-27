@@ -43,28 +43,33 @@
     <section class="example" id="example" aria-labelledby="example-title">
       <div class="wrap">
         <p class="kicker">예시 <span class="tag">가상</span></p>
-        <h2 id="example-title" class="visually-hidden">경력기술서가 달라지는 과정</h2>
+        <h2 id="example-title" class="title">한 줄이던 업무가,<br>세 번의 질문으로 달라집니다.</h2>
 
-        <figure class="quote-block">
-          <blockquote class="big-quote">“반복 업무라,<br>특별한 성과는 없어요.”</blockquote>
-          <figcaption>운영팀 5년 차 · 이직 준비 중</figcaption>
-        </figure>
-
-        <div class="ask">
-          <p class="ask-label">ARO가 묻는 것</p>
-          <ol class="ask-list">
-            <li>어떤 문의는 직접 답하고, 어떤 건 넘겼나요?</li>
-            <li>그 기준은 어디서 왔나요?</li>
-            <li>넘길 때 무엇을 함께 전달했나요?</li>
-          </ol>
-        </div>
-
-        <div class="doc" aria-label="경력기술서 문장 비교">
-          <p class="doc-head">경력기술서</p>
-          <p class="doc-before"><del>고객 문의 응대 및 공지 관리</del></p>
-          <p class="doc-after">운영 규정과 신청 상태를 확인해 <mark>문의를 직접 처리</mark>하고, 규정 밖 요청은 <mark>판단에 필요한 정보를 묶어</mark> 담당자에게 전달</p>
-          <p class="margin-note"><span aria-hidden="true">↳</span> 숫자가 없어도, 일하는 기준이 보입니다.</p>
-        </div>
+        <ol class="flow">
+          <li class="flow-step">
+            <p class="flow-label">처음 한 말 · 운영팀 5년 차, 이직 준비 중</p>
+            <p class="flow-quote">“반복 업무라, 특별한 성과는 없어요.”</p>
+          </li>
+          <li class="flow-step">
+            <p class="flow-label">처음 쓴 문장</p>
+            <p class="flow-before">고객 문의 응대 및 공지 관리</p>
+          </li>
+          <li class="flow-step">
+            <p class="flow-label">ARO가 물었습니다</p>
+            <ol class="qa">
+              <li><span class="num" aria-hidden="true">1</span><div><p class="q">문의에 답할 때, 무엇을 먼저 봤나요?</p><p class="a">“운영 규정이랑 신청 상태요.”</p></div></li>
+              <li><span class="num" aria-hidden="true">2</span><div><p class="q">어디까지 직접 처리했나요?</p><p class="a">“규정으로 확인되는 건 제가 바로요.”</p></div></li>
+              <li><span class="num" aria-hidden="true">3</span><div><p class="q">넘길 때는 무엇을 같이 줬나요?</p><p class="a">“상태랑 문의 요지를 정리해서요.”</p></div></li>
+            </ol>
+          </li>
+          <li class="flow-step flow-step--after">
+            <p class="flow-label">경력기술서에 이렇게 남았습니다</p>
+            <div class="doc">
+              <p class="doc-after"><mark>운영 규정과 신청 상태를 확인해</mark><span class="num num--sm" aria-label="답변 1">1</span> <mark>규정 안의 문의는 직접 처리</mark><span class="num num--sm" aria-label="답변 2">2</span>하고, 규정 밖 요청은 <mark>판단에 필요한 정보를 묶어</mark><span class="num num--sm" aria-label="답변 3">3</span> 담당자에게 전달</p>
+              <p class="margin-note">숫자가 없어도, 일하는 기준이 보입니다.</p>
+            </div>
+          </li>
+        </ol>
 
         <p class="fine">설명을 위해 만든 가상 예시입니다. 실제 고객 사례가 아닙니다.</p>
       </div>
@@ -129,23 +134,49 @@
     <section class="ai" id="ai" aria-labelledby="ai-title">
       <div class="wrap">
         <p class="kicker">AI 진단</p>
-        <h2 id="ai-title" class="title">지금 쓴 문장부터,<br>AI로 점검해보세요.</h2>
-        <p class="ai-lead">붙여넣은 서류를<br>평가자의 기준으로 읽어봅니다.</p>
+        <h2 id="ai-title" class="title">평가자의 판단 기준을<br>진단 엔진에 담았습니다.</h2>
+        <p class="ai-lead">문장을 고치기 전에,<br>평가자가 왜 걸리는지 원인부터 찾습니다.</p>
 
-        <div class="ai-sheet" aria-label="AI 진단 결과 예시">
-          <p class="doc-head">붙여넣은 문장 <span class="tag">가상 예시</span></p>
-          <p class="ai-input">“다양한 프로젝트를 통해<br><span class="flag">폭넓은 역량</span>을 쌓았습니다.”</p>
-          <dl class="ai-read">
-            <div><dt>문제 유형</dt><dd>맡은 역할이 보이지 않습니다.</dd></div>
-            <div><dt>위험 표현</dt><dd>‘폭넓은 역량’</dd></div>
-            <div><dt>꼬리질문</dt><dd>“그중 직접 맡은 일은요?”</dd></div>
-            <div><dt>정리 방향</dt><dd>한 가지 일을 골라 구체적으로.</dd></div>
-          </dl>
+        <div class="tree" aria-label="진단 엔진의 5가지 패턴 구조">
+          <div class="tier tier--root"><p class="tier-name">근본 원인</p><span class="chip chip--root">업계 맥락 부재</span></div>
+          <span class="tier-arrow" aria-hidden="true"></span>
+          <div class="tier"><p class="tier-name">1차 증상</p><span class="chip">규격화된 정형성</span><span class="chip">직무 적합성 어긋남</span></div>
+          <span class="tier-arrow" aria-hidden="true"></span>
+          <div class="tier"><p class="tier-name">2차 증상</p><span class="chip">근거 부재와 과장</span><span class="chip">차별화 판단 오류</span></div>
         </div>
+        <p class="tree-note">증상만 고치면 같은 문제가 다시 생깁니다.<br>엔진은 가장 깊은 원인부터 짚습니다.</p>
+
+        <article class="report" aria-label="진단 결과 예시">
+          <header class="report-head"><span>진단 결과</span><span class="tag">예시</span></header>
+          <p class="report-label">핵심 판정</p>
+          <p class="report-verdict">업계 맥락 부재에서<br>범용 문구·근거 부재로 번지는 구조입니다.</p>
+
+          <p class="report-label">5가지 패턴</p>
+          <ol class="bars">
+              <li class="bar bar--root" style="--v:0.88"><span class="bar-name">업계 맥락 부재<em>근본 원인</em></span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">88</span></li>
+              <li class="bar" style="--v:0.78"><span class="bar-name">규격화된 정형성</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">78</span></li>
+              <li class="bar" style="--v:0.62"><span class="bar-name">근거 부재와 과장</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">62</span></li>
+              <li class="bar" style="--v:0.55"><span class="bar-name">직무 적합성 어긋남</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">55</span></li>
+              <li class="bar" style="--v:0.41"><span class="bar-name">차별화 판단 오류</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">41</span></li>
+          </ol>
+
+          <p class="report-label">원문 근거 <span class="report-count">3건 중 1건</span></p>
+          <blockquote class="evidence">“귀사의 인재상에 부합하는<br>성실하고 책임감 있는 인재가 되겠습니다.”</blockquote>
+          <p class="evidence-why">어느 회사, 어느 직무에 넣어도<br>그대로 성립하는 문장입니다.</p>
+
+          <p class="report-label">스스로 점검할 질문</p>
+          <p class="report-q">‘귀사’를 실제 회사명으로 바꿔도<br>여전히 자연스럽습니까?</p>
+
+          <footer class="report-foot">
+            <span>교정 가능</span>
+            <span class="next"><span class="next-on">재작성</span><span>리허설</span><span>직접 상담</span></span>
+          </footer>
+        </article>
+        <p class="fine">엔진의 예시 결과입니다. 실제 고객의 진단이 아닙니다.</p>
 
         <div class="ai-actions">
-          <a class="btn btn-solid" href="https://aro-career.vercel.app/diagnosis" target="_blank" rel="noopener noreferrer">AI 진단 시작하기 <span aria-hidden="true">↗</span><span class="visually-hidden"> (새 창)</span></a>
-          <p class="ai-meta">약 3분 입력 · 비용 없음 · 상담은 선택</p>
+          <a class="btn btn-solid" href="https://aro-career.vercel.app/diagnosis" target="_blank" rel="noopener noreferrer">내 서류 진단하기 <span aria-hidden="true">↗</span><span class="visually-hidden"> (새 창)</span></a>
+          <p class="ai-meta">약 3분 입력 · 비용 없음 · 상담은 선택<br>근거를 인용할 때 이름·회사명은 가립니다.</p>
         </div>
       </div>
     </section>
