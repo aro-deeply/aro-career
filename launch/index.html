@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#F1F0EC">
+  <meta name="theme-color" content="#FAFAFA">
   <meta name="description" content="해온 일을 경력으로 설명하도록 돕는 ARO 취업·이직 상담. 이력서·경력기술서와 면접을 함께 준비합니다.">
   <title>ARO · 일은 해왔는데, 쓸 말이 없나요?</title>
   <link rel="preload" href="./fonts/SUIT-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__aroReady)document.documentElement.classList.remove('js')},2500)</script>
   <link rel="stylesheet" href="./style.css">
   <script type="module" src="./app.js"></script>
 </head>
@@ -18,9 +19,9 @@
       <a class="brand" href="#top" aria-label="ARO 처음으로">ARO</a>
       <nav class="nav" aria-label="주요 메뉴">
         <a href="#example" class="nav-link">사례</a>
-        <a href="#service" class="nav-link">상담</a>
         <a href="#ai" class="nav-link">AI 진단</a>
-        <a href="#contact" class="nav-cta">문의하기</a>
+        <a href="#service" class="nav-link">상담</a>
+        <a href="#contact" class="pill pill--dark pill--sm">문의하기</a>
       </nav>
     </div>
   </header>
@@ -28,15 +29,51 @@
   <main id="main" tabindex="-1">
 
     <section class="hero" id="top" aria-labelledby="hero-title">
-      <div class="wrap">
-        <p class="kicker">이직·취업 서류와 면접</p>
-        <h1 id="hero-title" class="display">일은 해왔는데,<br><em>쓸 말</em>이 없나요?</h1>
-        <p class="hero-lead">당연하게 해온 일 안에<br><strong>설명할 경력</strong>이 있습니다.</p>
-        <div class="actions">
-          <a class="btn btn-solid" href="#contact">상담 문의하기</a>
-          <a class="btn btn-line" href="#example">사례 먼저 보기</a>
+      <div class="container">
+        <div class="hero-copy">
+          <a class="announce" href="#ai"><span class="announce-dot" aria-hidden="true"></span>평가자 관점의 AI 서류 진단<span class="announce-arrow" aria-hidden="true">→</span></a>
+          <h1 id="hero-title" class="display">일은 해왔는데,<br><em>쓸 말</em>이 없나요?</h1>
+          <p class="hero-lead">당연하게 해온 일 안에 <strong>설명할 경력</strong>이 있습니다.<br>서류와 면접을 평가자의 시선으로 함께 준비합니다.</p>
+          <div class="actions actions--center">
+            <a class="pill pill--dark" href="#contact">상담 문의하기 <span class="pill-arrow" aria-hidden="true">→</span></a>
+            <a class="pill pill--soft" href="#ai">내 서류 AI 진단</a>
+          </div>
         </div>
-        <p class="hero-foot">기업 HR 약 16년 · 채용·평가·교육·인사제도</p>
+
+        <div class="bento" aria-label="ARO가 하는 일 한눈에 보기">
+          <a class="card card--doc" href="#example">
+            <p class="card-label">경력기술서</p>
+            <p class="bento-before">고객 문의 응대 및 공지 관리</p>
+            <p class="doc-after bento-after"><mark>운영 규정과 신청 상태를 확인해</mark> 문의를 직접 처리하고, 규정 밖 요청은 <mark>판단에 필요한 정보를 묶어</mark> 전달</p>
+            <p class="card-foot">세 번의 질문으로 달라진 한 줄 <span aria-hidden="true">→</span></p>
+          </a>
+
+          <a class="card card--report" href="#ai">
+            <p class="card-label">ARO 진단 리포트</p>
+            <p class="mini-verdict">업계 맥락 부재에서<br>범용 문구로 번지는 구조</p>
+            <ol class="bars bars--mini" aria-label="5가지 패턴 점수">
+              <li class="bar bar--root" style="--v:.88"><span class="bar-name">업계 맥락 부재</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">88</span></li>
+              <li class="bar" style="--v:.78"><span class="bar-name">규격화된 정형성</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">78</span></li>
+              <li class="bar" style="--v:.62"><span class="bar-name">근거 부재와 과장</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">62</span></li>
+              <li class="bar" style="--v:.55"><span class="bar-name">직무 적합성 어긋남</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">55</span></li>
+              <li class="bar" style="--v:.41"><span class="bar-name">차별화 판단 오류</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">41</span></li>
+            </ol>
+            <p class="card-foot">원인부터 찾는 진단 엔진 <span aria-hidden="true">→</span></p>
+          </a>
+
+          <a class="card card--talk" href="#interview">
+            <p class="card-label">면접 연습</p>
+            <p class="mini-q">“그 기준은 어떻게 정했나요?”</p>
+            <p class="mini-feedback"><span class="badge">ARO</span>‘중요하다’의 기준이 빠졌어요.</p>
+          </a>
+
+          <div class="card card--stat">
+            <p class="card-label">기업 HR</p>
+            <p class="stat"><small>약</small>16<span>년</span></p>
+            <p class="stat-tags"><span>채용</span><span>평가</span><span>교육</span><span>인사제도</span></p>
+          </div>
+        </div>
+        <p class="fine fine--center">* 상담 방식을 보여주기 위해 만든 사례입니다.</p>
       </div>
     </section>
 
@@ -64,34 +101,32 @@
           </li>
           <li class="flow-step flow-step--after">
             <p class="flow-label">경력기술서에 이렇게 남았습니다</p>
-            <div class="doc">
+            <div class="card card--flat">
               <p class="doc-after"><mark>운영 규정과 신청 상태를 확인해</mark><span class="num num--sm" aria-label="답변 1">1</span> <mark>규정 안의 문의는 직접 처리</mark><span class="num num--sm" aria-label="답변 2">2</span>하고, 규정 밖 요청은 <mark>판단에 필요한 정보를 묶어</mark><span class="num num--sm" aria-label="답변 3">3</span> 담당자에게 전달</p>
               <p class="margin-note">숫자가 없어도, <strong>일하는 기준</strong>이 보입니다.</p>
             </div>
           </li>
         </ol>
-
         <p class="fine">* 상담 방식을 보여주기 위해 만든 사례입니다.</p>
       </div>
     </section>
 
-    <section class="interview" aria-labelledby="interview-title">
+    <section class="interview" id="interview" aria-labelledby="interview-title">
       <div class="wrap">
         <p class="kicker">면접</p>
         <h2 id="interview-title" class="title">써놓은 말을,<br><em>내 말로</em> 할 수 있게.</h2>
-
-        <div class="talk">
+        <div class="card card--flat talk">
           <p class="talk-q">“그 기준은 어떻게 정했나요?”</p>
           <div class="talk-row">
-            <span class="talk-who">처음 답</span>
+            <span class="badge badge--line">처음 답</span>
             <p class="talk-text muted-text">“중요한 건 팀장님께 올렸습니다.”</p>
           </div>
           <div class="talk-row talk-row--aro">
-            <span class="talk-who">ARO</span>
+            <span class="badge">ARO</span>
             <p class="talk-text">‘중요하다’의 기준이 빠졌어요.<br>확인한 것부터 말해보세요.</p>
           </div>
           <div class="talk-row">
-            <span class="talk-who">다시 답</span>
+            <span class="badge badge--line">다시 답</span>
             <p class="talk-text">“규정과 신청 상태를 보고,<br>제가 안내할 수 있는지 먼저 확인했습니다.”</p>
           </div>
         </div>
@@ -99,43 +134,11 @@
       </div>
     </section>
 
-    <section class="steps" aria-labelledby="steps-title">
-      <div class="wrap">
-        <p class="kicker">진행</p>
-        <h2 id="steps-title" class="title">상담은<br>이렇게 흘러갑니다.</h2>
-        <ol class="step-list">
-          <li><span class="step-no">1</span><div><h3>듣기</h3><p>해온 일을 편하게 이야기합니다.</p></div></li>
-          <li><span class="step-no">2</span><div><h3>고르기</h3><p>지원할 공고에 맞는 경험을 고릅니다.</p></div></li>
-          <li><span class="step-no">3</span><div><h3>다듬기</h3><p>서류로 쓰고, 면접에서 말해봅니다.</p></div></li>
-        </ol>
-      </div>
-    </section>
-
-    <section class="service" id="service" aria-labelledby="service-title">
-      <div class="wrap">
-        <p class="kicker">상담</p>
-        <h2 id="service-title" class="title"><em>필요한 것만</em><br>고르면 됩니다.</h2>
-        <div class="service-list">
-          <article class="service-item">
-            <h3>서류 완성</h3>
-            <p>공고 한 건에 맞춰 경험을 고르고,<br>이력서·경력기술서를 함께 씁니다.</p>
-            <p class="service-out">남는 것 · 지원 방향, 제출할 문서</p>
-          </article>
-          <article class="service-item">
-            <h3>면접 연습</h3>
-            <p>직접 답해보고, 피드백을 듣고,<br>다시 답합니다.</p>
-            <p class="service-out">남는 것 · 답변별 피드백, 다음 과제</p>
-          </article>
-        </div>
-        <p class="service-note">비용과 일정은 상황을 들은 뒤 안내합니다.</p>
-      </div>
-    </section>
-
     <section class="ai" id="ai" aria-labelledby="ai-title">
       <div class="wrap">
         <p class="kicker">AI 진단</p>
         <h2 id="ai-title" class="title">평가자의 <em>판단 기준</em>을<br>진단 엔진에 담았습니다.</h2>
-        <p class="ai-lead">문장을 고치기 전에,<br>평가자가 <strong>왜 걸리는지</strong> 원인부터 찾습니다.</p>
+        <p class="section-lead">문장을 고치기 전에,<br>평가자가 <strong>왜 걸리는지</strong> 원인부터 찾습니다.</p>
 
         <div class="tree" aria-label="진단 엔진의 5가지 패턴 구조">
           <div class="tier tier--root">
@@ -153,38 +156,73 @@
         </div>
         <p class="tree-note">증상만 고치면 같은 문제가 다시 생깁니다.<br>엔진은 <strong>가장 깊은 원인</strong>부터 짚습니다.</p>
 
-        <article class="report" aria-label="진단 리포트 화면">
-          <header class="report-head"><span>ARO 진단 리포트</span></header>
-          <p class="report-label">핵심 판정</p>
-          <p class="report-verdict">업계 맥락 부재에서<br>범용 문구·근거 부재로 번지는 구조입니다.</p>
+        <article class="card report" aria-label="진단 리포트 화면">
+          <header class="report-head">
+            <span>ARO 진단 리포트</span>
+            <div class="tabs" role="tablist" aria-label="리포트 항목">
+              <button type="button" role="tab" id="tab-verdict" aria-controls="panel-verdict" aria-selected="true">핵심 판정</button>
+              <button type="button" role="tab" id="tab-pattern" aria-controls="panel-pattern" aria-selected="false" tabindex="-1">5가지 패턴</button>
+              <button type="button" role="tab" id="tab-evidence" aria-controls="panel-evidence" aria-selected="false" tabindex="-1">원문 근거</button>
+            </div>
+          </header>
 
-          <p class="report-label">5가지 패턴</p>
-          <ol class="bars">
-              <li class="bar bar--root" style="--v:0.88"><span class="bar-name">업계 맥락 부재<em>근본 원인</em></span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">88</span></li>
-              <li class="bar" style="--v:0.78"><span class="bar-name">규격화된 정형성</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">78</span></li>
-              <li class="bar" style="--v:0.62"><span class="bar-name">근거 부재와 과장</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">62</span></li>
-              <li class="bar" style="--v:0.55"><span class="bar-name">직무 적합성 어긋남</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">55</span></li>
-              <li class="bar" style="--v:0.41"><span class="bar-name">차별화 판단 오류</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">41</span></li>
-          </ol>
+          <div class="report-panel" role="tabpanel" id="panel-verdict" aria-labelledby="tab-verdict">
+            <p class="report-verdict">업계 맥락 부재에서<br>범용 문구·근거 부재로 번지는 구조입니다.</p>
+            <p class="report-q-label">스스로 점검할 질문</p>
+            <p class="report-q">‘귀사’를 실제 회사명으로 바꿔도<br>여전히 자연스럽습니까?</p>
+          </div>
 
-          <p class="report-label">원문 근거 <span class="report-count">3건 중 1건</span></p>
-          <blockquote class="evidence">“귀사의 인재상에 부합하는<br>성실하고 책임감 있는 인재가 되겠습니다.”</blockquote>
-          <p class="evidence-why">어느 회사, 어느 직무에 넣어도<br>그대로 성립하는 문장입니다.</p>
+          <div class="report-panel" role="tabpanel" id="panel-pattern" aria-labelledby="tab-pattern">
+            <ol class="bars">
+              <li class="bar bar--root" style="--v:.88"><span class="bar-name">업계 맥락 부재<em>근본 원인</em></span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">88</span></li>
+              <li class="bar" style="--v:.78"><span class="bar-name">규격화된 정형성</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">78</span></li>
+              <li class="bar" style="--v:.62"><span class="bar-name">근거 부재와 과장</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">62</span></li>
+              <li class="bar" style="--v:.55"><span class="bar-name">직무 적합성 어긋남</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">55</span></li>
+              <li class="bar" style="--v:.41"><span class="bar-name">차별화 판단 오류</span><span class="bar-track" aria-hidden="true"><span></span></span><span class="bar-val">41</span></li>
+            </ol>
+          </div>
 
-          <p class="report-label">스스로 점검할 질문</p>
-          <p class="report-q">‘귀사’를 실제 회사명으로 바꿔도<br>여전히 자연스럽습니까?</p>
+          <div class="report-panel" role="tabpanel" id="panel-evidence" aria-labelledby="tab-evidence">
+            <blockquote class="evidence">“귀사의 인재상에 부합하는<br>성실하고 책임감 있는 인재가 되겠습니다.”</blockquote>
+            <p class="evidence-why">어느 회사, 어느 직무에 넣어도<br>그대로 성립하는 문장입니다.</p>
+          </div>
 
           <footer class="report-foot">
-            <span>교정 가능</span>
+            <span class="status"><span class="status-dot" aria-hidden="true"></span>교정 가능</span>
             <span class="next"><span class="next-on">재작성</span><span>리허설</span><span>직접 상담</span></span>
           </footer>
         </article>
         <p class="fine">* 실제 결과 화면과 같은 형식입니다.<br>입력 문장은 설명을 위해 넣었습니다.</p>
 
         <div class="ai-actions">
-          <a class="btn btn-solid" href="https://aro-career.vercel.app/diagnosis" target="_blank" rel="noopener noreferrer">내 서류 진단하기 <span aria-hidden="true">↗</span><span class="visually-hidden"> (새 창)</span></a>
+          <a class="pill pill--dark" href="https://aro-career.vercel.app/diagnosis" target="_blank" rel="noopener noreferrer">내 서류 진단하기 <span class="pill-arrow" aria-hidden="true">↗</span><span class="visually-hidden"> (새 창)</span></a>
           <p class="ai-meta">약 3분 입력 · 비용 없음 · 상담은 선택<br>근거를 인용할 때 이름·회사명은 가립니다.</p>
         </div>
+      </div>
+    </section>
+
+    <section class="service" id="service" aria-labelledby="service-title">
+      <div class="wrap">
+        <p class="kicker">상담</p>
+        <h2 id="service-title" class="title"><em>필요한 것만</em><br>고르면 됩니다.</h2>
+        <ol class="steps">
+          <li><span class="step-no">01</span><strong>듣기</strong><span>해온 일을 편하게 이야기합니다.</span></li>
+          <li><span class="step-no">02</span><strong>고르기</strong><span>공고에 맞는 경험을 고릅니다.</span></li>
+          <li><span class="step-no">03</span><strong>다듬기</strong><span>서류로 쓰고, 면접에서 말해봅니다.</span></li>
+        </ol>
+        <div class="service-list">
+          <article class="card service-item">
+            <h3>서류 완성</h3>
+            <p>공고 한 건에 맞춰 경험을 고르고,<br>이력서·경력기술서를 함께 씁니다.</p>
+            <p class="service-out"><span>남는 것</span>지원 방향, 제출할 문서</p>
+          </article>
+          <article class="card service-item">
+            <h3>면접 연습</h3>
+            <p>직접 답해보고, 피드백을 듣고,<br>다시 답합니다.</p>
+            <p class="service-out"><span>남는 것</span>답변별 피드백, 다음 과제</p>
+          </article>
+        </div>
+        <p class="service-note">비용과 일정은 상황을 들은 뒤 안내합니다.</p>
       </div>
     </section>
 
@@ -200,6 +238,7 @@
 
     <section class="faq" aria-labelledby="faq-title">
       <div class="wrap">
+        <p class="kicker">질문</p>
         <h2 id="faq-title" class="title">자주 묻는 것</h2>
         <div class="faq-list">
           <details><summary>신입도 상담할 수 있나요?</summary><p>네. 신입과 경력 모두 가능합니다.<br>지원할 공고 한 건을 기준으로 진행합니다.</p></details>
@@ -211,21 +250,23 @@
     </section>
 
     <section class="contact" id="contact" aria-labelledby="contact-title">
-      <div class="wrap">
-        <h2 id="contact-title" class="display display--sm">무엇부터 할지,<br><em>같이</em> 정해요.</h2>
-        <p class="contact-lead">원하는 직무와 지금 고민을<br>짧게 보내주세요.</p>
-        <div class="actions">
-          <a class="btn btn-solid" href="https://pf.kakao.com/_WjxexbX/chat" target="_blank" rel="noopener noreferrer">카카오톡으로 문의 <span class="visually-hidden">(새 창)</span></a>
-          <a class="btn btn-line" href="mailto:aro.deeply@gmail.com">이메일로 문의</a>
+      <div class="container">
+        <div class="cta">
+          <h2 id="contact-title" class="cta-title">무엇부터 할지,<br><em>같이</em> 정해요.</h2>
+          <p class="cta-lead">원하는 직무와 지금 고민을<br>짧게 보내주세요.</p>
+          <div class="actions actions--center">
+            <a class="pill pill--light" href="https://pf.kakao.com/_WjxexbX/chat" target="_blank" rel="noopener noreferrer">카카오톡으로 문의 <span class="visually-hidden">(새 창)</span></a>
+            <a class="pill pill--ghost" href="mailto:aro.deeply@gmail.com">이메일로 문의</a>
+          </div>
+          <p class="cta-mail">aro.deeply@gmail.com</p>
         </div>
-        <p class="contact-mail">aro.deeply@gmail.com</p>
       </div>
     </section>
 
   </main>
 
   <footer class="site-footer">
-    <div class="wrap footer-inner">
+    <div class="container footer-inner">
       <span class="brand brand--sm">ARO</span>
       <span lang="en">deeply human</span>
       <a href="#top">맨 위로</a>

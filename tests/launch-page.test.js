@@ -11,7 +11,7 @@ function visibleSentences(source) {
   // 경력기술서 예시 문장(.doc-after)은 실제 문서 문체를 보여주는 인용이라 제외한다.
   const body = source
     .replace(/<(script|style|head)[^>]*>[\s\S]*?<\/\1>/g, '')
-    .replace(/<p class="doc-after">[\s\S]*?<\/p>/, '');
+    .replace(/<p class="doc-after[^"]*">[\s\S]*?<\/p>/g, '');
   return body
     .split(/<br\s*\/?>|<\/(?:p|h1|h2|h3|li|summary|blockquote|figcaption|a|span|del|dt|dd|div)>/)
     .map(chunk => chunk.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim())
