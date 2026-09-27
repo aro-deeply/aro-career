@@ -13,8 +13,6 @@
   --night:#1D222C;      /* 소개 영역 */
   --night-ink:#E9E8E3;
   --night-soft:#A3A7B0;
-  --night-line:#343B48;
-  --pencil-light:#9DB0F5; /* 어두운 면 위의 파란 연필 */
 
   --display:'SUIT Variable','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
   --sans:'SUIT Variable','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
@@ -75,7 +73,7 @@ main:focus{outline:none}
 
 /* 버튼 */
 .actions{display:flex;flex-wrap:wrap;gap:12px}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 28px;font-size:.9375rem;font-weight:500;text-decoration:none;border-radius:2px;border:1px solid var(--ink);transition:background-color .15s ease-out,color .15s ease-out}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 28px;font-size:.9375rem;font-weight:500;text-decoration:none;border-radius:2px;border:1px solid var(--ink);transition:background-color .15s ease-out,color .15s ease-out}
 .btn-solid{background:var(--ink);color:var(--paper)}
 .btn-solid:hover{background:var(--pencil);border-color:var(--pencil)}
 .btn-line{background:transparent}
@@ -133,22 +131,19 @@ section{padding-block:var(--section)}
 .service-item .service-out{margin-top:auto;padding-top:14px;border-top:1px dashed var(--line);font-size:var(--t-caption);color:var(--ink)}
 .service-note{margin-top:28px;font-size:.9375rem;color:var(--ink-soft)}
 
-/* AI 진단: 어두운 결과 카드 하나로 '엔진'을 보여준다. */
-.hero-ai{display:inline-block;margin-top:24px;font-size:.9375rem;color:var(--pencil);text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1px}
-.ai{padding-top:0}
-.ai-lead{font-size:var(--t-lead);color:var(--ink-soft);line-height:1.75;margin:-24px 0 40px}
-.engine{background:var(--night);color:var(--night-ink);padding:clamp(24px,5vw,44px);border-radius:4px}
-.engine-top{display:flex;justify-content:space-between;align-items:center;font-size:var(--t-caption);color:var(--night-soft);padding-bottom:18px;border-bottom:1px solid var(--night-line)}
-.engine-tag{padding:1px 8px;border:1px solid var(--night-line);border-radius:999px}
-.engine-input{font-family:var(--display);font-weight:300;font-size:var(--t-lead);line-height:1.7;padding-block:28px 32px}
-.flag{text-decoration:underline wavy var(--pencil-light);text-decoration-thickness:1.5px;text-underline-offset:6px;color:#fff}
-.engine-grid{margin:0;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--night-line)}
-.engine-grid div{padding:18px 0 18px;border-bottom:1px solid var(--night-line)}
-.engine-grid div:nth-child(odd){padding-right:20px}
-.engine-grid div:nth-child(even){padding-left:20px;border-left:1px solid var(--night-line)}
-.engine-grid dt{font-size:var(--t-caption);color:var(--pencil-light);margin-bottom:4px}
-.engine-grid dd{margin:0;font-size:.9375rem;color:var(--night-ink);line-height:1.6}
-.ai-actions{margin-top:32px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px}
+/* AI 진단: 예시 섹션과 같은 '문서 + 파란 연필 메모' 언어로, 밝은 띠 위에 둔다. */
+.ai{background:var(--sheet);border-block:1px solid var(--line)}
+.ai-lead{font-size:var(--t-lead);color:var(--ink-soft);line-height:1.75;margin:-24px 0 48px}
+.ai-sheet{background:var(--paper);border:1px solid var(--line);padding:clamp(28px,5vw,48px)}
+.ai-sheet .doc-head{display:flex;justify-content:space-between;align-items:center}
+.ai-input{font-size:var(--t-lead);line-height:1.8;margin-bottom:32px}
+.flag{background:linear-gradient(transparent 60%,var(--pencil-wash) 60%);text-decoration:underline;text-decoration-color:var(--pencil);text-decoration-thickness:1.5px;text-underline-offset:6px}
+.ai-read{margin:0;border-top:1px solid var(--line)}
+.ai-read div{display:grid;grid-template-columns:96px 1fr;gap:16px;padding-block:16px;border-bottom:1px solid var(--line)}
+.ai-read div:last-child{border-bottom:0;padding-bottom:0}
+.ai-read dt{font-size:var(--t-caption);color:var(--ink-soft);padding-top:2px}
+.ai-read dd{margin:0;color:var(--pencil)}
+.ai-actions{margin-top:36px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px}
 .ai-meta{font-size:var(--t-caption);color:var(--ink-soft)}
 
 /* 소개 */
@@ -185,8 +180,7 @@ section{padding-block:var(--section)}
   .service-list{grid-template-columns:1fr}
   .actions .btn{flex:1 1 100%}
   .talk-row{grid-template-columns:1fr;gap:6px}
-  .engine-grid{grid-template-columns:1fr}
-  .engine-grid div:nth-child(n){padding:16px 0;border-left:0}
+  .ai-read div{grid-template-columns:1fr;gap:2px}
   .ai-actions .btn{flex:1 1 100%}
   .step-list li{grid-template-columns:48px 1fr}
   body{font-size:1rem}
