@@ -24,3 +24,6 @@ vite.config.*.timestamp-*.*
 .env
 .env.*
 !.env.example
+
+# 새 랜딩 중간 빌드 산출물
+dist-launch/

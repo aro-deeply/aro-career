@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- 링크 미리보기(OG) 이미지 원본. scripts/make-og-image.sh로 1200x630 PNG를 만든다. -->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face{font-family:'SUIT Variable';font-weight:100 900;src:url('../launch/public/fonts/SUIT-Variable.woff2') format('woff2')}
+*{box-sizing:border-box;margin:0}
+html,body{width:1200px;height:630px}
+body{background:#FAFAFA;color:#0B0B0C;font-family:'SUIT Variable',sans-serif;padding:72px 80px;display:flex;flex-direction:column;position:relative;overflow:hidden;word-break:keep-all}
+.glow{position:absolute;right:-160px;top:-160px;width:620px;height:620px;border-radius:50%;background:radial-gradient(closest-side,rgba(47,77,179,.16),transparent)}
+.brand{font-weight:700;font-size:30px;letter-spacing:.24em}
+.pill{display:inline-flex;align-items:center;gap:10px;margin-top:56px;align-self:flex-start;height:44px;padding:0 20px 0 16px;border-radius:999px;background:#fff;box-shadow:0 0 0 1px rgba(11,11,12,.07),0 4px 14px -4px rgba(11,11,12,.12);font-size:21px;font-weight:600}
+.dot{width:9px;height:9px;border-radius:50%;background:#2F4DB3;box-shadow:0 0 0 5px rgba(47,77,179,.15)}
+h1{margin-top:28px;font-weight:800;font-size:92px;line-height:1.1;letter-spacing:-.055em}
+h1 em{font-style:normal;color:#2F4DB3}
+.foot{margin-top:auto;display:flex;align-items:center;gap:14px;font-size:24px;color:#6A6A6F}
+.foot b{color:#0B0B0C;font-weight:700}
+.check{width:30px;height:30px;border-radius:50%;background:#2F4DB3;position:relative;flex:none}
+.check::after{content:"";position:absolute;left:9px;top:9px;width:11px;height:6px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg)}
+.url{margin-left:auto;font-weight:600;color:#0B0B0C;letter-spacing:.01em}
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <p class="brand">ARO</p>
+  <p class="pill"><span class="dot"></span>이력서·경력기술서·면접 1:1 준비</p>
+  <h1>일은 해왔는데,<br><em>쓸 말</em>이 없나요?</h1>
+  <p class="foot"><span class="check"></span><span>기업 HR <b>약 16년</b> · 평가자 관점 AI 서류 진단</span><span class="url">aro-career.com</span></p>
+</body>
+</html>
