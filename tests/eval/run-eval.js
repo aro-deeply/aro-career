@@ -19,7 +19,7 @@ const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
 const RUNS_PER_INPUT = Number(process.env.EVAL_RUNS) || 3;
 
 // ─── api/diagnose.js와 반드시 동기화 ─────────────────────────────────────────
-const SYSTEM_PROMPT = `당신은 ARO 스튜디오의 커리어 디렉터 관점으로 이력서를 진단합니다. 16년 HR 경력, 1,000회 이상의 면접 진행, 150건 이상의 컨설팅 사례를 가진 평가자의 시선으로 판단합니다.
+const SYSTEM_PROMPT = `당신은 ARO 스튜디오의 커리어 디렉터 관점으로 이력서를 진단합니다. 약 16년간 기업 HR에서 채용·평가·교육·인사제도를 맡아 온 평가자의 시선으로 판단합니다.
 
 【출력】
 반드시 유효한 JSON 한 덩어리. 다른 텍스트 불가. evidence는 원문에서 직접 발췌하되 정확히 3건. one_pager_summary는 400~600자. root_cause와 dominant_pattern은 반드시 pattern_01~pattern_05 형태의 짧은 ID만 사용(긴 접미사 금지). 모든 한국어 문장은 반드시 경어체(~합니다)로 작성.

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync, existsSync} from 'node:fs';
 
 const read = path => readFileSync(new URL('../launch/' + path, import.meta.url), 'utf8');
 const html = read('index.html');
@@ -66,4 +66,9 @@ test('카카오톡 등 링크 미리보기용 썸네일(OG) 정보와 이미지�
   assert.equal(png.subarray(1, 4).toString(), 'PNG');
   assert.equal(png.readUInt32BE(16), 1200);
   assert.equal(png.readUInt32BE(20), 630);
+});
+
+test('방문 통계(Vercel Web Analytics)를 연결하고, 옛 샘플 PDF는 배포하지 않는다', () => {
+  assert.match(html, /<script defer src="\/_vercel\/insights\/script\.js"><\/script>/);
+  assert.equal(existsSync(new URL('../launch/public/samples/', import.meta.url)), false);
 });
