@@ -62,12 +62,15 @@ export default function InputStep({
           <p className="xp-context">써둔 이력서 진단</p>
           <h1 tabIndex={-1}>지금 쓴 문장을 그대로 붙여 넣어 주세요</h1>
           <p className="xp-sub">완성본이 아니어도 괜찮아요. 평가자가 어디서 걸리는지 먼저 짚어 드려요.</p>
-          <ul className="xp-gets" aria-label="진단 결과에서 확인하는 것">
-            <li><b>문제 유형</b>지원 기준과 어긋난 지점</li>
-            <li><b>위험 문장</b>면접에서 질문으로 이어질 표현</li>
-            <li><b>꼬리질문</b>평가자가 더 확인할 질문</li>
-            <li><b>정리 방향</b>어떤 근거를 앞세울지</li>
-          </ul>
+          <div className="xp-gets-box">
+            <p className="xp-gets-title" id="diag-gets">결과에서 받는 것</p>
+            <ul className="xp-gets" aria-labelledby="diag-gets">
+              <li><b>문제 유형</b> 지원 기준과 어긋난 지점</li>
+              <li><b>위험 문장</b> 면접에서 질문으로 이어질 표현</li>
+              <li><b>꼬리질문</b> 평가자가 더 확인할 질문</li>
+              <li><b>정리 방향</b> 어떤 근거를 앞세울지</li>
+            </ul>
+          </div>
 
           <div id="diag-form" className="xp-form">
             <div className="xp-field">
