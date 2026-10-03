@@ -36,9 +36,9 @@ test('만든 사례임을 밝히고 검증되지 않은 실적·가격을 넣지
   assert.doesNotMatch(html, /—/);
 });
 
-test('외부 연결은 AI 진단·카카오톡·이메일만 쓰고 데이터를 보내지 않는다', () => {
+test('외부 연결은 AI 도구·카카오톡·이메일만 쓰고 데이터를 보내지 않는다', () => {
   const external = [...html.matchAll(/href="(https?:\/\/[^"]+)"/g)].map(m => new URL(m[1]).host);
-  assert.deepEqual([...new Set(external)].sort(), ['aro-career.vercel.app', 'pf.kakao.com', 'www.aro-career.com']);
+  assert.deepEqual([...new Set(external)].sort(), ['pf.kakao.com', 'www.aro-career.com']);
   for (const tag of html.matchAll(/<a [^>]*target="_blank"[^>]*>/g)) assert.match(tag[0], /rel="noopener noreferrer"/);
   assert.match(html, /mailto:aro\.deeply@gmail\.com/);
   assert.doesNotMatch(app, /\b(fetch|XMLHttpRequest|sendBeacon|localStorage|sessionStorage)\b/);

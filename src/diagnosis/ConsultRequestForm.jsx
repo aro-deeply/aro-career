@@ -75,8 +75,8 @@ export default function ConsultRequestForm({ result }) {
       style={{
         marginTop: "3rem",
         padding: "clamp(1.5rem, 4vw, 2rem)",
-        background: "#F7F1E8",
-        border: "1px solid rgba(28,25,23,.1)",
+        background: "#F3F3F2",
+        border: "1px solid rgba(11,11,12,.1)",
         borderRadius: "12px",
       }}
     >
@@ -84,7 +84,7 @@ export default function ConsultRequestForm({ result }) {
         style={{
           fontSize: "1.125rem",
           fontWeight: 700,
-          color: "#1C1917",
+          color: "#0B0B0C",
           marginBottom: "0.5rem",
           letterSpacing: "-0.015em",
           wordBreak: "keep-all",
@@ -92,7 +92,7 @@ export default function ConsultRequestForm({ result }) {
       >
         진단 결과를 바탕으로 상담 문의하기
       </h3>
-      <p style={{ fontSize: "0.875rem", color: "#6B625C", marginBottom: "1.5rem", lineHeight: 1.6 }}>
+      <p style={{ fontSize: "0.875rem", color: "#5F5F65", marginBottom: "1.5rem", lineHeight: 1.6 }}>
         결과를 보고 더 깊게 정리하고 싶은 경우에만 남겨 주세요. 상담 신청은 선택입니다.
       </p>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -104,16 +104,16 @@ export default function ConsultRequestForm({ result }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           style={{
-            border: "1px solid rgba(28,25,23,.18)",
+            border: "1px solid rgba(11,11,12,.18)",
             borderRadius: "8px",
             padding: "10px 14px",
             fontSize: "0.9375rem",
-            color: "#1C1917",
+            color: "#0B0B0C",
             background: "#FFFFFF",
             outline: "none",
           }}
-          onFocus={(e) => (e.target.style.borderColor = "#5E4A36")}
-          onBlur={(e) => (e.target.style.borderColor = "rgba(28,25,23,.18)")}
+          onFocus={(e) => (e.target.style.borderColor = "#2F4DB3")}
+          onBlur={(e) => (e.target.style.borderColor = "rgba(11,11,12,.18)")}
         />
         <label htmlFor="consult-email" style={SR_ONLY_STYLE}>이메일</label>
         <input
@@ -123,16 +123,16 @@ export default function ConsultRequestForm({ result }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           style={{
-            border: "1px solid rgba(28,25,23,.18)",
+            border: "1px solid rgba(11,11,12,.18)",
             borderRadius: "8px",
             padding: "10px 14px",
             fontSize: "0.9375rem",
-            color: "#1C1917",
+            color: "#0B0B0C",
             background: "#FFFFFF",
             outline: "none",
           }}
-          onFocus={(e) => (e.target.style.borderColor = "#5E4A36")}
-          onBlur={(e) => (e.target.style.borderColor = "rgba(28,25,23,.18)")}
+          onFocus={(e) => (e.target.style.borderColor = "#2F4DB3")}
+          onBlur={(e) => (e.target.style.borderColor = "rgba(11,11,12,.18)")}
         />
         <label
           style={{
@@ -140,7 +140,7 @@ export default function ConsultRequestForm({ result }) {
             alignItems: "flex-start",
             gap: "8px",
             fontSize: "0.8125rem",
-            color: "#57534E",
+            color: "#5F5F65",
             lineHeight: 1.6,
           }}
         >
@@ -167,8 +167,8 @@ export default function ConsultRequestForm({ result }) {
           disabled={status === "sending" || !agree}
           aria-busy={status === "sending"}
           style={{
-            background: "#1C1917",
-            color: "#FAFAF7",
+            background: "#0B0B0C",
+            color: "#FAFAFA",
             padding: "14px",
             borderRadius: "8px",
             fontWeight: 600,
@@ -179,10 +179,10 @@ export default function ConsultRequestForm({ result }) {
             transition: "background .2s",
           }}
           onMouseOver={(e) => {
-            if (status !== "sending" && agree) e.currentTarget.style.background = "#5E4A36";
+            if (status !== "sending" && agree) e.currentTarget.style.background = "#2F4DB3";
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.background = "#1C1917";
+            e.currentTarget.style.background = "#0B0B0C";
           }}
         >
           {status === "sending" ? "전송 중..." : "상담 문의 보내기"}

@@ -159,11 +159,11 @@ export default function DiagnosisPage() {
     setStep("input");
   }
 
-  const fontStack = '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+  const fontStack = '"SUIT Variable", "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
 
   return (
     <MotionConfig reducedMotion="user">
-    <div className="min-h-screen bg-[#FAFAFA] text-[#1C1917]" style={{ fontFamily: fontStack }}>
+    <div className="min-h-screen bg-[#FAFAFA] text-[#0B0B0C]" style={{ fontFamily: fontStack }}>
       <style>{`
         .aro-skip-link {
           position: absolute;
@@ -171,8 +171,8 @@ export default function DiagnosisPage() {
           left: 16px;
           z-index: 200;
           padding: 12px 20px;
-          background: #1C1917;
-          color: #FAFAF7;
+          background: #0B0B0C;
+          color: #FAFAFA;
           font-size: 0.9rem;
           font-weight: 500;
           border-radius: 4px;
@@ -181,7 +181,7 @@ export default function DiagnosisPage() {
         }
         .aro-skip-link:focus {
           top: 12px;
-          outline: 3px solid #B48A5A;
+          outline: 3px solid #2F4DB3;
           outline-offset: 2px;
         }
         .aro-sr-only {
@@ -202,7 +202,7 @@ export default function DiagnosisPage() {
         textarea:focus-visible,
         select:focus-visible,
         summary:focus-visible {
-          outline: 2px solid #5E4A36;
+          outline: 2px solid #2F4DB3;
           outline-offset: 3px;
           border-radius: 3px;
         }

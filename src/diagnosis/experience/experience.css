@@ -211,3 +211,47 @@
 .xp-left{text-align:left}
 .xp-script-evidence{margin-top:6px;background:var(--soft);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:10px;font-size:var(--t-caption);color:#4A4A50}
 .xp-script-line{font-weight:700;color:var(--ink)}
+
+/* resume diagnosis input — same parts as the experience flow */
+.xp-gets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
+.xp-gets li{background:var(--card);border-radius:14px;box-shadow:var(--ring);padding:12px 14px;font-size:var(--t-caption);color:var(--ink-soft);display:flex;flex-direction:column;gap:2px}
+.xp-gets b{font-size:.9375rem;color:var(--ink)}
+.xp-form{display:flex;flex-direction:column;gap:22px;margin-top:18px;padding-top:22px;border-top:1px solid var(--line)}
+.xp-field{display:flex;flex-direction:column;gap:6px;border:0;padding:0;margin:0;min-width:0}
+.xp-field-label{font-size:var(--t-title);font-weight:700;padding:0}
+.xp-optional{font-size:.75rem;font-weight:700;color:var(--ink-soft);background:var(--soft);border-radius:999px;padding:2px 8px;margin-left:4px;vertical-align:2px}
+.xp-field textarea{resize:vertical;min-height:200px}
+.xp-count-line{text-align:right;font-variant-numeric:tabular-nums}
+.xp-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
+.xp-option{text-align:left;background:var(--card);border-radius:14px;padding:12px 14px;min-height:48px;box-shadow:inset 0 0 0 1px #D9D9D6;font-size:.9375rem;line-height:1.45;transition:box-shadow .15s ease-out,background .15s ease-out}
+.xp-option:hover{box-shadow:inset 0 0 0 1.5px var(--pencil)}
+.xp-option[aria-checked="true"]{background:var(--pencil-soft);color:#1F3790;font-weight:700;box-shadow:inset 0 0 0 1.5px var(--pencil)}
+.xp-alert{font-size:var(--t-caption);color:var(--warn);background:#FFF4EE;border-radius:12px;padding:10px 14px}
+@media (max-width:560px){.xp-options{grid-template-columns:1fr}}
+.xp-meter{width:min(280px,80%);height:3px;background:#EDEDEB;border-radius:99px;overflow:hidden;margin-top:12px}
+.xp-meter i{display:block;height:3px;background:var(--pencil);border-radius:99px}
+.xp-preview-verdict{font-size:1.0625rem;font-weight:700;line-height:1.55;margin-top:4px}
+.xp-preview-root{margin-top:8px;color:var(--ink-soft);font-size:.9375rem}
+.xp-card .xp-fine{margin-top:8px}
+
+/* resume diagnosis result — same cards as the experience result */
+.xp-result-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.xp-hero-body{color:#D5D5DA;line-height:1.7}
+.xp-hero-more{margin-top:8px;color:#E3E3E6;line-height:1.75;white-space:pre-line}
+.xp-block{display:block;margin-top:8px;font-size:.875rem}
+.xp-strong{font-weight:700;line-height:1.6}
+.xp-muted{color:var(--ink-soft);font-size:.9375rem;line-height:1.65}
+.xp-quotes{display:flex;flex-direction:column}
+.xp-quote-item{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px 0;border-top:1px solid #F0F0EE}
+.xp-quote-item:first-child{border-top:0;padding-top:6px}
+.xp-quote{margin:0;padding:10px 14px;border-radius:12px;background:var(--soft);font-weight:700;line-height:1.6;align-self:stretch}
+.xp-plan{display:flex;flex-direction:column;gap:8px;margin:10px 0 12px}
+.xp-plan li{background:var(--soft);border-radius:12px;padding:12px 14px}
+.xp-plan b{display:block;font-size:var(--t-caption);color:var(--pencil);margin-bottom:2px}
+.xp-plan p{font-size:.9375rem;line-height:1.65}
+.xp-pre{margin-top:8px;white-space:pre-line;line-height:1.75;font-size:.9375rem;color:#3A3A3F}
+.xp-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 8px}
+.xp-actions .xp-btn{min-height:46px;padding:0 16px;font-size:.9375rem;text-decoration:none;gap:6px}
+.xp .xp-btn--kakao{background:#FEE500;color:#191600}
+.xp .xp-btn--kakao:hover{background:#FFDD00}
+.xp-after{display:flex;flex-direction:column;gap:16px}

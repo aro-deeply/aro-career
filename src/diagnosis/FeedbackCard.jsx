@@ -53,11 +53,11 @@ export default function FeedbackCard({ result }) {
         style={{
           marginTop: "2rem",
           padding: "1.25rem 1.5rem",
-          background: "#F2EFE9",
-          border: "1px solid rgba(28,25,23,.08)",
+          background: "#F3F3F2",
+          border: "1px solid rgba(11,11,12,.08)",
           borderRadius: "12px",
           fontSize: "0.875rem",
-          color: "#5E4A36",
+          color: "#2F4DB3",
           textAlign: "center",
         }}
       >
@@ -73,7 +73,7 @@ export default function FeedbackCard({ result }) {
         marginTop: "2rem",
         padding: "1.5rem",
         background: "rgba(255,255,255,.7)",
-        border: "1px solid rgba(28,25,23,.08)",
+        border: "1px solid rgba(11,11,12,.08)",
         borderRadius: "12px",
       }}
     >
@@ -81,14 +81,14 @@ export default function FeedbackCard({ result }) {
         style={{
           fontSize: "0.95rem",
           fontWeight: 700,
-          color: "#1C1917",
+          color: "#0B0B0C",
           margin: "0 0 6px",
           letterSpacing: "-0.01em",
         }}
       >
         이 진단이 정확하다고 느끼시나요?
       </h3>
-      <p style={{ margin: "0 0 14px", fontSize: "0.78rem", color: "#8B7355" }}>
+      <p style={{ margin: "0 0 14px", fontSize: "0.78rem", color: "#6A6A6F" }}>
         익명으로 수집되며, 진단 엔진 개선에만 사용합니다.
       </p>
 
@@ -116,7 +116,7 @@ export default function FeedbackCard({ result }) {
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
-                color: filled ? "#B48A5A" : "rgba(28,25,23,.18)",
+                color: filled ? "#2F4DB3" : "rgba(11,11,12,.18)",
                 padding: "2px 4px",
                 transition: "color .15s",
               }}
@@ -125,7 +125,7 @@ export default function FeedbackCard({ result }) {
             </button>
           );
         })}
-        <span style={{ marginLeft: "8px", fontSize: "0.78rem", color: "#8B7355", alignSelf: "center" }}>
+        <span style={{ marginLeft: "8px", fontSize: "0.78rem", color: "#6A6A6F", alignSelf: "center" }}>
           {score === 0 && "별점을 선택"}
           {score === 1 && "전혀 아닙니다"}
           {score === 2 && "거의 아닙니다"}
@@ -143,11 +143,11 @@ export default function FeedbackCard({ result }) {
         aria-label="피드백 코멘트"
         style={{
           width: "100%",
-          border: "1px solid rgba(28,25,23,.18)",
+          border: "1px solid rgba(11,11,12,.18)",
           borderRadius: "8px",
           padding: "10px 12px",
           fontSize: "0.875rem",
-          color: "#1C1917",
+          color: "#0B0B0C",
           background: "#FFFFFF",
           outline: "none",
           lineHeight: 1.6,
@@ -164,14 +164,14 @@ export default function FeedbackCard({ result }) {
       )}
 
       <div style={{ marginTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontSize: "0.72rem", color: "#8B7355" }}>{comment.length}/500</span>
+        <span style={{ fontSize: "0.72rem", color: "#6A6A6F" }}>{comment.length}/500</span>
         <button
           type="button"
           onClick={submit}
           disabled={status === "sending" || score < 1}
           style={{
-            background: score < 1 ? "rgba(28,25,23,.2)" : "#1C1917",
-            color: "#FAFAF7",
+            background: score < 1 ? "rgba(11,11,12,.2)" : "#0B0B0C",
+            color: "#FAFAFA",
             padding: "10px 20px",
             border: "none",
             borderRadius: "8px",

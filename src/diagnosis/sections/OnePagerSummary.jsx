@@ -10,7 +10,7 @@ export default function OnePagerSummary({ summary }) {
       <div className="text-[11px] tracking-[0.2em] text-neutral-500 font-semibold mb-6">
         04 · 종합 진단
       </div>
-      <div className="bg-stone-50 border border-stone-200 p-8 md:p-12">
+      <div className="bg-neutral-50 border border-neutral-200 p-8 md:p-12">
         <div className="space-y-6">
           {summary
             .split(/\n\n+/)

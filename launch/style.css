@@ -383,3 +383,24 @@ mark{color:inherit;background:linear-gradient(var(--pencil-wash),var(--pencil-wa
   .hero-proof{display:flex;text-align:left;align-items:flex-start}
   body{font-size:1rem}
 }
+
+/* AI 도구 두 가지 (이력서 진단 · 경험 정리) */
+.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 28px}
+.tool{display:flex;flex-direction:column;gap:8px}
+.tool h3{font-size:var(--t-lead);font-weight:700;letter-spacing:-.02em}
+.tool-when{font-size:var(--t-caption);font-weight:700;color:var(--pencil)}
+.tool-desc{color:var(--ink-soft);line-height:1.7}
+.tool-get{font-size:var(--t-caption);color:var(--ink-soft);background:var(--soft);border-radius:12px;padding:10px 12px;line-height:1.6;margin-bottom:6px}
+.tool-get b{display:block;color:var(--ink)}
+.tool .pill{margin-top:auto;align-self:flex-start}
+.try-link{margin-top:10px;font-size:var(--t-caption)}
+.try-link a{color:var(--pencil);font-weight:700;text-decoration:none}
+.try-link a:hover{text-decoration:underline;text-underline-offset:3px}
+.xp-demo{display:flex;flex-direction:column;gap:4px}
+.xp-demo-label{font-size:var(--t-caption);font-weight:700;color:var(--ink-soft);margin-top:10px}
+.xp-demo-label:first-child{margin-top:0}
+.xp-demo-label--pencil{color:var(--pencil)}
+.xp-demo-said{color:var(--ink-soft)}
+.xp-demo-q{font-weight:700}
+.xp-demo-line{background:var(--pencil-soft);border-radius:12px;padding:12px 14px;line-height:1.7;font-weight:600}
+@media (max-width:640px){.tools{grid-template-columns:1fr}.tool .pill{align-self:stretch}}

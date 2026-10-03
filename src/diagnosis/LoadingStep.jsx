@@ -21,166 +21,41 @@ export default function LoadingStep({ progress = 0, preview = null }) {
   return (
     <motion.div
       key="loading"
+      className="xp"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      style={{
-        background: "#FAFAF7",
-        padding: "8rem 1.5rem",
-        textAlign: "center",
-      }}
     >
-      <div className="inline-block">
-        <div
-          style={{
-            fontSize: "0.6875rem",
-            letterSpacing: "0.25em",
-            color: "#8B7355",
-            fontWeight: 700,
-            textTransform: "uppercase",
-            marginBottom: "1.5rem",
-          }}
-        >
-          DIAGNOSING
-        </div>
-        <div className="flex items-center justify-center gap-2 mb-8">
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              style={{ width: "8px", height: "8px", background: "#1C1917", borderRadius: "50%" }}
-              animate={{ opacity: [0.2, 1, 0.2] }}
-              transition={{
-                duration: 1.2,
-                repeat: Infinity,
-                delay: i * 0.2,
-              }}
-            />
-          ))}
-        </div>
-        <h2
-          style={{
-            fontSize: "clamp(1.4rem, 3vw, 1.875rem)",
-            fontWeight: 700,
-            color: "#1C1917",
-            marginBottom: "1rem",
-            lineHeight: 1.3,
-            letterSpacing: "-0.02em",
-            wordBreak: "keep-all",
-          }}
-        >
-          평가자 관점으로 문장을 읽고 있습니다.
-        </h2>
-        <p
-          style={{
-            color: "#57534E",
-            fontSize: "0.9375rem",
-            maxWidth: "420px",
-            margin: "0 auto",
-            lineHeight: 1.7,
-          }}
-        >
-          문제 유형, 위험 문장, 면접 꼬리질문 가능성을 함께 확인합니다. 잠시만 기다려 주세요.
-        </p>
-        <div style={{ marginTop: "2rem", maxWidth: "280px", margin: "2rem auto 0" }}>
-          <div
-            style={{
-              height: "3px",
-              background: "rgba(28,25,23,.1)",
-              borderRadius: "99px",
-              overflow: "hidden",
-            }}
-          >
-            <motion.div
-              style={{ height: "100%", background: "#5E4A36", borderRadius: "99px" }}
-              animate={{ width: `${loadingProgress}%` }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            />
+      <main className="xp-main">
+        <section className="xp-screen">
+          <p className="xp-context">써둔 이력서 진단</p>
+          <div className="xp-loading">
+            <span className="xp-bubble xp-typing" aria-hidden="true"><i /><i /><i /></span>
+            <h1 className="xp-center">평가자 관점으로 읽고 있어요</h1>
+            <p className="xp-center">문제 유형, 위험 문장, 면접 꼬리질문을 함께 확인해요.</p>
+            <div className="xp-meter" role="progressbar" aria-label="진단 진행률" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(loadingProgress)}>
+              <motion.i animate={{ width: `${loadingProgress}%` }} transition={{ duration: 0.4, ease: "easeOut" }} />
+            </div>
+            <p className="xp-fine">분석 중 · {Math.round(loadingProgress)}%</p>
           </div>
-          <div
-            style={{
-              fontSize: "0.625rem",
-              letterSpacing: "0.2em",
-              color: "#8B7355",
-              fontWeight: 600,
-              marginTop: "0.75rem",
-              fontVariantNumeric: "tabular-nums",
-            }}
-          >
-            분석 중 · {Math.round(loadingProgress)}%
-          </div>
-        </div>
 
-        <div aria-live="polite">
-          {preview?.keyVerdict && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              style={{
-                marginTop: "2.5rem",
-                maxWidth: "480px",
-                marginLeft: "auto",
-                marginRight: "auto",
-                padding: "1.25rem 1.5rem",
-                background: "#FFFFFF",
-                border: "1px solid rgba(28,25,23,.08)",
-                borderRadius: "8px",
-                textAlign: "left",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "0.625rem",
-                  letterSpacing: "0.2em",
-                  color: "#B48A5A",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                핵심 판정 먼저 확인
-              </div>
-              <div
-                style={{
-                  fontSize: "1rem",
-                  fontWeight: 700,
-                  color: "#1C1917",
-                  lineHeight: 1.5,
-                  wordBreak: "keep-all",
-                }}
-              >
-                {preview.keyVerdict}
-              </div>
-              {preview.rootDiagnosis && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.4 }}
-                  style={{
-                    marginTop: "0.75rem",
-                    fontSize: "0.875rem",
-                    color: "#57534E",
-                    lineHeight: 1.7,
-                    wordBreak: "keep-all",
-                  }}
-                >
-                  {preview.rootDiagnosis}
-                </motion.p>
-              )}
-              <p
-                style={{
-                  marginTop: "0.75rem",
-                  fontSize: "0.75rem",
-                  color: "#8B7355",
-                }}
-              >
-                상세 근거와 정리 방향을 계속 분석하고 있습니다…
-              </p>
-            </motion.div>
-          )}
-        </div>
-      </div>
+          <div aria-live="polite">
+            {preview?.keyVerdict && (
+              <motion.div className="xp-card" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+                <p className="xp-label">핵심 판정 먼저 확인</p>
+                <p className="xp-preview-verdict">{preview.keyVerdict}</p>
+                {preview.rootDiagnosis && (
+                  <motion.p className="xp-preview-root" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
+                    {preview.rootDiagnosis}
+                  </motion.p>
+                )}
+                <p className="xp-fine">상세 근거와 정리 방향을 계속 분석하고 있어요…</p>
+              </motion.div>
+            )}
+          </div>
+        </section>
+      </main>
     </motion.div>
   );
 }
