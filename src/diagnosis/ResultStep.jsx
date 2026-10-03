@@ -116,7 +116,7 @@ const VAR_ACCENT_BG2 = "rgba(94,74,54,.12)";
 
 // ─── component ───────────────────────────────────────────────────────────────
 
-export default function ResultStep({ result, onReset }) {
+export default function ResultStep({ result, onReset, onStartExperience }) {
   const top3 = getTop3Patterns(result.pattern_scores);
 
   // Block 01 derivation
@@ -544,6 +544,26 @@ export default function ResultStep({ result, onReset }) {
                     >
                       {e.why}
                     </p>
+                    {onStartExperience && (
+                      <button
+                        type="button"
+                        onClick={() => onStartExperience(e.quote)}
+                        style={{
+                          marginTop: "12px",
+                          minHeight: "40px",
+                          padding: "0 14px",
+                          borderRadius: "10px",
+                          border: "1px solid rgba(28,25,23,.18)",
+                          background: "#FFFFFF",
+                          color: VAR_INK,
+                          fontSize: "0.85rem",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                        }}
+                      >
+                        이 문장 뒤의 경험 정리하기 →
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

@@ -3,6 +3,8 @@ import { AnimatePresence, MotionConfig } from "framer-motion";
 import LoadingStep from "./LoadingStep.jsx";
 import InputStep from "./InputStep.jsx";
 import ResultStep from "./ResultStep.jsx";
+import ModeChooser from "./ModeChooser.jsx";
+import ExperienceFlow, { SEED_KEY } from "./experience/ExperienceFlow.jsx";
 import { readDiagnosisStream, parseDiagnosisJson } from "./diagnose-stream.js";
 import { extractStreamPreview } from "./stream-preview.js";
 
@@ -17,7 +19,21 @@ const STEP_STATUS_MESSAGE = {
   result: "진단 결과가 도착했습니다.",
 };
 
+// 주소의 해시로 진단 갈래를 정한다: 없음 = 시작 선택, #resume = 이력서 패턴 진단, #xp... = 경험 정리.
+function modeFromHash() {
+  const hash = typeof window === "undefined" ? "" : window.location.hash;
+  if (hash.startsWith("#xp")) return "experience";
+  if (hash === "#resume") return "resume";
+  return "choose";
+}
+
 export default function DiagnosisPage() {
+  const [mode, setMode] = useState(modeFromHash);
+  useEffect(() => {
+    const onHash = () => setMode(modeFromHash());
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
   const [step, setStep] = useState("input");
   const [statusMessage, setStatusMessage] = useState("");
   const mainRef = useRef(null);
@@ -130,6 +146,12 @@ export default function DiagnosisPage() {
     }
   }
 
+  // 진단에서 짚은 문장을 들고 경험 정리로 넘어간다. 진단 결과는 이 화면 상태에 그대로 남는다.
+  function startExperienceFromQuote(quote) {
+    try { window.sessionStorage.setItem(SEED_KEY, quote); } catch { /* storage blocked: start empty */ }
+    window.location.hash = "xp/from-diagnosis";
+  }
+
   function resetForm() {
     setFormData({ jobTarget: "", situation: "", resume: "", rejection: "" });
     setResult(null);
@@ -141,7 +163,7 @@ export default function DiagnosisPage() {
 
   return (
     <MotionConfig reducedMotion="user">
-    <div className="min-h-screen bg-[#FAFAF7] text-[#1C1917]" style={{ fontFamily: fontStack }}>
+    <div className="min-h-screen bg-[#FAFAFA] text-[#1C1917]" style={{ fontFamily: fontStack }}>
       <style>{`
         .aro-skip-link {
           position: absolute;
@@ -192,53 +214,28 @@ export default function DiagnosisPage() {
         {statusMessage}
       </div>
 
-      {/* Light sticky header */}
+      {/* Light sticky header — same neutral tone as the landing page */}
       <header
         style={{
           position: "sticky",
           top: 0,
           zIndex: 50,
-          background: "rgba(250,250,247,.86)",
+          background: "rgba(250,250,250,.9)",
           backdropFilter: "blur(10px)",
           WebkitBackdropFilter: "blur(10px)",
-          borderBottom: "1px solid rgba(28,25,23,.08)",
+          borderBottom: "1px solid #E7E7E5",
         }}
       >
-        <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
-          <div>
-            <div
-              style={{
-                fontSize: "0.65rem",
-                letterSpacing: "0.22em",
-                color: "#B48A5A",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                marginBottom: "2px",
-              }}
-            >
-              ARO
-            </div>
-            <div
-              style={{
-                fontSize: "0.8rem",
-                fontWeight: 600,
-                color: "#1C1917",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              Career Direction
-            </div>
-          </div>
+        <div className="max-w-5xl mx-auto px-5 flex items-center justify-between" style={{ height: "60px" }}>
+          <a href="index.html" style={{ display: "flex", alignItems: "baseline", gap: "10px", color: "#0B0B0C", textDecoration: "none" }}>
+            <span style={{ fontSize: "1rem", fontWeight: 700, letterSpacing: "0.08em" }}>ARO</span>
+            <span style={{ fontSize: "0.8125rem", color: "#5F5F65" }}>AI 서류 진단</span>
+          </a>
           <a
             href="index.html"
-            style={{
-              fontSize: "0.75rem",
-              color: "#8B7355",
-              transition: "color .2s",
-              textDecoration: "none",
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.color = "#5E4A36")}
-            onMouseOut={(e) => (e.currentTarget.style.color = "#8B7355")}
+            style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#5F5F65", textDecoration: "none", padding: "10px 4px" }}
+            onMouseOver={(e) => (e.currentTarget.style.color = "#0B0B0C")}
+            onMouseOut={(e) => (e.currentTarget.style.color = "#5F5F65")}
           >
             ← 메인으로 돌아가기
           </a>
@@ -246,6 +243,11 @@ export default function DiagnosisPage() {
       </header>
 
       <main id="main-content" ref={mainRef} tabIndex={-1} style={{ scrollMarginTop: "84px", outline: "none" }}>
+        {mode === "choose" && (
+          <ModeChooser onResume={() => { window.location.hash = "resume"; }} onExperience={() => { window.location.hash = "xp"; }} />
+        )}
+        {mode === "experience" && <ExperienceFlow onExit={() => { window.location.hash = ""; }} />}
+        {mode === "resume" && (
         <AnimatePresence mode="wait">
           {step === "input" && (
             <InputStep
@@ -266,19 +268,20 @@ export default function DiagnosisPage() {
           )}
 
           {step === "result" && result && (
-            <ResultStep key="result" result={result} onReset={resetForm} />
+            <ResultStep key="result" result={result} onReset={resetForm} onStartExperience={startExperienceFromQuote} />
           )}
         </AnimatePresence>
+        )}
       </main>
 
       <footer
         style={{
-          background: "#FAFAF7",
-          borderTop: "1px solid rgba(28,25,23,.08)",
+          background: "#FAFAFA",
+          borderTop: "1px solid #E7E7E5",
         }}
       >
-        <div className="max-w-5xl mx-auto px-6 py-8 text-center" style={{ fontSize: "0.72rem", color: "#8B7355" }}>
-          © ARO · Career Direction · 서류 문제 유형 진단
+        <div className="max-w-5xl mx-auto px-6 py-8 text-center" style={{ fontSize: "0.75rem", color: "#5F5F65" }}>
+          © ARO · AI 서류 진단
         </div>
       </footer>
     </div>
