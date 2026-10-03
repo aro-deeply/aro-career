@@ -13,11 +13,12 @@ const RESUME_MAX_LENGTH = 3000;
 // ─── Rate Limiting (IP 기반) ─────────────────────────────────────────────────
 // Upstash Redis 무료 티어 사용. UPSTASH_REDIS_REST_* 는 수동 설정 이름,
 // KV_REST_API_* 는 Vercel Marketplace Upstash 연동이 자동 생성하는 이름.
+// ARO_KV_KV_REST_API_* 는 2026-10-04 재연결한 DB(옛 DB의 KV_* 값과 이름이 겹쳐 접두어를 ARO_KV로 지정).
 // 환경변수가 없거나 Redis 호출이 실패하면(예: DB 소멸) rate limit는 자동
 // 비활성화 — fail-open 판정 규칙은 api/_rate-limit.js 참조.
 // 정책: IP당 1분 5회, 1일 20회. 둘 중 하나라도 초과하면 429.
-const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+const REDIS_URL = process.env.ARO_KV_KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+const REDIS_TOKEN = process.env.ARO_KV_KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 let limiterPerMinute = null;
 let limiterPerDay = null;
 if (REDIS_URL && REDIS_TOKEN) {

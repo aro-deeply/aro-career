@@ -8,8 +8,8 @@ import { checkRateLimit } from "./_rate-limit.js";
 import { createExperienceHandler } from "./_experience-core.js";
 import { createSpendGuard } from "./_experience-guard.js";
 
-const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+const REDIS_URL = process.env.ARO_KV_KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+const REDIS_TOKEN = process.env.ARO_KV_KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 let limiters = { limiterPerMinute: null, limiterPerDay: null };
 // Without Redis the spending guard cannot see spend, so every AI call is refused (fail-closed).
 let guard = createSpendGuard({ redis: null });
