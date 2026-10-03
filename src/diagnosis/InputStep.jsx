@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
+const CAREER_STAGES = ["신입·인턴", "1~3년차", "4~7년차", "8년차 이상"];
+
 const SITUATIONS = [
   "서류에서 자주 막힘",
   "면접에서 자주 막힘",
@@ -85,6 +87,25 @@ export default function InputStep({
                 placeholder="예: 패션 브랜드 MD 신입, 제조업 인사 직무"
               />
             </div>
+
+            <fieldset className="xp-field">
+              <legend className="xp-field-label">연차 <span className="xp-optional">선택</span></legend>
+              <p className="xp-fine">연차마다 평가자가 기대하는 수준이 달라요.</p>
+              <div className="xp-options xp-options--4" role="radiogroup" aria-label="연차">
+                {CAREER_STAGES.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    role="radio"
+                    aria-checked={formData.careerStage === c}
+                    className="xp-option"
+                    onClick={() => setFormData({ ...formData, careerStage: formData.careerStage === c ? "" : c })}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
 
             <fieldset className="xp-field">
               <legend className="xp-field-label">지금 막히는 지점</legend>

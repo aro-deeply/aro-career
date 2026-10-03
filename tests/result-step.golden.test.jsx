@@ -6,7 +6,7 @@ import { dirname, resolve } from "node:path";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import ResultStep from "../src/diagnosis/ResultStep.jsx";
-import { FIXTURE_DIAGNOSIS } from "./_fixtures/diagnosis-fixture.js";
+import { FIXTURE_DIAGNOSIS_V2 as FIXTURE_DIAGNOSIS } from "./_fixtures/diagnosis-fixture.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SNAPSHOT_PATH = resolve(__dirname, "__snapshots__/result-step.html");

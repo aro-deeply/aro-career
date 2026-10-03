@@ -2,7 +2,7 @@
 //   node scripts/local-diagnosis-server.mjs                → 경험 정리 API 없음: 화면이 규칙 기반 엔진으로 동작 (실제 원문 검증용)
 //   node --env-file=.env.local scripts/local-diagnosis-server.mjs --ai
 //                                                          → 경험 정리 API를 시험 모드로 연결: 가상 경험만, 공유 비용 원장으로 차단
-// 운영 API(/api/diagnose, /api/lead, /api/feedback)는 어떤 모드에서도 호출하지 않고 503으로 막는다.
+// 운영 API(/api/lead, /api/feedback)는 어떤 모드에서도 호출하지 않고 503으로 막는다. /api/diagnose는 --prod-sim에서만 시험 원장으로 돈다.
 import http from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -21,6 +21,7 @@ const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; ch
   ".png": "image/png", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".json": "application/json", ".ico": "image/x-icon", ".txt": "text/plain; charset=utf-8" };
 
 let experienceHandler = null;
+let diagnoseHandler = null;
 if (AI) {
   const { createExperienceHandler } = await import("../api/_experience-core.js");
   const { createLedger } = await import("../shared/experience/budget-ledger.mjs");
@@ -45,6 +46,9 @@ if (AI) {
     };
     experienceHandler = createExperienceHandler({ guard: both, secret: "local-prod-sim", verifyBot: async () => true, rateLimit: async () => ({ ok: true }),
       callModel: body => client.messages.create(body), analyzeModel: "claude-sonnet-5-5", model: "claude-opus-5-5" });
+    // The resume diagnosis runs its production handler too, reserving in the same ledger and in-memory guard.
+    const { createDiagnoseHandler } = await import("../api/diagnose.js");
+    diagnoseHandler = createDiagnoseHandler({ guard: both, verifyBot: async () => true, rateLimit: async () => ({ ok: true }), makeClient: () => client });
   } else experienceHandler = createExperienceHandler({ ledger, model: MODEL, callModel: body => client.messages.create(body),
     verifyBot: async () => false, rateLimit: async () => ({ ok: true }), requireFictional: !OWN_EXPERIENCE,
     // ARO_DEBUG_DIR keeps raw model answers of test calls for diagnosis. Off unless set.
@@ -83,6 +87,10 @@ http.createServer(async (req, res) => {
     if (url.split("?")[0] === "/api/experience" && experienceHandler) {
       try { req.body = await readJson(req); } catch { return vercelRes(res).status(400).json({ error: "bad-json" }); }
       return experienceHandler(req, vercelRes(res));
+    }
+    if (url.split("?")[0] === "/api/diagnose" && diagnoseHandler) {
+      try { req.body = await readJson(req); } catch { return vercelRes(res).status(400).json({ error: "bad-json" }); }
+      return diagnoseHandler(req, vercelRes(res));
     }
     if (url.startsWith("/api/experience")) { res.writeHead(404).end("Not found"); return; }
     res.writeHead(503, { "Content-Type": "application/json" }).end(JSON.stringify({ error: "로컬 검증 서버는 운영 API를 호출하지 않습니다." }));

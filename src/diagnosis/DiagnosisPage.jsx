@@ -56,6 +56,7 @@ export default function DiagnosisPage() {
   const [formData, setFormData] = useState({
     jobTarget: "",
     situation: "",
+    careerStage: "",
     resume: "",
     rejection: "",
   });
@@ -97,6 +98,7 @@ export default function DiagnosisPage() {
         body: JSON.stringify({
           jobTarget: formData.jobTarget,
           situation: formData.situation,
+          careerStage: formData.careerStage || undefined,
           resume: formData.resume,
           rejection: formData.rejection,
           turnstileToken,
@@ -122,15 +124,17 @@ export default function DiagnosisPage() {
       }
 
       let lastUiUpdate = 0;
+      let checked = null;
       const accumulated = await readDiagnosisStream(response.body, (acc) => {
         const now = Date.now();
         if (now - lastUiUpdate < STREAM_UI_UPDATE_MS) return;
         lastUiUpdate = now;
         setStreamProgress(Math.min(95, (acc.length / EXPECTED_RESPONSE_CHARS) * 100));
         setStreamPreview(extractStreamPreview(acc));
-      });
+      }, (r) => { checked = r; });
       clearTimeout(timeoutId);
-      setResult(parseDiagnosisJson(accumulated));
+      // The server's checked result (quotes confirmed in the resume) wins over the raw stream text.
+      setResult(checked || parseDiagnosisJson(accumulated));
       setStep("result");
     } catch (err) {
       clearTimeout(timeoutId);
@@ -153,7 +157,7 @@ export default function DiagnosisPage() {
   }
 
   function resetForm() {
-    setFormData({ jobTarget: "", situation: "", resume: "", rejection: "" });
+    setFormData({ jobTarget: "", situation: "", careerStage: "", resume: "", rejection: "" });
     setResult(null);
     setError(null);
     setStep("input");

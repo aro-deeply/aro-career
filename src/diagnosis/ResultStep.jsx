@@ -8,127 +8,44 @@ import ConsultRequestForm from "./ConsultRequestForm.jsx";
 import FeedbackCard from "./FeedbackCard.jsx";
 import { KAKAO_CHANNEL_URL, OPERATOR_EMAIL } from "../shared/contact.js";
 
-// ─── helpers ────────────────────────────────────────────────────────────────
+// 이력서 진단 결과: "고치는 법" 보고서.
+// 핵심 판정 → 5가지 패턴 점수 → 걸리는 문장(왜, 무엇을 채울지) → 면접 꼬리질문 → 다음에 할 일.
+
+const PATTERNS = [
+  { id: "pattern_05", key: "pattern_05_industry_context_absence", name: "업계 맥락 부재", blurb: "이 회사·직무를 이해했는지 보이지 않음" },
+  { id: "pattern_01", key: "pattern_01_generic_template", name: "규격화된 정형성", blurb: "누구의 서류인지 구분되지 않음" },
+  { id: "pattern_02", key: "pattern_02_unsupported_claims", name: "근거 부재와 과장", blurb: "주장은 있는데 뒷받침이 없음" },
+  { id: "pattern_04", key: "pattern_04_job_fit_mismatch", name: "직무 적합성 어긋남", blurb: "직무가 원하는 것과 강조점이 다름" },
+  { id: "pattern_03", key: "pattern_03_differentiation_mishandling", name: "차별화 판단 오류", blurb: "약점을 스스로 먼저 드러냄" },
+];
 
 function stripBold(s) {
-  if (!s) return "";
-  return s.replace(/\*\*([^*]+)\*\*/g, "$1");
+  return s ? s.replace(/\*\*([^*]+)\*\*/g, "$1") : "";
 }
 
-function firstSentence(s) {
-  if (!s) return "";
-  const clean = s.trim();
-  const m = clean.match(/^.{1,80}?[.!?。]/);
-  if (m) return m[0].trim();
-  return clean.slice(0, 80).trim();
+// Patterns from the most to the least troubling, with the root cause marked.
+function rankedPatterns(scores = {}, rootCause) {
+  return PATTERNS
+    .map((p) => ({ ...p, score: Math.round(Math.min(1, Math.max(0, Number(scores[p.key]) || 0)) * 100), root: p.id === rootCause }))
+    .sort((a, b) => b.score - a.score);
 }
 
-// ─── pattern metadata ────────────────────────────────────────────────────────
-
-const PATTERN_META = {
-  pattern_01_generic_template: {
-    name: "규격화된 정형성",
-    blurb: "어느 회사에도 제출할 수 있는 형식적 표현이 반복됩니다.",
-  },
-  pattern_02_unsupported_claims: {
-    name: "근거 부재와 과장",
-    blurb: "주장이 행동 근거 없이 결론으로만 제시됩니다.",
-  },
-  pattern_03_differentiation_mishandling: {
-    name: "차별화 약함",
-    blurb: "타 지원자와 구별되는 강점이 충분히 드러나지 않습니다.",
-  },
-  pattern_04_job_fit_mismatch: {
-    name: "직무 적합성 정리 필요",
-    blurb: "경험이 지원 직무의 평가 기준과 직접 연결되지 않습니다.",
-  },
-  pattern_05_industry_context_absence: {
-    name: "지원 회사 이해 부족",
-    blurb: "특정 회사가 아니라 어느 기업에도 제출 가능한 문장처럼 읽힙니다.",
-  },
-};
-
-const PATTERN_PURPOSE = {
-  pattern_01: "지원 동기·경험이 형식적 표현 너머에서 구체적인지 확인합니다.",
-  pattern_02: "주장이 실제 행동 근거로 뒷받침되는지 확인합니다.",
-  pattern_03: "다른 지원자와 구별되는 차별 지점이 무엇인지 확인합니다.",
-  pattern_04: "지원 직무 기준에서 경험이 어떻게 연결되는지 확인합니다.",
-  pattern_05: "특정 회사에 대한 이해와 선택 이유가 구체적인지 확인합니다.",
-};
-
-// ─── derived data helpers ────────────────────────────────────────────────────
-
-function getTop3Patterns(patternScores) {
-  return Object.entries(patternScores)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 3)
-    .map(([key]) => ({
-      key,
-      ...(PATTERN_META[key] || { name: key, blurb: "" }),
-    }));
+// Results made before the report format changed carry questions as plain strings.
+function interviewQuestionsOf(result) {
+  if (Array.isArray(result.interview_questions) && result.interview_questions.length) return result.interview_questions;
+  return (result.self_reflection_questions || []).map((question) => ({ question, checks: "", answer_point: "" }));
 }
-
-function getPurposeText(dominantPattern, rootCause) {
-  const raw = dominantPattern || rootCause || "";
-  // raw may be e.g. "pattern_05" or "pattern_05_industry_context_absence"
-  const m = raw.match(/pattern_0?(\d+)/);
-  if (m) {
-    const id = "pattern_0" + m[1];
-    if (PATTERN_PURPOSE[id]) return PATTERN_PURPOSE[id];
-  }
-  return "지원 동기와 경험이 구체적으로 뒷받침되는지 확인합니다.";
-}
-
-function getShortBody(text) {
-  if (!text) return "";
-  const plain = stripBold(text);
-  const sentences = plain.match(/[^.!?。]+[.!?。]?/g) || [];
-  return sentences.slice(0, 2).join(" ").trim();
-}
-
-function getFullBody(text) {
-  if (!text) return "";
-  const plain = stripBold(text);
-  const sentences = plain.match(/[^.!?。]+[.!?。]?/g) || [];
-  return sentences.slice(2).join(" ").trim();
-}
-
-// ─── component ───────────────────────────────────────────────────────────────
 
 export default function ResultStep({ result, onReset, onStartExperience }) {
-  const top3 = getTop3Patterns(result.pattern_scores);
-
-  // Block 01 derivation
-  const keyLine = result.key_verdict || firstSentence(stripBold(result.root_diagnosis));
-  const shortBody = getShortBody(result.root_diagnosis);
-  const fullBody = getFullBody(result.root_diagnosis);
-
-  // Block 04 evaluator-flow derivation
-  const step2Text =
-    firstSentence(stripBold(result.root_diagnosis)) || result.key_verdict;
-  const step3Question = result.self_reflection_questions?.[0] || "";
-
-  // Block 05 purpose
-  const purposeText = getPurposeText(
-    result.dominant_pattern,
-    result.root_cause
-  );
-
-  // Block 06 action plan derivation
-  const summaryParagraphs = (result.one_pager_summary || "")
-    .split(/\n\n+/)
-    .map((p) => p.trim())
-    .filter(Boolean);
-
-  function getPlanItem(idx) {
-    const para = summaryParagraphs[idx];
-    if (!para) return "";
-    const plain = stripBold(para);
-    const sentences = plain.match(/[^.!?。]+[.!?。]?/g) || [];
-    return sentences.slice(0, 2).join(" ").trim();
-  }
-
-  const plan = [getPlanItem(0), getPlanItem(1), getPlanItem(2)];
+  const patterns = rankedPatterns(result.pattern_scores, result.root_cause);
+  const evidence = (result.evidence || []).slice(0, 3);
+  const questions = interviewQuestionsOf(result);
+  const plan = result.plan || {};
+  const steps = [
+    { label: "버릴 표현", text: plan.drop },
+    { label: "살릴 근거", text: plan.keep },
+    { label: "다시 짤 방향", text: plan.rebuild },
+  ].filter((s) => s.text);
 
   return (
     <motion.div
@@ -138,7 +55,7 @@ export default function ResultStep({ result, onReset, onStartExperience }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Print-only styles: hide chrome, expand result, B/W text */}
+      {/* Print-only styles: hide chrome, keep the report readable on paper */}
       <style>{`
         @media print {
           @page { size: A4; margin: 18mm 16mm; }
@@ -151,6 +68,7 @@ export default function ResultStep({ result, onReset, onStartExperience }) {
           html, body, .xp { background: #FFFFFF !important; }
           .xp-card, .xp-hero { box-shadow: none !important; border: 1px solid #DDD !important; }
           .xp-hero { background: #FFFFFF !important; color: #0B0B0C !important; }
+          .xp-hero .xp-label, .xp-hero-body { color: #3A3A3F !important; }
           h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
           section, article { page-break-inside: avoid; break-inside: avoid; }
         }
@@ -165,115 +83,92 @@ export default function ResultStep({ result, onReset, onStartExperience }) {
             </button>
           </div>
           <h1 tabIndex={-1}>평가자가 먼저 걸리는 지점이에요</h1>
-          <p className="xp-sub">문장을 고치기 전에, 왜 걸리는지부터 확인해 보세요.</p>
+          <p className="xp-sub">걸리는 이유를 보고, 문장마다 무엇을 채울지 확인해 보세요.</p>
 
-          {/* 01 핵심 원인 */}
-          <section className="xp-hero" aria-labelledby="diag-core">
-            <p className="xp-label" id="diag-core">핵심 원인</p>
-            <p className="xp-hero-text">{keyLine}</p>
-            {shortBody && <p className="xp-hero-body">{shortBody}</p>}
-            {fullBody && (
-              <details className="xp-evidence">
-                <summary>자세한 해석 보기</summary>
-                <p className="xp-hero-more">
-                  {renderMarkdownBold(result.root_diagnosis, BOLD_HIGHLIGHT_CLASS)}
-                  {result.correctability && <span className="xp-block">{result.correctability}</span>}
-                </p>
-              </details>
-            )}
+          {/* ① 핵심 판정 */}
+          <section className="xp-hero" aria-labelledby="diag-verdict">
+            <p className="xp-label" id="diag-verdict">핵심 판정</p>
+            <p className="xp-hero-text">{stripBold(result.key_verdict)}</p>
+            {result.root_diagnosis && <p className="xp-hero-body">{renderMarkdownBold(result.root_diagnosis, BOLD_HIGHLIGHT_CLASS)}</p>}
+            {result.correctability && <p className="xp-hero-tag">{result.correctability}</p>}
           </section>
 
-          {/* 02 감지된 문제 패턴 */}
-          <section className="xp-card">
-            <header><h2>함께 걸린 패턴</h2></header>
-            <ul className="xp-lines">
-              {top3.map(({ key, name, blurb }) => (
-                <li key={key} className="xp-line">
-                  <span className="xp-dotmark" aria-hidden="true" />
-                  <div><p className="xp-strong">{name}</p><p className="xp-muted">{blurb}</p></div>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {/* 03 원문에서 감지된 위험 문장 */}
-          <section className="xp-card">
-            <header><h2>원문에서 걸리는 문장</h2></header>
-            <ul className="xp-quotes">
-              {result.evidence.slice(0, 3).map((e, i) => (
-                <li key={i} className="xp-quote-item">
-                  <blockquote className="xp-quote">"{e.quote}"</blockquote>
-                  <span className="xp-tag">{e.signal}</span>
-                  <p className="xp-muted">{e.why}</p>
-                  {onStartExperience && (
-                    <button type="button" className="xp-link xp-left" onClick={() => onStartExperience(e.quote)}>
-                      이 문장 뒤의 경험 정리하기 →
-                    </button>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {/* 04 평가자 관점 */}
-          <section className="xp-card">
-            <header><h2>평가자는 이렇게 읽어요</h2></header>
-            <ol className="xp-lines">
-              {[
-                "좋은 태도와 의지는 충분히 전달됩니다.",
-                step2Text,
-                step3Question
-                  ? `그래서 "${step3Question}"라는 질문이 남습니다.`
-                  : "그래서 구체적인 근거가 남아 있는지 묻게 됩니다.",
-              ].map((text, i) => (
-                <li key={i} className="xp-line">
-                  <span className="xp-num" aria-hidden="true">{i + 1}</span>
-                  <p>{text}</p>
+          {/* ② 5가지 패턴 */}
+          <section className="xp-card" aria-labelledby="diag-patterns">
+            <header><h2 id="diag-patterns">평가자가 보는 5가지 패턴</h2></header>
+            <p className="xp-muted">점수가 높을수록 평가자가 더 걸려요.</p>
+            <ol className="xp-bars">
+              {patterns.map((p) => (
+                <li key={p.id} className={p.root ? "xp-bar xp-bar--root" : "xp-bar"}>
+                  <span className="xp-bar-name">
+                    {p.name}{p.root && <em>근본 원인</em>}
+                    <small>{p.blurb}</small>
+                  </span>
+                  <span className="xp-bar-track" aria-hidden="true"><i style={{ width: `${p.score}%` }} /></span>
+                  <span className="xp-bar-val">{p.score}</span>
                 </li>
               ))}
             </ol>
           </section>
 
-          {/* 05 면접에서 이어질 수 있는 질문 */}
-          <section className="xp-card">
-            <header><h2>면접에서 이어질 질문</h2></header>
-            <p className="xp-muted">평가자가 확인하려는 것: {purposeText}</p>
-            <div className="xp-follow">
-              {result.self_reflection_questions.map((q, i) => (
-                <div key={i} className="xp-follow-item"><p className="xp-follow-q">{q}</p></div>
-              ))}
-            </div>
-          </section>
+          {/* ③ 걸리는 문장 */}
+          {evidence.length > 0 && (
+            <section className="xp-card" aria-labelledby="diag-quotes">
+              <header><h2 id="diag-quotes">원문에서 걸리는 문장</h2></header>
+              <ul className="xp-quotes">
+                {evidence.map((e, i) => (
+                  <li key={i} className="xp-quote-item">
+                    <blockquote className="xp-quote">"{e.quote}"</blockquote>
+                    {e.signal && <span className="xp-tag">{e.signal.replace(/^Pattern\s*\d+\s*·\s*/i, "")}</span>}
+                    <p className="xp-read"><b>평가자는 이렇게 읽어요</b>{e.why}</p>
+                    {e.fill && <p className="xp-fill"><b>채울 것</b>{e.fill}</p>}
+                    {onStartExperience && (
+                      <button type="button" className="xp-link xp-left" onClick={() => onStartExperience(e.quote)}>
+                        이 문장, 경험 정리로 채우기 →
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-          {/* 06 정리 방향 */}
-          <section className="xp-card">
-            <header><h2>정리 방향</h2></header>
-            <p className="xp-strong">개별 문장을 더 다듬기보다, 지원 기업과 직무 기준에 맞춰 이력서의 기준점을 다시 잡아야 합니다.</p>
-            <ul className="xp-plan">
-              {[
-                { label: "버릴 표현", text: plan[0] },
-                { label: "살릴 근거", text: plan[1] },
-                { label: "다시 구성할 방향", text: plan[2] },
-              ].map(({ label, text }) => (
-                <li key={label}><b>{label}</b><p>{text || "본문에서 확인하세요."}</p></li>
-              ))}
-            </ul>
-            <details className="xp-fold">
-              <summary>자세한 정리 방향 보기</summary>
-              <p className="xp-pre">{renderMarkdownBold(result.one_pager_summary, BOLD_HIGHLIGHT_CLASS)}</p>
-            </details>
-          </section>
+          {/* ④ 면접 꼬리질문 */}
+          {questions.length > 0 && (
+            <section className="xp-card" aria-labelledby="diag-interview">
+              <header><h2 id="diag-interview">면접에서 이어질 질문</h2></header>
+              <div className="xp-follow xp-follow--flush">
+                {questions.map((q, i) => (
+                  <div key={i} className="xp-follow-item">
+                    <p className="xp-follow-q">{q.question}</p>
+                    {q.checks && <p className="xp-follow-a"><b>확인하려는 것</b> {q.checks}</p>}
+                    {q.answer_point && <p className="xp-follow-a"><b>준비</b> {q.answer_point}</p>}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
-          {/* Next steps */}
+          {/* ⑤ 다음에 할 일 */}
+          {steps.length > 0 && (
+            <section className="xp-card" aria-labelledby="diag-plan">
+              <header><h2 id="diag-plan">다음에 할 일</h2></header>
+              <ol className="xp-lines">
+                {steps.map((s, i) => (
+                  <li key={s.label} className="xp-line">
+                    <span className="xp-num" aria-hidden="true">{i + 1}</span>
+                    <div><p className="xp-strong">{s.label}</p><p className="xp-muted">{s.text}</p></div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+
+          {/* 상담·다시 하기 */}
           <section className="xp-card aro-print-hide">
-            <header><h2>다음에 할 일을 골라 주세요</h2></header>
-            <p className="xp-muted">고칠 문장이 보였다면, 그 뒤의 경험부터 정리해 보세요. 실제 문장과 면접 답변까지 함께 다듬고 싶다면 상담을 신청할 수 있어요.</p>
+            <header><h2>혼자 고치기 어렵다면</h2></header>
+            <p className="xp-muted">걸리는 문장은 경험 정리로 하나씩 채울 수 있어요. 실제 문장과 면접 답변까지 함께 다듬고 싶다면 상담을 신청해 주세요.</p>
             <div className="xp-actions">
-              {onStartExperience && result.evidence?.[0]?.quote && (
-                <button type="button" className="xp-btn" onClick={() => onStartExperience(result.evidence[0].quote)}>
-                  첫 문장 뒤의 경험 정리하기
-                </button>
-              )}
               <a className="xp-btn xp-btn--kakao" href={KAKAO_CHANNEL_URL} target="_blank" rel="noopener noreferrer" aria-label="카카오톡 채널로 상담 문의 (새 창)">
                 <span aria-hidden="true">💬</span> 카카오톡으로 상담 문의
               </a>

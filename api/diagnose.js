@@ -2,9 +2,12 @@ import Anthropic from "@anthropic-ai/sdk";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { checkRateLimit } from "./_rate-limit.js";
+import { createSpendGuard } from "./_experience-guard.js";
+import { buildDiagnoseRequest, acceptDiagnosis, CAREER_STAGES, DIAGNOSE_MODEL } from "./_diagnose-core.js";
+import { worstCaseUsd, BudgetError } from "../shared/experience/budget-ledger.mjs";
 
 // Model can be overridden by env var without code changes (for A/B, upgrades)
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
+const ANTHROPIC_MODEL = process.env.DIAGNOSE_MODEL || DIAGNOSE_MODEL;
 
 // Input length guards (server-side enforcement, mirrors client UI)
 const RESUME_MIN_LENGTH = 200;
@@ -21,11 +24,15 @@ const REDIS_URL = process.env.ARO_KV_KV_REST_API_URL || process.env.UPSTASH_REDI
 const REDIS_TOKEN = process.env.ARO_KV_KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 let limiterPerMinute = null;
 let limiterPerDay = null;
+// Diagnosis shares the experience engine's spending caps (site owner decision 2026-10-04: one USD 50 monthly cap for both tools).
+// Without the store the cap cannot be checked, so the AI is not called (fail-closed), unlike the IP limit above.
+let guard = createSpendGuard({ redis: null });
 if (REDIS_URL && REDIS_TOKEN) {
   const redis = new Redis({
     url: REDIS_URL,
     token: REDIS_TOKEN,
   });
+  guard = createSpendGuard({ redis });
   limiterPerMinute = new Ratelimit({
     redis,
     limiter: Ratelimit.slidingWindow(5, "60 s"),
@@ -40,96 +47,6 @@ if (REDIS_URL && REDIS_TOKEN) {
   });
 }
 
-const SYSTEM_PROMPT = `당신은 ARO 스튜디오의 커리어 디렉터 관점으로 이력서를 진단합니다. 약 16년간 기업 HR에서 채용·평가·교육·인사제도를 맡아 온 평가자의 시선으로 판단합니다.
-
-【진단 엔진 최상위 원칙】
-1. 모든 판정의 뿌리는 "지원 회사와 직무에 대한 이해도"입니다. 이 이해가 부재하면 나머지 결함은 대부분 여기서 파생됩니다.
-2. 범용 이력서(copy된 남의 이력서)는 근본 결함입니다. 가장 강도 있는 판정을 내립니다.
-3. 결함의 성격을 "근본 결함"과 "교정 가능 결함"으로 구분합니다.
-4. 이력서는 정보 전달이 아니라 이미지 각인입니다. 역량은 문서 전반에 분산 반복되어야 합니다.
-
-【5개 패턴】
-- Pattern 05 (뿌리): 업계 맥락 부재
-- Pattern 01 (1차 증상): 규격화된 정형성
-- Pattern 04 (1차 증상): 직무 적합성 어긋남
-- Pattern 02 (2차 증상): 근거 부재와 과장
-- Pattern 03 (2차 증상): 차별화 요소의 판단 오류
-
-【판정 기준】
-- Pattern 01: "고유성 가시성"과 "범용성 여부"가 최상위. 기여 범위 불명확, 과도한 기승전결, 주관적 성공 서술, 정제되지 않은 어투, 독자 설정 오류, 도입부 인상 부재
-- Pattern 02: 납득 가능성 + 연차·회사 규모 정합성 + 주장-근거 쌍. 연차별 기준: 신입~1년차 평균은 지시받은 업무 수행, 2~3년차 평균은 독립 수행, 5년차 이상은 일부 리드
-- Pattern 03: "스스로 먼저 부각하지 않는다" 원칙. "비록 ~은 아니지만" 구문은 약점 자발 부각. 업종 전환 3단 판정 (3-5년 이내 / 장기+접점 있음 / 장기+접점 없음)
-- Pattern 04: 직급별 어필 축 (사원급 = 열정·도전·창의성, 팀장급 = 의사결정 전문성, 임원급 = 전체 조망+리스크 감수). 3박자 구조(시작, 내적 경험, 현재까지 남은 것)
-- Pattern 05: "귀사" 호칭은 즉시 범용 판정. 회사 이해도 3단계
-
-【현재 상황별 추가 판정 축】
-- 동종업계 이직: 현 직장과 이직 대상 회사의 차별점을 이력서가 반영하고 있는지가 핵심 평가 축입니다. 같은 직무·업계이므로 "왜 지금 옮기는가", "이 회사에서만 할 수 있는 것이 무엇인가"에 대한 답이 드러나야 합니다.
-
-【반전 인사이트】
-- 아르바이트 수치 부풀리기는 무의미. 있는 그대로 기술이 유효
-- "비록 ~은 아니지만" 구문은 약점을 스스로 부각. 굳이 넣지 않음
-- 2년차의 총괄 리드 주장은 양면 불리
-- 직무 적합성 어긋남은 교정 가능
-
-【Voice 원칙 · 매우 중요】
-- 모든 진단 문장은 "~합니다" 경어체로 작성합니다. "~다", "~이다" 등 평어체 금지
-- 단정적이고 근거 기반의 전문성 있는 어조
-- 구어체 어휘 금지 ("꼴이 된다", "두루뭉술", "콩가루")
-- em dash 금지, 과장 부사 금지, 위로·격려 금지
-- 동일 어휘 반복 금지. 유사어 분산 (서사/맥락/흐름, 연결고리/접점/연계, 범용/일반적/통용)
-- 교정 가능성 명시
-
-【매우 중요 · 종합 진단(one_pager_summary) 작성 규칙】
-one_pager_summary는 반드시 다음 구조로 작성합니다:
-1. 정확히 3개 단락으로 분리. 각 단락은 두 번의 줄바꿈(\\n\\n)으로 구분
-2. 각 단락은 2~4문장 내외
-3. 단락별 주제 분리: (1) 뿌리 원인 진단 (2) 표면 증상과 구체 지점 (3) 교정 가능성과 다음 단계
-4. 각 단락에서 가장 중요한 핵심 문장이나 구문은 **별표 두 개**로 감싸서 강조 (마크다운 볼드 문법). 단락당 1~2회 사용
-
-【출력】
-반드시 유효한 JSON 한 덩어리. 다른 텍스트 불가. evidence는 원문에서 직접 발췌하되 정확히 3건. one_pager_summary는 400~600자. root_cause와 dominant_pattern은 반드시 pattern_01~pattern_05 형태의 짧은 ID만 사용(긴 접미사 금지). 모든 한국어 문장은 반드시 경어체(~합니다)로 작성.
-
-【어휘 다양성 추가 지시】
-진단 생성 시 "뿌리"라는 단어는 내부 개념 설명용으로만 사용하고, 실제 출력 텍스트(root_diagnosis, one_pager_summary 등)에서는 다음과 같이 유사어로 분산합니다:
-- 뿌리 원인 → 근본 원인, 핵심 원인, 가장 깊은 층위, 최상위 원인
-
-【표현 완화 지시 · 매우 중요】
-단정적이고 부정적인 결론은 지원자에게 절망을 주므로, 다음과 같이 완화합니다:
-- "가능성이 없습니다" → "가능성이 매우 낮습니다" 또는 "가능성이 제한적입니다"
-- "불가능합니다" → "현재 상태로는 어렵습니다"
-- "~할 수 없습니다" → "~하기 어렵습니다" 또는 "~하기에는 제약이 있습니다"
-- "부재합니다" → "충분히 드러나지 않습니다" 또는 "확인되지 않습니다"
-- "전혀 없습니다" → "거의 보이지 않습니다"
-- 근본 결함이라 해도 "교정 가능" 여지를 반드시 함께 제시
-
-진단은 객관적이되, 지원자가 개선 방향을 볼 수 있도록 서술합니다.
-
-【evidence 작성 규칙 · 매우 중요 · 개인정보 보호】
-evidence의 quote는 이력서 원문에서 발췌하되, 다음 정보는 반드시 제외하거나 마스킹합니다:
-- 이름·회사명·학교명·기관명·소속명
-- 전화번호·이메일·주소·생년월일·SNS ID
-- 기타 고유명사로 개인을 특정할 수 있는 정보
-식별정보가 포함된 문장이라면 해당 부분을 [...]로 가리거나, 식별정보가 없는 다른 문장을 발췌합니다.
-
-【JSON 스키마 · 반드시 아래 필드 순서 그대로 출력】
-{
-  "root_cause": "pattern_01|pattern_02|pattern_03|pattern_04|pattern_05",
-  "dominant_pattern": "동일 enum",
-  "key_verdict": "전체 진단을 한 문장으로 압축한 핵심 판정. 최대 60자 이내",
-  "root_diagnosis": "근본 진단 2-3문장. 가장 핵심 구문은 **별표 두 개**로 감싸 강조",
-  "pattern_scores": {
-    "pattern_01_generic_template": 0.0-1.0,
-    "pattern_02_unsupported_claims": 0.0-1.0,
-    "pattern_03_differentiation_mishandling": 0.0-1.0,
-    "pattern_04_job_fit_mismatch": 0.0-1.0,
-    "pattern_05_industry_context_absence": 0.0-1.0
-  },
-  "evidence": [{"quote": "원문 발췌 (식별정보 마스킹)", "signal": "Pattern 번호 · 신호명", "why": "평가 근거 (경어체)"}] — 정확히 3건,
-  "one_pager_summary": "정확히 3개 단락으로 \\n\\n 구분. 각 단락에서 핵심 구문은 **별표 두 개**로 강조. 400~600자",
-  "correctability": "근본 결함 | 교정 가능 | 교정 가능하나 재검토 필요",
-  "next_step_recommendation": "Rewrite | Rehearse | Direct",
-  "self_reflection_questions": ["자가 성찰 질문 3개 (경어체, 물음표로 끝)"]
-}`;
 
 async function verifyTurnstile(token, ip) {
   const params = new URLSearchParams({
@@ -146,35 +63,44 @@ async function verifyTurnstile(token, ip) {
   return Boolean(data.success);
 }
 
-function buildUserMessage({ jobTarget, situation, resume, rejection }) {
-  return `지원 직무: ${jobTarget}
-현재 상황: ${situation}
-이력서 본문:
-${resume}
-최근 탈락 경험: ${rejection || "기재되지 않음"}
-
-위 입력에 대해 JSON 스키마에 따라 진단 결과를 생성해주세요.
-- 모든 한국어 문장은 경어체(~합니다)로 작성
-- root_diagnosis와 one_pager_summary에서 핵심 구문은 **별표 두 개**로 감싸 강조
-- one_pager_summary는 반드시 정확히 3개 단락으로 \\n\\n 구분, 400~600자
-- key_verdict는 전체 진단을 한 문장으로 압축
-- JSON 외의 텍스트는 절대 포함하지 마세요`;
-}
-
 export const config = {
-  maxDuration: 60,
+  maxDuration: 90,
   supportsResponseStreaming: true,
 };
 
-export default async function handler(req, res) {
+// Errors the API rejects before doing any work are not billed, so their reservation is refunded.
+const NOT_BILLED = new Set([400, 401, 403, 404, 413, 422, 429]);
+const LIMIT_MESSAGES = {
+  "monthly-cap": "이번 달 AI 진단 사용량이 모두 찼어요. 다음 달에 다시 이용해 주세요.",
+  "daily-cap": "오늘 AI 진단 사용량이 모두 찼어요. 내일 다시 이용해 주세요.",
+  "ip-daily-cap": "오늘은 이 기기에서 진단을 충분히 하셨어요. 내일 다시 이용해 주세요.",
+  "guard-unavailable": "지금은 AI 진단을 이용할 수 없어요. 잠시 후 다시 시도해 주세요.",
+};
+
+/**
+ * Production wiring is the default export below; the local check server passes a test ledger and simulated bot check.
+ * @param {object} deps
+ * @param {{reserve: Function, settle: Function}} deps.guard  spending guard (or the test ledger)
+ */
+export function createDiagnoseHandler({
+  guard,
+  verifyBot = verifyTurnstile,
+  rateLimit = (ip) => checkRateLimit({ limiterPerMinute, limiterPerDay }, ip),
+  makeClient = () => new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }),
+  model = ANTHROPIC_MODEL,
+}) {
+  return async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { jobTarget, situation, resume, rejection, turnstileToken } = req.body || {};
+  const { jobTarget, situation, careerStage, resume, rejection, turnstileToken } = req.body || {};
 
   if (!jobTarget || !situation || !resume) {
     return res.status(400).json({ error: "필수 항목이 누락되었습니다." });
+  }
+  if (careerStage && !CAREER_STAGES.includes(careerStage)) {
+    return res.status(400).json({ error: "연차 값이 올바르지 않습니다." });
   }
   if (typeof resume !== "string" || resume.length < RESUME_MIN_LENGTH) {
     return res.status(400).json({ error: `이력서 본문은 ${RESUME_MIN_LENGTH}자 이상이어야 합니다.` });
@@ -189,14 +115,14 @@ export default async function handler(req, res) {
   const ip = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || null;
 
   // Rate limit는 Turnstile 검증 이전에 — 외부 API 호출 비용 절약
-  const rl = await checkRateLimit({ limiterPerMinute, limiterPerDay }, ip);
+  const rl = await rateLimit(ip);
   if (!rl.ok) {
     const seconds = rl.reset ? Math.max(0, Math.ceil((rl.reset - Date.now()) / 1000)) : null;
     const wait = seconds ? `약 ${seconds}초 후 다시 시도해주세요.` : "잠시 후 다시 시도해주세요.";
     return res.status(429).json({ error: `요청이 너무 많습니다 (${rl.scope} 한도 초과). ${wait}` });
   }
 
-  const turnstileOk = await verifyTurnstile(turnstileToken, ip);
+  const turnstileOk = await verifyBot(turnstileToken, ip);
   if (!turnstileOk) {
     return res.status(403).json({ error: "봇 검증에 실패했습니다. 다시 시도해주세요." });
   }
@@ -205,26 +131,29 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "서버 설정 오류: ANTHROPIC_API_KEY 환경변수가 설정되지 않았습니다." });
   }
 
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-  // 응답은 NDJSON 스트리밍: {"t":"delta","text":...} 이벤트가 생성 즉시 흘러가고,
-  // 마지막에 {"t":"done"} 또는 {"t":"error","message":...}로 끝난다.
-  // 첫 delta 이전의 실패는 기존과 동일하게 JSON 상태 응답으로 처리한다.
+  const body = buildDiagnoseRequest({ jobTarget, situation, careerStage, resume, rejection }, model);
+  let reservation;
   try {
-    const stream = client.messages.stream({
-      model: ANTHROPIC_MODEL,
-      max_tokens: 4000,
-      system: [
-        {
-          type: "text",
-          text: SYSTEM_PROMPT,
-          cache_control: { type: "ephemeral" },
-        },
-      ],
-      messages: [
-        { role: "user", content: buildUserMessage({ jobTarget, situation, resume, rejection }) },
-      ],
-    });
+    reservation = await guard.reserve("diagnose", worstCaseUsd(body, body.max_tokens), body.model, { ip });
+  } catch (error) {
+    const code = error instanceof BudgetError ? error.code : "guard-unavailable";
+    console.error("Diagnosis spend guard refused:", code);
+    return res.status(code === "guard-unavailable" ? 503 : 429).json({ error: LIMIT_MESSAGES[code] || LIMIT_MESSAGES["guard-unavailable"], code });
+  }
+
+  const client = makeClient();
+
+  // 응답은 NDJSON 스트리밍: {"t":"delta","text":...} 이벤트가 생성 즉시 흘러가고(로딩 화면 미리보기용),
+  // 끝에 검사를 마친 결과 {"t":"result","result":...}와 {"t":"done"}, 또는 {"t":"error","message":...}가 온다.
+  // 첫 delta 이전의 실패는 JSON 상태 응답으로 처리한다.
+  let settled = false;
+  const settle = async (outcome) => {
+    if (settled) return;
+    settled = true;
+    await guard.settle(reservation, outcome).catch((e) => console.error("Diagnosis spend settle failed:", e?.message || e));
+  };
+  try {
+    const stream = client.messages.stream(body);
 
     stream.on("text", (delta) => {
       if (!res.headersSent) {
@@ -237,37 +166,38 @@ export default async function handler(req, res) {
     });
 
     const finalMessage = await stream.finalMessage();
-    const text = finalMessage.content?.[0]?.text;
-    if (!text) {
-      return res.status(502).json({ error: "AI 응답이 비어있습니다. 잠시 후 다시 시도해주세요." });
-    }
-
-    const cleaned = text
-      .trim()
-      .replace(/^```json\s*/i, "")
-      .replace(/```\s*$/, "")
-      .trim();
-
+    await settle({ usage: finalMessage.usage });
+    const text = (finalMessage.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
+    let result;
     try {
-      JSON.parse(cleaned);
+      result = acceptDiagnosis(JSON.parse(text), { resume });
     } catch (e) {
-      console.error("JSON parse fail. stop_reason:", finalMessage.stop_reason, "preview:", text.slice(0, 500));
+      console.error("Diagnosis JSON parse fail. stop_reason:", finalMessage.stop_reason);
       const hint =
         finalMessage.stop_reason === "max_tokens"
           ? "AI 응답이 한도를 넘겨 끊겼습니다. 입력 길이를 줄이고 다시 시도해주세요."
           : "AI 응답 형식이 잘못되었습니다. 잠시 후 다시 시도해주세요.";
+      if (!res.headersSent) return res.status(502).json({ error: hint });
       res.write(JSON.stringify({ t: "error", message: hint }) + "\n");
       return res.end();
     }
-
+    if (result.dropped_quotes) console.warn("Diagnosis quotes not found in resume:", result.dropped_quotes);
+    if (!res.headersSent) {
+      res.writeHead(200, { "content-type": "application/x-ndjson; charset=utf-8", "cache-control": "no-cache" });
+    }
+    res.write(JSON.stringify({ t: "result", result }) + "\n");
     res.write(JSON.stringify({ t: "done" }) + "\n");
     return res.end();
   } catch (err) {
-    console.error("Anthropic call failed:", err?.message || err);
+    console.error("Anthropic call failed:", err?.status || "", err?.message || err);
+    await settle({ notBilled: NOT_BILLED.has(err?.status) });
     if (!res.headersSent) {
       return res.status(502).json({ error: "일시적 오류입니다. 잠시 후 다시 시도해주세요." });
     }
     res.write(JSON.stringify({ t: "error", message: "일시적 오류입니다. 잠시 후 다시 시도해주세요." }) + "\n");
     return res.end();
   }
+  };
 }
+
+export default createDiagnoseHandler({ guard });

@@ -259,3 +259,27 @@
 .xp .xp-btn--kakao{background:#FEE500;color:#191600}
 .xp .xp-btn--kakao:hover{background:#FFDD00}
 .xp-after{display:flex;flex-direction:column;gap:16px}
+.xp-options--4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:560px){.xp .xp-options--4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* resume diagnosis report (format 2) */
+.xp-hero-tag{align-self:flex-start;font-size:.75rem;font-weight:700;color:#AEBBF2;background:rgba(174,187,242,.14);border-radius:999px;padding:2px 10px;margin-top:4px}
+.xp-bars{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.xp-bar{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 32px;align-items:center;gap:12px}
+.xp-bar-name{font-size:.9375rem;font-weight:700;line-height:1.4;color:#3A3A3F}
+.xp-bar-name em{font-style:normal;font-size:.6875rem;font-weight:700;color:var(--pencil);background:var(--pencil-soft);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+.xp-bar-name small{display:block;font-size:.75rem;font-weight:500;color:var(--ink-soft)}
+.xp-bar-track{height:6px;background:#EDEDEB;border-radius:99px;overflow:hidden}
+.xp-bar-track i{display:block;height:100%;background:#9A9AA0;border-radius:99px;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.xp-bar--root .xp-bar-name{color:var(--ink)}
+.xp-bar--root .xp-bar-track i{background:var(--pencil)}
+.xp-bar-val{font-size:.875rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+.xp-bar--root .xp-bar-val{color:var(--pencil)}
+.xp-read,.xp-fill{font-size:.9375rem;line-height:1.65}
+.xp-read b,.xp-fill b{display:block;font-size:var(--t-caption);margin-bottom:2px}
+.xp-read b{color:var(--ink-soft)}
+.xp-fill{align-self:stretch;background:var(--pencil-soft);border-radius:12px;padding:10px 14px;color:#1F3790}
+.xp-fill b{color:var(--pencil)}
+.xp-follow--flush{margin-top:4px;padding-top:0;border-top:0}
+.xp-follow-a b{color:var(--ink);font-size:var(--t-caption);margin-right:4px}
+@media (max-width:560px){.xp-bar{grid-template-columns:1fr 32px}.xp-bar-track{grid-column:1/-1;grid-row:2}}

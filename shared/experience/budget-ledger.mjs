@@ -15,9 +15,10 @@ export const MODEL_PRICES = Object.freeze({
 export const PRICES = Object.freeze({ model: 'claude-opus-5-5', ...MODEL_PRICES['claude-opus-5-5'], multiplier: MULTIPLIER, verifiedAt: '2026-10-03',
   source: 'https://platform.claude.com/docs/en/about-claude/pricing' });
 // Approved by the site owner: USD 2 (fictional only) → +1 (own experience) → 5 ("예산 신경쓰지 말고")
-// → 15 ("돈을 더 써서라도 비교해보고 맞춰놔야지", model comparison and quality fixes), all 2026-10-03.
-export const CAP_USD = 15;
-export const HARD_STOP_USD = 14.9;
+// → 15 ("돈을 더 써서라도 비교해보고 맞춰놔야지", model comparison and quality fixes), all 2026-10-03
+// → 20 (2026-10-04, owner chose "5달러 추가" for resume-diagnosis engine tests on fictional resumes).
+export const CAP_USD = 20;
+export const HARD_STOP_USD = 19.9;
 // A model without a verified price cannot be budgeted, so it cannot be called.
 export function pricesFor(model = 'claude-opus-5-5') {
   const prices = MODEL_PRICES[model];
