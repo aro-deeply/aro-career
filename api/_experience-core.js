@@ -93,7 +93,7 @@ export function createExperienceHandler({ callModel, ledger = null, guard = null
     // Second reading: every statement is checked against the person's own words before it is shown.
     try {
       const { raw } = await callStructured("verify", buildVerifyRequest(card, payload.items || []), useModel, ctx);
-      return applyVerification(card, raw, payload.items || []);
+      return applyVerification(card, raw, payload.items || [], { angle: payload.angle });
     } catch (error) {
       if (error instanceof BudgetError) throw error;
       return { ...card, verification: null };

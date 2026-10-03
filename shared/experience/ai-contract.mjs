@@ -123,7 +123,16 @@ export function buildVerifyRequest(card, items) {
 }
 
 // Apply the checks: fixed lines must still pass the outcome/number rules; dropped lines are kept aside with the reason.
-export function applyVerification(card, raw, items) {
+// A headline is read at a glance; when it still runs long after the check, the core message the person confirmed is shorter and theirs.
+const HEADLINE_MAX = 55;
+export function fitHeadline(headline, angle, items) {
+  const confirmed = normalizeText(angle);
+  if (!headline || normalizeText(headline.text).length <= HEADLINE_MAX) return headline;
+  if (!confirmed || confirmed.length > HEADLINE_MAX || claimIssues(confirmed, items).length) return headline;
+  return { text: confirmed, itemIds: [] };
+}
+
+export function applyVerification(card, raw, items, { angle = '' } = {}) {
   const byId = new Map((raw?.checks || []).map(c => [c.id, c]));
   const usable = new Map(items.map(i => [i.id, i]));
   const held = [...(card.held || [])];
@@ -138,7 +147,7 @@ export function applyVerification(card, raw, items) {
     fixed++;
     return { ...line, text, checked: normalizeText(check.reason) };
   };
-  const headline = card.headline?.itemIds?.length ? review(card.headline, 'h') : card.headline;
+  const headline = fitHeadline(card.headline?.itemIds?.length ? review(card.headline, 'h') : card.headline, angle, items);
   const resume = card.resume.map((l, i) => review(l, 'r' + i)).filter(Boolean);
   const lines = card.interview.lines.map((l, i) => review(l, 's' + i)).filter(Boolean);
   return { ...card, headline: headline || null, resume, interview: { ...card.interview, lines }, held, verification: { fixed, dropped } };

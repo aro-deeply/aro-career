@@ -301,3 +301,12 @@ test("styleIssues flags resume lines that cannot be pasted as-is", async () => {
   assert.ok(rows[0].style_issues.length);
   assert.equal(rows[1].style_issues, undefined);
 });
+
+test("fitHeadline swaps a long headline for the confirmed core message", async () => {
+  const { fitHeadline } = await import("../shared/experience/ai-contract.mjs");
+  const long = { text: "[가상] " + "담당 부서와 필요한 정보를 확인하고 기준을 정해 ".repeat(3), itemIds: ["i1"] };
+  assert.deepEqual(fitHeadline(long, "[가상] 기준을 정해 신청 양식을 만듦", []), { text: "[가상] 기준을 정해 신청 양식을 만듦", itemIds: [] });
+  assert.equal(fitHeadline(long, "", []), long);
+  const short = { text: "[가상] 신청 양식을 만듦", itemIds: ["i1"] };
+  assert.equal(fitHeadline(short, "[가상] 다른 문장", []), short);
+});
