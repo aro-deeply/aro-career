@@ -287,3 +287,17 @@ test("concurrent reservations can never pass the monthly cap together", async ()
   const results = await Promise.allSettled(Array.from({ length: 20 }, (_, i) => guard.reserve("compose", 0.15, "claude-opus-5-5", { ip: "ip" + i })));
   assert.equal(results.filter(r => r.status === "fulfilled").length, 6);
 });
+
+test("styleIssues flags resume lines that cannot be pasted as-is", async () => {
+  const { styleIssues, statementsOf } = await import("../shared/experience/ai-contract.mjs");
+  assert.deepEqual(styleIssues("[가상] 접수 누락을 막기 위해 담당 부서와 필수 정보를 정해 신청 양식 제작", "resume"), []);
+  assert.ok(styleIssues("[가상] 내가 보낸 메일을 다시 찾아 빠진 정보를 확인", "resume").some(x => x.includes("주어")));
+  assert.ok(styleIssues("[가상] 초안을 몇 건에 써보고 담당 부서에 확인받음", "resume").length >= 2);
+  assert.ok(styleIssues("[가상] 공유했고, 결국 계약 유지", "resume").some(x => x.includes("연결어")));
+  assert.ok(styleIssues("가".repeat(51), "headline").some(x => x.includes("50자")));
+  const items = [{ id: "i1", evidence: [{ quote: "[가상] 양식을 만들었어요" }] }];
+  const card = { headline: null, resume: [{ text: "[가상] 양식을 만들었음", itemIds: ["i1"] }, { text: "[가상] 신청 양식 제작", itemIds: ["i1"] }], interview: { lines: [] } };
+  const rows = statementsOf(card, items);
+  assert.ok(rows[0].style_issues.length);
+  assert.equal(rows[1].style_issues, undefined);
+});

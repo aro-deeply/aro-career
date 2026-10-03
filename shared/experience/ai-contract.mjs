@@ -83,18 +83,36 @@ A statement may restate the quotes in professional Korean. It must not add anyth
 - a specific fact widened into a general method or principle (quote "자주 묻는 질문을 마지막 장에 모았다" → statement "자주 묻는 질문을 기준으로 교육 내용을 구성함" is unsupported; "자주 묻는 질문을 자료 마지막 장에 따로 정리함" is faithful);
 - motives, results, evaluations or praise.
 
+Some statements also carry style_issues: wording problems found by rules (a subject word, a spoken or mixed ending, a vague amount, "여부", too long). For those, return "fix" with a sentence that keeps exactly the same facts and resolves every listed issue; never add facts to do so. A resume line ends with a plain action noun (제작, 정리, 확인, 공유); a vague amount (몇 건) becomes neutral wording without a number (실제 요청에 시범 적용).
+
 For each statement return verdict "ok" (faithful), "fix" (give the minimally corrected sentence in the same style and length, removing only what is unsupported), or "drop" (nothing faithful remains). reason: a short Korean note on what was unsupported ("" when ok).`;
 
 export const VERIFY_SCHEMA = { type: 'object', additionalProperties: false, required: ['checks'],
   properties: { checks: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['id', 'verdict', 'text', 'reason'],
     properties: { id: { type: 'string' }, verdict: { type: 'string', enum: ['ok', 'fix', 'drop'] }, text: { type: 'string' }, reason: { type: 'string' } } } } } };
 
+// Rule-checkable wording problems that keep a line from being pasted as-is. The verify pass rewrites lines that have them.
+const STYLE_RULES = [
+  { pattern: /(?:^|\s)(?:내가|제가|나는|저는|내|제)(?=\s)/u, issue: '주어(내가·제가)가 들어 있음', on: ['resume'] },
+  { pattern: /(?:받음|했음|하였음|였음|됨|만듦|함|음|요|다)[.。]?$/u, issue: '끝맺음이 행동 명사(제작·정리·확인)가 아님', on: ['resume'] },
+  { pattern: /몇\s*(?:건|번|개|명|군데)/u, issue: '"몇 건"처럼 모호한 양', on: ['resume', 'headline'] },
+  { pattern: /여부/u, issue: '"여부" 사용', on: ['resume', 'headline'] },
+  { pattern: /했고|했는데|결국|그래서/u, issue: '말투 연결어', on: ['resume', 'headline'] },
+];
+export function styleIssues(text, kind) {
+  const t = normalizeText(text);
+  const found = STYLE_RULES.filter(r => r.on.includes(kind) && r.pattern.test(t)).map(r => r.issue);
+  if (kind === 'headline' && t.length > 50) found.push('50자를 넘음');
+  return found;
+}
+
 // The statements of a sheet that speak about the person, each with the quotes behind it.
 export function statementsOf(card, items) {
   const quotesFor = ids => [...new Set(ids.map(id => items.find(i => i.id === id)).filter(Boolean).flatMap(i => i.evidence.map(e => e.quote)))];
   const rows = [];
-  if (card.headline?.itemIds?.length) rows.push({ id: 'h', text: card.headline.text, quotes: quotesFor(card.headline.itemIds) });
-  card.resume.forEach((l, i) => rows.push({ id: 'r' + i, text: l.text, quotes: quotesFor(l.itemIds) }));
+  const withStyle = (row, kind) => { const issues = styleIssues(row.text, kind); return issues.length ? { ...row, style_issues: issues } : row; };
+  if (card.headline?.itemIds?.length) rows.push(withStyle({ id: 'h', text: card.headline.text, quotes: quotesFor(card.headline.itemIds) }, 'headline'));
+  card.resume.forEach((l, i) => rows.push(withStyle({ id: 'r' + i, text: l.text, quotes: quotesFor(l.itemIds) }, 'resume')));
   card.interview.lines.forEach((l, i) => rows.push({ id: 's' + i, text: l.text, quotes: quotesFor(l.itemIds) }));
   return rows;
 }
